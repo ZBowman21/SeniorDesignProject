@@ -1,0 +1,14 @@
+group 'psu.edu.unifiedapi'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
+}
