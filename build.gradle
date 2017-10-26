@@ -1,8 +1,11 @@
 import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
+import jp.classmethod.aws.gradle.lambda.AWSLambdaUpdateFunctionCodeTask
+import jp.classmethod.aws.gradle.lambda.S3File
 
 plugins {
     id 'java'
     id 'jp.classmethod.aws.s3' version '0.35'
+    id 'jp.classmethod.aws.lambda' version '0.35'
 }
 
 group 'psu.edu.unifiedapi'
@@ -23,4 +26,9 @@ task uploadJar(type: AmazonS3FileUploadTask, dependsOn: jar) {
     file jar.archivePath
     bucketName "psu-unified-api-us-east-1"
     key "api.jar"
+}
+
+task updateLambdaGetGrades(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadJar) {
+    functionName "getGrades"
+    s3File new S3File(bucketName: uploadJar.bucketName, key: uploadJar.key)
 }
