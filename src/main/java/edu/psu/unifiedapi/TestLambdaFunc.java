@@ -14,5 +14,4 @@ public class TestLambdaFunc implements RequestHandler<TestAPIGateway, String> {
 		String output = "Hello, " + input.input + "!";
 		return output;
 	}
-
 }
