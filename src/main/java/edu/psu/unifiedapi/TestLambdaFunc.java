@@ -11,7 +11,7 @@ public class TestLambdaFunc implements RequestHandler<TestAPIGateway, String> {
 	@Override
 	public String handleRequest(TestAPIGateway input, Context context) {
 		context.getLogger().log("Input: " + input);
-		String output = "Hello, " + input.input + "!";
+		String output = "Hello, " + input.input + "!!";
 		return output;
 	}
 }
