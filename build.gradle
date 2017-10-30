@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
+    compile 'com.amazonaws:aws-lambda-java-events:2.0.1'
 }
 
 task uploadJar(type: AmazonS3FileUploadTask, dependsOn: jar) {
