@@ -39,7 +39,16 @@ task uploadZip(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
     overwrite true
 }
 
+task uploadAlexaSkillJar(type: AmazonS3FileUploadTask, dependsOn: jar) {
+    file jar.archivePath
+    bucketName "psu-unified-api-us-east-1"
+    key "skill.jar"
+}
+
+
 task updateLambdaGetGrades(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
     functionName "getGrades"
     s3File new S3File(bucketName: uploadZip.bucketName, key: uploadZip.key)
 }
+
+
