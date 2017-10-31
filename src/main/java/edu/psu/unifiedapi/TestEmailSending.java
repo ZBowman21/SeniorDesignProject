@@ -15,18 +15,21 @@ public class TestEmailSending implements RequestHandler<EmailArgs, String> {
         try {
             Email testEmail = new SimpleEmail();
             testEmail.setHostName("authsmtp.psu.edu");
-            testEmail.setSmtpPort(465);
+            //testEmail.setSmtpPort(2525);
             testEmail.setAuthenticator(new DefaultAuthenticator(input.username, input.password));
             testEmail.setSSLOnConnect(true);
             testEmail.setFrom(input.username + "@psu.edu");
             testEmail.addTo(input.destination + "@psu.edu");
             testEmail.setSubject(input.subject);
             testEmail.setMsg(input.body);
+            testEmail.setSocketTimeout(5000);
+            testEmail.setSocketConnectionTimeout(5000);
             testEmail.send();
             output = "Message sent on " + testEmail.getSentDate().toString() + ".";
-
+            context.getLogger().log(output);
         } catch (EmailException e) {
-            output = "Message failed to send.";
+            output = "Message failed to send. " + e.getCause();
+            context.getLogger().log(output);
         }
         return output;
     }
