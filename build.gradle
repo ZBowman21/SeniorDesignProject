@@ -36,6 +36,7 @@ task uploadZip(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
     file buildZip.archivePath
     bucketName "psu-unified-api-us-east-1"
     key "api.zip"
+    overwrite true
 }
 
 task updateLambdaGetGrades(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
