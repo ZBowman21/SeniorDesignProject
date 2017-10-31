@@ -21,15 +21,24 @@ repositories {
 dependencies {
     compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
     compile 'com.amazonaws:aws-lambda-java-events:2.0.1'
+    compile 'org.apache.commons:commons-email:1.5'
 }
 
-task uploadJar(type: AmazonS3FileUploadTask, dependsOn: jar) {
-    file jar.archivePath
+task buildZip(type: Zip) {
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtime
+    }
+}
+
+task uploadZip(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
+    file buildZip.archivePath
     bucketName "psu-unified-api-us-east-1"
-    key "api.jar"
+    key "api.zip"
 }
 
-task updateLambdaGetGrades(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadJar) {
+task updateLambdaGetGrades(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
     functionName "getGrades"
-    s3File new S3File(bucketName: uploadJar.bucketName, key: uploadJar.key)
+    s3File new S3File(bucketName: uploadZip.bucketName, key: uploadZip.key)
 }
