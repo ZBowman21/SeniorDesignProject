@@ -27,6 +27,8 @@ dependencies {
     compile 'org.eclipse.jetty:jetty-server:9.0.6.v20130930'
     compile 'org.eclipse.jetty:jetty-servlet:9.0.6.v20130930'
     compile 'org.slf4j:slf4j-api:1.7.10'
+
+    compile files('PennStateUnified-1.0-SNAPSHOT-all.jar')
 }
 
 task buildZip(type: Zip) {
