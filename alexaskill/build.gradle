@@ -1,7 +1,13 @@
+import jp.classmethod.aws.gradle.lambda.AWSLambdaUpdateFunctionCodeTask
+import jp.classmethod.aws.gradle.lambda.S3File
+import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
+
 group 'com.canvoice'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'jp.classmethod.aws.s3'
+apply plugin: 'jp.classmethod.aws.lambda'
 
 sourceCompatibility = 1.8
 
@@ -11,4 +17,41 @@ repositories {
 
 dependencies {
     compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
+    compile 'com.amazonaws:aws-lambda-java-core:1.0.0'
+    compile 'com.amazonaws:aws-java-sdk-dynamodb:1.9.40'
+    compile 'com.amazonaws:aws-lambda-java-log4j:1.0.0'
+
+    compile 'log4j:log4j:1.2.17'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    compile 'org.eclipse.jetty:jetty-server:9.0.6.v20130930'
+    compile 'org.eclipse.jetty:jetty-servlet:9.0.6.v20130930'
+    compile 'org.slf4j:slf4j-api:1.7.10'
 }
+
+task buildZip(type: Zip) {
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtime
+    }
+}
+
+task fatJar(type: Jar) {
+    baseName = project.name + '-fat'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task uploadAlexaSkillJar(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
+    file buildZip.archivePath
+    bucketName "psu-unified-api-us-east-1"
+    key "skill.zip"
+}
+
+task updateLambdaPennStateAlexaSkill(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadAlexaSkillJar) {
+    functionName "pennStateAlexaSkill"
+    s3File new S3File(bucketName: uploadAlexaSkillJar.bucketName, key: uploadAlexaSkillJar.key)
+}
+
+
