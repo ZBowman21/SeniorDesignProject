@@ -45,10 +45,12 @@ task uploadAlexaSkillJar(type: AmazonS3FileUploadTask, dependsOn: jar) {
     key "skill.jar"
 }
 
-
 task updateLambdaGetGrades(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
     functionName "getGrades"
     s3File new S3File(bucketName: uploadZip.bucketName, key: uploadZip.key)
 }
 
-
+task updateLambdaSendEmail(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
+    functionName "sendEmail"
+    s3File new S3File(bucketName: uploadZip.bucketName, key: uploadZip.key)
+}
