@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi;
+package edu.psu.unifiedapi.testing;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;

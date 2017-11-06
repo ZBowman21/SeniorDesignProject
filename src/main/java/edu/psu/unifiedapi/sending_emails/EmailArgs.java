@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi;
+package edu.psu.unifiedapi.sending_emails;
 
 public class EmailArgs {
     public String username;
