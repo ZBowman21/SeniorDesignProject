@@ -6,20 +6,10 @@ import com.amazon.speech.speechlet.*;
 import com.amazon.speech.speechlet.IntentRequest.DialogState;
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.speechlet.dialog.directives.DelegateDirective;
-import com.amazon.speech.speechlet.dialog.directives.DialogDirective;
 import com.amazon.speech.speechlet.dialog.directives.DialogIntent;
 import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
-import com.amazonaws.opensdk.SdkRequestConfig;
-import com.amazonaws.opensdk.config.ConnectionConfiguration;
-import com.amazonaws.opensdk.config.TimeoutConfiguration;
-import edu.pennstate.api.*;
-import edu.pennstate.api.model.PennStateUnifiedException;
-import edu.pennstate.api.model.SendEmailRequest;
-import edu.pennstate.api.model.SendEmailResult;
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
-
 
 import java.util.*;
 
@@ -29,14 +19,6 @@ public class PennStateSpeechlet implements SpeechletV2 {
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
-       /* // any initialization logic goes here
-        PennStateUnified client = PennStateUnified.builder().build();
-        SendEmailRequest newRequest = new SendEmailRequest();
-
-        newRequest.setDestination("bra130@psu.edu");
-        newRequest.setBody("If this works, holy fucking shit.");
-        newRequest.setSubject("Oh hot damn");
-        client.sendEmail(newRequest);*/
 
     }
 
@@ -60,34 +42,7 @@ public class PennStateSpeechlet implements SpeechletV2 {
             case "SendMail":
                 if(dialogState.equals(DialogState.STARTED))
                 {
-                    //Build the DialogIntent to build a speechlet from, to generate a reprompt and to keep intent state
-                    DialogIntent dialogIntent = new DialogIntent();
-                    dialogIntent.setName(intentName);
-                    Map<String, DialogSlot> dialogSlots = new HashMap<>();
-
-                    Iterator iter = intent.getSlots().entrySet().iterator();
-                    while(iter.hasNext())
-                    {
-                        Map.Entry pair = (Map.Entry)iter.next();
-                        DialogSlot dialogSlot = new DialogSlot();
-                        Slot slot = (Slot) pair.getValue();
-                        dialogSlot.setName(slot.getName());
-                        dialogSlot.setValue(slot.getValue());
-                        dialogSlots.put((String)pair.getKey(), dialogSlot);
-                    }
-
-                    dialogIntent.setSlots(dialogSlots);
-
-                    DelegateDirective dd = new DelegateDirective();
-                    dd.setUpdatedIntent(dialogIntent);
-
-                    List<Directive> directiveList = new ArrayList<>();
-                    directiveList.add(dd);
-
-                    SpeechletResponse speechletResponse = new SpeechletResponse();
-                    speechletResponse.setDirectives(directiveList);
-                    speechletResponse.setNullableShouldEndSession(false);
-                    return speechletResponse;
+                    return GenerateMultiDialogStartedResponse(intentName, intent);
                 }
                 else if(dialogState.equals(DialogState.COMPLETED))
                 {
@@ -97,14 +52,7 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 }
                 else
                 {
-                    DelegateDirective dd = new DelegateDirective();
-                    List<Directive> directiveList = new ArrayList<>();
-                    directiveList.add(dd);
-
-                    SpeechletResponse speechletResponse = new SpeechletResponse();
-                    speechletResponse.setDirectives(directiveList);
-                    speechletResponse.setNullableShouldEndSession(false);
-                    return speechletResponse;
+                    return GenerateMultiDialogInProgressResponse();
                 }
         }
         return getDefaultResponse();
@@ -115,31 +63,54 @@ public class PennStateSpeechlet implements SpeechletV2 {
     }
 
     private SpeechletResponse getDefaultResponse() {
-        //need to change this to story intro
         String speechText = "Welcome to the Penn State Unified System. I did not understand your request.";
-
-        // Create the Simple card content.
-        //SimpleCard card = new SimpleCard();
-        //card.setTitle("Hello Penn State student!");
-        //card.setContent(speechText);
-
-        // Create the plain text output.
         PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
         speech.setText(speechText);
-
-        // Create reprompt
-        //Reprompt reprompt = new Reprompt();
-        //reprompt.setOutputSpeech(speech);
 
         return SpeechletResponse.newTellResponse(speech);
     }
 
-    private SpeechletResponse getTestResponse(String value)
+    private SpeechletResponse GenerateMultiDialogStartedResponse(String intentName, Intent intent)
     {
-        String response = "I found this as the destination: " + value;
-        PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
-        speech.setText(response);
-        return SpeechletResponse.newTellResponse(speech);
+        //Build the DialogIntent to build a speechlet from, to generate a reprompt and to keep intent state
+        DialogIntent dialogIntent = new DialogIntent();
+        dialogIntent.setName(intentName);
+        Map<String, DialogSlot> dialogSlots = new HashMap<>();
 
+        Iterator iter = intent.getSlots().entrySet().iterator();
+        while(iter.hasNext())
+        {
+            Map.Entry pair = (Map.Entry)iter.next();
+            DialogSlot dialogSlot = new DialogSlot();
+            Slot slot = (Slot) pair.getValue();
+            dialogSlot.setName(slot.getName());
+            dialogSlot.setValue(slot.getValue());
+            dialogSlots.put((String)pair.getKey(), dialogSlot);
+        }
+
+        dialogIntent.setSlots(dialogSlots);
+
+        DelegateDirective dd = new DelegateDirective();
+        dd.setUpdatedIntent(dialogIntent);
+
+        List<Directive> directiveList = new ArrayList<>();
+        directiveList.add(dd);
+
+        SpeechletResponse speechletResponse = new SpeechletResponse();
+        speechletResponse.setDirectives(directiveList);
+        speechletResponse.setNullableShouldEndSession(false);
+        return speechletResponse;
+    }
+
+    private SpeechletResponse GenerateMultiDialogInProgressResponse()
+    {
+        DelegateDirective dd = new DelegateDirective();
+        List<Directive> directiveList = new ArrayList<>();
+        directiveList.add(dd);
+
+        SpeechletResponse speechletResponse = new SpeechletResponse();
+        speechletResponse.setDirectives(directiveList);
+        speechletResponse.setNullableShouldEndSession(false);
+        return speechletResponse;
     }
 }
