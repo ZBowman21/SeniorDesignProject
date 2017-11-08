@@ -15,8 +15,7 @@ public class EmailSending implements RequestHandler<EmailArgs, String> {
         try {
             Email testEmail = new SimpleEmail();
             testEmail.setHostName("authsmtp.psu.edu");
-            //testEmail.setSmtpPort(2525);
-            //testEmail.setAuthenticator(new DefaultAuthenticator(eA.username, eA.password));
+            testEmail.setAuthenticator(new DefaultAuthenticator(eA.username, eA.password));
             testEmail.setSSLOnConnect(true);
             testEmail.setFrom(eA.username + "@psu.edu");
             testEmail.addTo(eA.destination + "@psu.edu");
