@@ -10,6 +10,7 @@ import com.amazon.speech.speechlet.dialog.directives.DialogDirective;
 import com.amazon.speech.speechlet.dialog.directives.DialogIntent;
 import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
+import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.SdkRequestConfig;
 import com.amazonaws.opensdk.config.ConnectionConfiguration;
 import com.amazonaws.opensdk.config.TimeoutConfiguration;
@@ -23,6 +24,8 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import java.util.*;
 
 public class PennStateSpeechlet implements SpeechletV2 {
+
+    RequestHandler requestHandler;
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
@@ -88,45 +91,9 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 }
                 else if(dialogState.equals(DialogState.COMPLETED))
                 {
-                    String subject = intent.getSlot("subject").getValue();
-                    String body = intent.getSlot("body").getValue();
-                    String speechText = "I will send your message";
-                    PlainTextOutputSpeech speech =  new PlainTextOutputSpeech();
-                    speech.setText(speechText);
-
-                    PennStateUnified client = PennStateUnified.builder().connectionConfiguration(new ConnectionConfiguration()
-                            .maxConnections(100)
-                            .connectionMaxIdleMillis(10000))
-                            .timeoutConfiguration(new TimeoutConfiguration()
-                                    .httpRequestTimeout(12000)
-                                    .totalExecutionTimeout(12000)
-                                    .socketTimeout(12000)).build();
-
-                    SendEmailRequest newRequest = new SendEmailRequest();
-                    newRequest.setDestination("bra130");
-                    newRequest.setBody(body);
-                    newRequest.setSubject(subject);
-                    newRequest.setUsername("bra130");
-
-                    newRequest.sdkRequestConfig(
-                        SdkRequestConfig.builder()
-                                .httpRequestTimeout(5000)
-                                .totalExecutionTimeout(10000)
-                                .build()
-                    );
-
-                    String error;
-
-                    try
-                    {
-                        client.sendEmail(newRequest);
-                    }
-                    catch(PennStateUnifiedException e)
-                    {
-                        error = e.getMessage();
-
-                    }
-                    return SpeechletResponse.newTellResponse(speech);
+                    requestHandler = new SendEmailRequestSender();
+                    BaseResult result = requestHandler.sendRequest(intent);
+                    return requestHandler.parseResponse(result);
                 }
                 else
                 {
