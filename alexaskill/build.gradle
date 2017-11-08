@@ -45,15 +45,16 @@ task fatJar(type: Jar) {
     with jar
 }
 
-task uploadAlexaSkillJar(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
+task uploadAlexaSkillZip(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
     file buildZip.archivePath
     bucketName "psu-unified-api-us-east-1"
     key "skill.zip"
+    overwrite true
 }
 
-task updateLambdaPennStateAlexaSkill(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadAlexaSkillJar) {
+task updateLambdaPennStateAlexaSkill(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadAlexaSkillZip) {
     functionName "pennStateAlexaSkill"
-    s3File new S3File(bucketName: uploadAlexaSkillJar.bucketName, key: uploadAlexaSkillJar.key)
+    s3File new S3File(bucketName: uploadAlexaSkillZip.bucketName, key: uploadAlexaSkillZip.key)
 }
 
 
