@@ -15,7 +15,7 @@ import java.util.*;
 
 public class PennStateSpeechlet implements SpeechletV2 {
 
-    RequestHandler requestHandler;
+    private RequestHandler requestHandler;
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
