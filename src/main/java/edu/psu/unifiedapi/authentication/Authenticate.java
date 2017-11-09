@@ -31,6 +31,7 @@ public class Authenticate implements RequestHandler<AuthArgs, String> {
         String pass = System.getenv("DB_PASS");
 
         try {
+            context.getLogger().log("Timeout " + DriverManager.getLoginTimeout());
             connection = DriverManager.getConnection(url, user, pass);
         } catch (SQLException e) {
             context.getLogger().log(e.toString());
@@ -51,9 +52,9 @@ public class Authenticate implements RequestHandler<AuthArgs, String> {
 
             resultSet = statement.getResultSet();
             if (resultSet.next()) {
-                byte[] un = resultSet.getBytes(0);
-                pw = resultSet.getBytes(1);
-                pwHash = resultSet.getBytes(2);
+                String un = resultSet.getString(1);
+                pw = resultSet.getBytes(2);
+                pwHash = resultSet.getBytes(3);
                 context.getLogger().log(un.toString());
             }
         } catch (SQLException e) {
