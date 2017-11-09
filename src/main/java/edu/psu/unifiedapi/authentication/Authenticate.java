@@ -78,6 +78,8 @@ public class Authenticate implements RequestHandler<AuthArgs, String> {
             context.getLogger().log(e.toString());
         }
 
+        context.getLogger().log(dPW);
+
         if (Arrays.equals(pw, pwHash))
             return dPW;
         else
