@@ -15,7 +15,7 @@ import com.amazonaws.services.lambda.invoke.LambdaFunction;
 public class EmailSending implements RequestHandler<EmailArgs, String> {
 
     private interface Auth{
-        @LambdaFunction(functionName = "Authenticate")
+        @LambdaFunction(functionName = "getAuth")
         String Auth(AuthArgs aA);
     }
 
