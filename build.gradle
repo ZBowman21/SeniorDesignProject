@@ -22,6 +22,7 @@ dependencies {
     compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
     compile 'com.amazonaws:aws-lambda-java-events:2.0.1'
     compile 'org.apache.commons:commons-email:1.5'
+    compile 'com.amazonaws:aws-java-sdk-lambda:1.11.226'
 }
 
 task buildZip(type: Zip) {

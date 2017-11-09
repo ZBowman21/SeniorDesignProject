@@ -2,12 +2,16 @@ package edu.psu.unifiedapi.authentication;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.sun.mail.iap.ByteArray;
 
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class Authenticate implements RequestHandler<AuthArgs, String> {
     private Connection connection;
@@ -34,18 +38,23 @@ public class Authenticate implements RequestHandler<AuthArgs, String> {
 
         //lookup database
         ResultSet resultSet;
-        String pw = null;
-        String pwHash = null;
+        byte[] pw = null;
+        String dPW = null;
+        byte[] pwHash = null;
+
         try {
-            PreparedStatement statement = connection.prepareStatement("select something from something where username = ?");
+            PreparedStatement statement = connection.prepareStatement(
+                    "select username, password, hash from plain_credentials where username = ? AND service = ?");
             statement.setString(1, aA.username);
+            statement.setString(2, aA.service);
             statement.execute();
 
             resultSet = statement.getResultSet();
             if (resultSet.next()) {
-                pw = resultSet.getString(1);
-                pwHash = resultSet.getString(2);
-                context.getLogger().log(resultSet.getString(0) + " | " + resultSet.getString(1) + " | " + resultSet.getString(2));
+                byte[] un = resultSet.getBytes(0);
+                pw = resultSet.getBytes(1);
+                pwHash = resultSet.getBytes(2);
+                context.getLogger().log(un.toString());
             }
         } catch (SQLException e) {
             context.getLogger().log(e.toString());
@@ -53,15 +62,24 @@ public class Authenticate implements RequestHandler<AuthArgs, String> {
 
         //decrypt
         //kelp me matt
-        pw.toString();
-        pwHash.toString();
-        aA.passphrase.toString();
+        try {
+            dPW = Encryption.decrypt(pw, aA.passphrase);
+        }
+        catch(GeneralSecurityException e) {
+            context.getLogger().log(e.toString());
+        }
 
         //hash
         //n kelp me cheese
+        try{
+            pw = Hashing.hash(dPW);
+        }
+        catch (NoSuchAlgorithmException e){
+            context.getLogger().log(e.toString());
+        }
 
-        if (pw == pwHash)
-            return pw;
+        if (Arrays.equals(pw, pwHash))
+            return dPW;
         else
             return null;
     }
