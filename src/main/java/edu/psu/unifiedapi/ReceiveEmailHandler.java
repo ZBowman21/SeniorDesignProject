@@ -54,14 +54,14 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 		return retStr;
 	}
 
-	private <T extends Part> String getMessage(T m){
+	private String getMessage(Part p){
 		String s = "Could not read the message's content.";
 		try {
-			if (m.getContentType().equals("text/plain")) {
-				s = (String) m.getContent();
-			} else if (m.getContentType().equals("multipart")) {
+			if (p.getContentType().equals("text/plain")) {
+				s = (String) p.getContent();
+			} else if (p.getContentType().equals("multipart")) {
 				s = "";
-				Multipart mp = (Multipart)m.getContent();
+				Multipart mp = (Multipart)p.getContent();
 				for(int i = 0; i < mp.getCount(); i++){
 					s += getMessage(mp.getBodyPart(i)) + "\n";
 				}
