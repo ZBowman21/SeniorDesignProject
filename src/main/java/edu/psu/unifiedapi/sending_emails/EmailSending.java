@@ -11,7 +11,7 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 
 
-public class EmailSending implements RequestHandler<EmailArgs, String> {
+public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
     private interface Auth{
         @LambdaFunction(functionName = "getAuth")
@@ -19,8 +19,8 @@ public class EmailSending implements RequestHandler<EmailArgs, String> {
     }
 
     @Override
-    public String handleRequest(EmailArgs eA, Context context) {
-        String output;
+    public Boolean handleRequest(EmailArgs eA, Context context) {
+        boolean output = false;
 
         AuthArgs aA = new AuthArgs();
         aA.passphrase = eA.password;
@@ -28,14 +28,10 @@ public class EmailSending implements RequestHandler<EmailArgs, String> {
         aA.username = eA.username;
 
         //Call authenticate with AuthArgs
-        Auth authService = LambdaInvokerFactory.builder()
-                .build(Auth.class);
+        Auth authService = LambdaInvokerFactory.builder().build(Auth.class);
         eA.password = authService.auth(aA);
 
-        if(eA.password == null){
-            output = "Authentication failed.. Please try again later.";
-        }
-        else {
+        if(eA.password != null) {
             try {
                 Email testEmail = new SimpleEmail();
                 testEmail.setHostName("authsmtp.psu.edu");
@@ -48,13 +44,15 @@ public class EmailSending implements RequestHandler<EmailArgs, String> {
                 testEmail.setSocketTimeout(5000);
                 testEmail.setSocketConnectionTimeout(5000);
                 testEmail.send();
-                output = "Message sent on " + testEmail.getSentDate().toString() + ".";
-                context.getLogger().log(output);
+                output = true;
+                context.getLogger().log("Message sent on " + testEmail.getSentDate().toString() + ".");
             } catch (EmailException e) {
-                output = "Message failed to send. " + e.getCause();
-                context.getLogger().log(output);
+                context.getLogger().log("Message failed to send. " + e.getCause());
             }
+        } else {
+            context.getLogger().log("Authentication failed");
         }
+
         return output;
     }
 }
