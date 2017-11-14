@@ -1,6 +1,6 @@
 package edu.psu.unifiedapi.sending_emails;
 
-import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
+import com.amazonaws.services.lambda.invoke.LambdaFunction;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -9,14 +9,13 @@ import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
-import com.amazonaws.services.lambda.invoke.LambdaFunction;
 
 
 public class EmailSending implements RequestHandler<EmailArgs, String> {
 
     private interface Auth{
         @LambdaFunction(functionName = "getAuth")
-        String Auth(AuthArgs aA);
+        String auth(AuthArgs aA);
     }
 
     @Override
@@ -31,7 +30,7 @@ public class EmailSending implements RequestHandler<EmailArgs, String> {
         //Call authenticate with AuthArgs
         Auth authService = LambdaInvokerFactory.builder()
                 .build(Auth.class);
-        eA.password = authService.Auth(aA);
+        eA.password = authService.auth(aA);
 
         if(eA.password == null){
             output = "Authentication failed.. Please try again later.";
