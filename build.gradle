@@ -24,6 +24,7 @@ dependencies {
     compile 'org.apache.commons:commons-email:1.5'
     compile 'com.amazonaws:aws-java-sdk-lambda:1.11.226'
     compile 'org.postgresql:postgresql:42.1.4'
+    testCompile 'junit:junit:4.12'
 }
 
 task buildZip(type: Zip) {
