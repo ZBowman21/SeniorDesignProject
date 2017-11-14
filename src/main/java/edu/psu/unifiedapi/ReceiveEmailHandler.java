@@ -39,14 +39,14 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 			inbox.open(Folder.READ_ONLY);
 
 			Message[] messages = inbox.search(flagTerm);
-
+			String tmp = "";
 			for(int i = 0; i < 10 && i < messages.length; i++){
-				retStr = "From " + messages[i].getFrom()[0].toString() + " at "
+				tmp += "From " + messages[i].getFrom()[0].toString() + " at "
 						+  messages[i].getReceivedDate() + " with a subject of "
-						+ messages[i].getSubject() + ".\n"
-						+ getMessage(messages[i]);
+						+ messages[i].getSubject() + ".\n Message reads\n"
+						+ getMessage(messages[i]) + "\n\n";
 			}
-
+			retStr = tmp;
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
@@ -57,9 +57,10 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 	private String getMessage(Part p){
 		String s = "Could not read the message's content.";
 		try {
-			if (p.getContentType().equals("text/plain")) {
+			String tmp = p.getContentType();
+			if (tmp.contains("text/plain")) {
 				s = (String) p.getContent();
-			} else if (p.getContentType().equals("multipart")) {
+			} else if (tmp.contains("multipart")) {
 				s = "";
 				Multipart mp = (Multipart)p.getContent();
 				for(int i = 0; i < mp.getCount(); i++){
@@ -67,6 +68,7 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 				}
 			}
 		}catch(Exception e){
+			s = e.getMessage();
 		}
 		return s;
 	}
