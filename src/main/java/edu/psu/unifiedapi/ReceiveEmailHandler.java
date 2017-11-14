@@ -22,6 +22,8 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 	@Override
 	public String handleRequest(ReceiveEmailRequest input, Context context) {
 
+		String retStr = "No messages to display at this time.";
+
 		Properties props = new Properties();
 
 		props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
@@ -44,11 +46,15 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 			Message[] messages = inbox.search(flagTerm);
 
+			for(int i = 0; i < 10 && i < messages.length; i++){
+				retStr = "From " + messages[i].getFrom()[0].toString() + " at " +  messages[i].getReceivedDate() + " with a subject of "  + messages[i].getSubject() + ".\n";
+			}
+
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
 
-		return null;
+		return retStr;
 	}
 
 }
