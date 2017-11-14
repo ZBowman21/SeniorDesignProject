@@ -3,19 +3,13 @@ package edu.psu.unifiedapi;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import javax.mail.search.FlagTerm;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 
 /**
- * @author mthwate
+ * @author mthwate and Corey!
  */
 public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, String> {
 
@@ -47,7 +41,10 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 			Message[] messages = inbox.search(flagTerm);
 
 			for(int i = 0; i < 10 && i < messages.length; i++){
-				retStr = "From " + messages[i].getFrom()[0].toString() + " at " +  messages[i].getReceivedDate() + " with a subject of "  + messages[i].getSubject() + ".\n";
+				retStr = "From " + messages[i].getFrom()[0].toString() + " at "
+						+  messages[i].getReceivedDate() + " with a subject of "
+						+ messages[i].getSubject() + ".\n"
+						+ getMessage(messages[i]);
 			}
 
 		} catch (MessagingException e) {
@@ -55,6 +52,23 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 		}
 
 		return retStr;
+	}
+
+	private <T extends Part> String getMessage(T m){
+		String s = "Could not read the message's content.";
+		try {
+			if (m.getContentType().equals("text/plain")) {
+				s = (String) m.getContent();
+			} else if (m.getContentType().equals("multipart")) {
+				s = "";
+				Multipart mp = (Multipart)m.getContent();
+				for(int i = 0; i < mp.getCount(); i++){
+					s += getMessage(mp.getBodyPart(i)) + "\n";
+				}
+			}
+		}catch(Exception e){
+		}
+		return s;
 	}
 
 }
