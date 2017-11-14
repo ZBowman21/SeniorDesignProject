@@ -2,10 +2,9 @@ package edu.psu.unifiedapi.sending_emails;
 
 import com.amazonaws.services.lambda.invoke.LambdaFunction;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
-import edu.psu.unifiedapi.authentication.AuthArgs;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 /**
  * @author mthwate

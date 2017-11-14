@@ -27,6 +27,21 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDir file('src/integration-test/java')
+        }
+    }
+}
+
 task buildZip(type: Zip) {
     from compileJava
     from processResources
