@@ -41,19 +41,29 @@ public class EmailCorrector
 
     public String CorrectAddress(String address)
     {
-        String[] splitAddress = address.split("\\s+");
-        for(int i = 0; i < splitAddress.length; i++)
+        String correctedAddress;
+
+        if(address.contains(" "))
         {
-            for(String key: CorrectionsMap.keySet())
+            String[] splitAddress = address.split("\\s+");
+            for(int i = 0; i < splitAddress.length; i++)
             {
-                if(splitAddress[i].equals(key))
+                for(String key: CorrectionsMap.keySet())
                 {
-                    splitAddress[i] = CorrectionsMap.get(key);
+                    if(splitAddress[i].equals(key))
+                    {
+                        splitAddress[i] = CorrectionsMap.get(key);
+                    }
                 }
             }
+
+            correctedAddress = Arrays.stream(splitAddress).collect(Collectors.joining(""));
+        }
+        else
+        {
+            correctedAddress = address; //No changes
         }
 
-        String correctedAddress = Arrays.stream(splitAddress).collect(Collectors.joining(""));
         AddressCorrected = true;
         return correctedAddress;
     }
