@@ -18,11 +18,13 @@ public class SendEmailRequestSender extends RequestHandler {
         String body = requestIntent.getSlot("body").getValue();
 
         SendEmailRequest request = new SendEmailRequest();
-        request.setDestination(destination);
-        request.setSubject(subject);
-        request.setBody(body);
+        EmailCorrector corrector = new EmailCorrector();
+
+        request.setDestination(corrector.CorrectAddress(destination));
+        request.setSubject(corrector.CorrectSubject(subject));
+        request.setBody(corrector.CorrectBody(body));
         request.setUsername("bra130");
-        request.setPassword("pokemon175426093");
+        request.setPassword("cheese"); //really passphrase
 
         request.sdkRequestConfig(
                 SdkRequestConfig.builder()

@@ -16,7 +16,6 @@ import java.util.*;
 public class PennStateSpeechlet implements SpeechletV2 {
 
     private RequestHandler requestHandler;
-    private EmailCorrector emailCorrector = new EmailCorrector();
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
@@ -84,15 +83,8 @@ public class PennStateSpeechlet implements SpeechletV2 {
             Map.Entry pair = (Map.Entry)iter.next();
             Slot slot = (Slot) pair.getValue();
             DialogSlot dialogSlot = new DialogSlot();
-            if(intentName.equals("SendMail"))
-            {
-                dialogSlot = CreateSendEmailDialogSlot(slot);
-            }
-            else
-            {
-                dialogSlot.setName(slot.getName());
-                dialogSlot.setValue(slot.getValue());
-            }
+            dialogSlot.setName(slot.getName());
+            dialogSlot.setValue(slot.getValue());
             dialogSlots.put((String)pair.getKey(), dialogSlot);
         }
 
@@ -122,30 +114,4 @@ public class PennStateSpeechlet implements SpeechletV2 {
         return speechletResponse;
     }
 
-    private DialogSlot CreateSendEmailDialogSlot(Slot slot)
-    {
-        DialogSlot dialogSlot = new DialogSlot();
-
-        String slotName = slot.getName();
-        dialogSlot.setName(slotName);
-
-        if(slotName.equals("destination") && slot.getValue() != null && !emailCorrector.AddressCorrected)
-        {
-            dialogSlot.setValue(emailCorrector.CorrectAddress(slot.getValue()));
-        }
-        else if(slotName.equals("subject") && slot.getValue() != null && !emailCorrector.SubjectCorrected)
-        {
-            dialogSlot.setValue(emailCorrector.CorrectSubject(slot.getValue()));
-        }
-        else if(slotName.equals("body") && slot.getValue() != null && !emailCorrector.BodyCorrected)
-        {
-            dialogSlot.setValue(emailCorrector.CorrectBody(slot.getValue()));
-        }
-        else
-        {
-            dialogSlot.setValue(slot.getValue());
-        }
-
-        return dialogSlot;
-    }
 }
