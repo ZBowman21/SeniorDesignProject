@@ -3,9 +3,9 @@ import jp.classmethod.aws.gradle.lambda.AWSLambdaUpdateFunctionCodeTask
 import jp.classmethod.aws.gradle.lambda.S3File
 
 plugins {
-    id 'java'
-    id 'jp.classmethod.aws.s3' version '0.35'
-    id 'jp.classmethod.aws.lambda' version '0.35'
+	id 'java'
+	id 'jp.classmethod.aws.s3' version '0.35'
+	id 'jp.classmethod.aws.lambda' version '0.35'
 }
 
 group 'psu.edu.unifiedapi'
@@ -14,60 +14,52 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-}
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'jp.classmethod.aws.s3'
+	apply plugin: 'jp.classmethod.aws.lambda'
 
-dependencies {
-    compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
-    compile 'com.amazonaws:aws-lambda-java-events:2.0.1'
-    compile 'org.apache.commons:commons-email:1.5'
-    compile 'com.amazonaws:aws-java-sdk-lambda:1.11.226'
-    compile 'org.postgresql:postgresql:42.1.4'
-    testCompile 'junit:junit:4.12'
-}
+	repositories {
+		mavenCentral()
+	}
 
-configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
-}
+	dependencies {
+		testCompile 'junit:junit:4.12'
+	}
 
-sourceSets {
-    integrationTest {
-        java {
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-            srcDir file('src/integration-test/java')
-        }
-    }
-}
+	configurations {
+		integrationTestCompile.extendsFrom testCompile
+		integrationTestRuntime.extendsFrom testRuntime
+	}
 
-task buildZip(type: Zip) {
-    from compileJava
-    from processResources
-    into('lib') {
-        from configurations.runtime
-    }
-}
+	sourceSets {
+		integrationTest {
+			java {
+				compileClasspath += main.output
+				runtimeClasspath += main.output
+				srcDir file('src/integration-test/java')
+			}
+		}
+	}
 
-task uploadZip(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
-    file buildZip.archivePath
-    bucketName "psu-unified-api-us-east-1"
-    key "api.zip"
-    overwrite true
-}
+	task buildZip(type: Zip) {
+		from compileJava
+		from processResources
+		into('lib') {
+			from configurations.runtime
+		}
+	}
 
-task updateLambdaGetGrades(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
-    functionName "getGrades"
-    s3File new S3File(bucketName: uploadZip.bucketName, key: uploadZip.key)
-}
+	task uploadZip(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
+		file buildZip.archivePath
+		bucketName "psu-unified-api-us-east-1"
+		key "${project.name}.zip"
+		overwrite true
+	}
 
-task updateLambdaSendEmail(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
-    functionName "sendEmail"
-    s3File new S3File(bucketName: uploadZip.bucketName, key: uploadZip.key)
-}
+	task updateLambdaFunction(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
+		functionName project.name
+		s3File new S3File(bucketName: uploadZip.bucketName, key: uploadZip.key)
+	}
 
-task updateLambdaGetAuth(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadZip) {
-    functionName "getAuth"
-    s3File new S3File(bucketName: uploadZip.bucketName, key: uploadZip.key)
 }

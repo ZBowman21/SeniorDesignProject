@@ -1,51 +1,6 @@
-import jp.classmethod.aws.gradle.lambda.AWSLambdaUpdateFunctionCodeTask
-import jp.classmethod.aws.gradle.lambda.S3File
-import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
-
-group 'com.canvoice'
-version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
-apply plugin: 'jp.classmethod.aws.s3'
-apply plugin: 'jp.classmethod.aws.lambda'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
     compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
 
     compile files('PennStateUnified-1.0-SNAPSHOT-all.jar')
 }
-
-task buildZip(type: Zip) {
-    from compileJava
-    from processResources
-    into('lib') {
-        from configurations.runtime
-    }
-}
-
-task fatJar(type: Jar) {
-    baseName = project.name + '-fat'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-}
-
-task uploadAlexaSkillZip(type: AmazonS3FileUploadTask, dependsOn: buildZip) {
-    file buildZip.archivePath
-    bucketName "psu-unified-api-us-east-1"
-    key "skill.zip"
-    overwrite true
-}
-
-task updateLambdaPennStateAlexaSkill(type: AWSLambdaUpdateFunctionCodeTask, dependsOn: uploadAlexaSkillZip) {
-    functionName "pennStateAlexaSkill"
-    s3File new S3File(bucketName: uploadAlexaSkillZip.bucketName, key: uploadAlexaSkillZip.key)
-}
-
-

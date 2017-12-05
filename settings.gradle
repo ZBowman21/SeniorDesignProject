@@ -1,3 +1,5 @@
 rootProject.name = 'unifiedapi'
-include 'alexaskill'
 
+include 'alexaskill'
+include 'sendEmail'
+include 'getAuth'
