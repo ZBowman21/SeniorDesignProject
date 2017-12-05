@@ -2,6 +2,7 @@ package edu.psu.unifiedapi;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import edu.psu.unifiedapi.ReceiveEmailRequest;
 
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
