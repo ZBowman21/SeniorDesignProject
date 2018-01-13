@@ -22,6 +22,6 @@ public abstract class RequestHandler
                         .socketTimeout(30000)).build();
     }
 
-    public abstract BaseResult sendRequest(Intent requestIntent);
+    public abstract BaseResult sendRequest(Intent requestIntent, String token);
     public abstract SpeechletResponse parseResponse(BaseResult response);
 }
