@@ -40,4 +40,8 @@ public class ReceiveEmailRequest {
 		return finish;
 	}
 
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 }
