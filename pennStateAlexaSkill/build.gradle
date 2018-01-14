@@ -1,6 +1,5 @@
 dependencies {
     compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
     compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
-
-    compile files('PennStateUnified-1.0-SNAPSHOT-all.jar')
+    compile 'edu.pennstate.api:PennStateUnified:1.0-SNAPSHOT'
 }
