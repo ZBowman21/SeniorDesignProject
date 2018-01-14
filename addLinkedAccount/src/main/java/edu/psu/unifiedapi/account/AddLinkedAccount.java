@@ -5,12 +5,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.authentication.Encryption;
 import edu.psu.unifiedapi.authentication.Hashing;
 
-import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
