@@ -1,12 +1,12 @@
 package edu.psu.unifiedapi;
 
+import com.amazonaws.services.lambda.invoke.LambdaFunction;
+import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import edu.psu.unifiedapi.ReceiveEmailRequest;
-
+import edu.psu.unifiedapi.authentication.AuthArgs;
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -15,46 +15,67 @@ import java.util.Properties;
  */
 public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, ArrayList> {
 
-	@Override
-	public ArrayList handleRequest(ReceiveEmailRequest input, Context context) {
+	private interface Auth{
+		@LambdaFunction(functionName = "getAuth")
+		String auth(AuthArgs aA);
+	}
 
+	@Override
+	public ArrayList<String> handleRequest(ReceiveEmailRequest input, Context context) {
 		String retStr = "No messages to display at this time.";
-		ArrayList<String> returnMessages = new ArrayList();
+		ArrayList<String> returnMessages = new ArrayList<>();
 		Properties props = new Properties();
 
-		props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		//props.setProperty("mail.imap.ssl.enable", "true");
-		props.setProperty("mail.imap.socketFactory.port", "993");
+		//Authentication
+		AuthArgs aA = new AuthArgs();
+		aA.passphrase = input.getPassword();
+		aA.service = "webmail";
+		aA.username = input.getUsername();
 
-		// Flags for unread messages
-		Flags flags = new Flags();
-		flags.add(Flags.Flag.SEEN);
-		FlagTerm flagTerm = new FlagTerm(flags, false);
+		//Call authenticate with AuthArgs
+		Auth authService = LambdaInvokerFactory.builder().build(Auth.class);
+		input.setPassword(authService.auth(aA));
 
-		Session session = Session.getDefaultInstance(props);
+		if(input.getPassword() != null) {
+			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			//props.setProperty("mail.imap.ssl.enable", "true");
+			props.setProperty("mail.imap.socketFactory.port", "993");
 
-		try {
-			Store store = session.getStore("imap");
-			store.connect("email.psu.edu", input.getUsername(), input.getPassword());
+			// Flags for unread messages
+			Flags flags = new Flags();
+			flags.add(Flags.Flag.SEEN);
+			FlagTerm flagTerm = new FlagTerm(flags, false);
 
-			Folder inbox = store.getFolder("INBOX");
-			inbox.open(Folder.READ_ONLY);
+			Session session = Session.getDefaultInstance(props);
 
-			Message[] messages = inbox.search(flagTerm);
+			try {
+				Store store = session.getStore("imap");
+				store.connect("email.psu.edu", input.getUsername(), input.getPassword());
 
-			for(int i = input.getStart(); i <= input.getFinish() && i < messages.length; i++){
-				returnMessages.add("From " + messages[i].getFrom()[0].toString() + " at "
-						+  messages[i].getReceivedDate() + " with a subject of "
-						+ messages[i].getSubject() + ".\n Message reads\n"
-						+ getMessage(messages[i]) + "\n\n");
+				Folder inbox = store.getFolder("INBOX"); //INBOX or Sent
+				inbox.open(Folder.READ_ONLY);
+
+				Message[] messages = inbox.search(flagTerm);
+
+				for (int i = input.getStart(); i <= input.getFinish() && i < messages.length; i++) {
+					returnMessages.add("From " + messages[i].getFrom()[0].toString() + " at "
+							+ messages[i].getReceivedDate() + " with a subject of "
+							+ messages[i].getSubject() + ".\n Message reads\n"
+							+ getMessage(messages[i]) + "\n\n");
+				}
+			} catch (MessagingException e) {
+				e.printStackTrace();
+				context.getLogger().log("Problem retrieving emails: " + e.toString());
 			}
-		} catch (MessagingException e) {
-			e.printStackTrace();
+
+			if (returnMessages.isEmpty())
+				returnMessages.add(retStr);
+			context.getLogger().log("Emails retrieved.");
 		}
-
-		if(returnMessages.isEmpty())
-			returnMessages.add(retStr);
-
+		else{
+			returnMessages.add("Authentication Failed.");
+			context.getLogger().log("Authentication failed.");
+		}
 		return returnMessages;
 	}
 
@@ -76,5 +97,4 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 		}
 		return s;
 	}
-
 }

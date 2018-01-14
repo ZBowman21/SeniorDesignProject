@@ -7,9 +7,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.authentication.AuthArgs;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
-
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -17,7 +15,6 @@ import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
 import java.util.Properties;
-
 
 public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
@@ -69,7 +66,16 @@ public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
                 Store store = session.getStore("imap");
                 store.connect("email.psu.edu", eA.username, eA.password);
-                Folder folder = store.getFolder("Sent Items");
+
+                //check for "Sent" folder if doesn't exist, make it.
+                if(!store.getFolder("Sent").exists()) {
+                    boolean passFail = createFolder(store.getDefaultFolder(), "Sent");
+                    if(!passFail){
+                        context.getLogger().log("Failed to create folder \"Sent\"");
+                    }
+                }
+
+                Folder folder = store.getFolder("Sent");
                 folder.open(Folder.READ_WRITE);
                 folder.appendMessages(new Message[]{msg});
 
@@ -81,7 +87,25 @@ public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
         } else {
             context.getLogger().log("Authentication failed");
         }
-
         return output;
+    }
+
+    private static boolean createFolder(Folder parent, String folderName)
+    {
+        boolean isCreated;
+
+        try
+        {
+            Folder newFolder = parent.getFolder(folderName);
+            isCreated = newFolder.create(Folder.HOLDS_MESSAGES);
+            //System.out.println("created: " + isCreated);
+
+        } catch (Exception e)
+        {
+            System.out.println("Error creating folder: " + e.getMessage());
+            e.printStackTrace();
+            isCreated = false;
+        }
+        return isCreated;
     }
 }
