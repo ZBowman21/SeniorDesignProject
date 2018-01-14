@@ -1,6 +1,8 @@
-import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
+import com.amazonaws.auth.AWSCredentials
+import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import jp.classmethod.aws.gradle.lambda.AWSLambdaUpdateFunctionCodeTask
 import jp.classmethod.aws.gradle.lambda.S3File
+import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
 
 plugins {
 	id 'java'
@@ -16,12 +18,15 @@ sourceCompatibility = 1.8
 
 subprojects {
 	apply plugin: 'java'
-	apply plugin: 'jp.classmethod.aws.s3'
-	apply plugin: 'jp.classmethod.aws.lambda'
 
 	repositories {
 		maven {
-			url "http://repo.unifiedapi.psu.edu.s3-website-us-east-1.amazonaws.com/snapshots"
+			url "s3://repo.unifiedapi.psu.edu/snapshots"
+			credentials(AwsCredentials) {
+				AWSCredentials credentials = new ProfileCredentialsProvider().credentials
+				accessKey credentials.AWSAccessKeyId
+				secretKey credentials.AWSSecretKey
+			}
 		}
 		mavenCentral()
 	}
@@ -35,6 +40,13 @@ subprojects {
 		integrationTestRuntime.extendsFrom testRuntime
 	}
 
+	configurations.all {
+		resolutionStrategy {
+			cacheDynamicVersionsFor 0, 'seconds'
+			cacheChangingModulesFor 0, 'seconds'
+		}
+	}
+
 	sourceSets {
 		integrationTest {
 			java {
@@ -44,6 +56,12 @@ subprojects {
 			}
 		}
 	}
+
+}
+
+configure(subprojects.findAll { !it.name.endsWith("Utils") }) {
+	apply plugin: 'jp.classmethod.aws.s3'
+	apply plugin: 'jp.classmethod.aws.lambda'
 
 	task buildZip(type: Zip) {
 		from compileJava
