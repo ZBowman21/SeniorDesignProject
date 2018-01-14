@@ -21,9 +21,9 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 	}
 
 	@Override
-	public ArrayList<String> handleRequest(ReceiveEmailRequest input, Context context) {
-		String retStr = "No messages to display at this time.";
-		ArrayList<String> returnMessages = new ArrayList<>();
+	public ArrayList<EmailObject> handleRequest(ReceiveEmailRequest input, Context context) {
+		//String retStr = "No messages to display at this time.";
+		ArrayList<EmailObject> returnMessages = new ArrayList<>();
 		Properties props = new Properties();
 
 		//Authentication
@@ -58,22 +58,16 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 				Message[] messages = inbox.search(flagTerm);
 
 				for (int i = input.getStart(); i <= input.getFinish() && i < messages.length; i++) {
-					returnMessages.add("From " + messages[i].getFrom()[0].toString() + " at "
-							+ messages[i].getReceivedDate() + " with a subject of "
-							+ messages[i].getSubject() + ".\n Message reads\n"
-							+ getMessage(messages[i]) + "\n\n");
+					returnMessages.add(new EmailObject(messages[i].getFrom()[0].toString(),messages[i].getReceivedDate().toString(),
+							messages[i].getSubject(),getMessage(messages[i])));
 				}
 			} catch (MessagingException e) {
 				e.printStackTrace();
 				context.getLogger().log("Problem retrieving emails: " + e.toString());
 			}
-
-			if (returnMessages.isEmpty())
-				returnMessages.add(retStr);
 			context.getLogger().log("Emails retrieved.");
 		}
 		else{
-			returnMessages.add("Authentication Failed.");
 			context.getLogger().log("Authentication failed.");
 		}
 		return returnMessages;

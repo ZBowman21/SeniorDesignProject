@@ -12,10 +12,10 @@ import java.util.ArrayList;
 public class TestReceiveEmail {
     public static void main(String[] args) {
         ReceiveEmailHandler hand = new ReceiveEmailHandler();
-        ArrayList s = hand.handleRequest(new ReceiveEmailRequest("mkb5413", "cheese", 4), null);
+        ArrayList<EmailObject> s = hand.handleRequest(new ReceiveEmailRequest("mkb5413", "cheese", 4), null);
 
         for(int i = 0; i < s.size(); i++){
-            System.out.println(s.get(i));
+            System.out.println(s.get(i).from + " " + s.get(i).date);
         }
     }
 }
