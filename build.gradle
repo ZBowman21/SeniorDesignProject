@@ -20,6 +20,9 @@ subprojects {
 	apply plugin: 'jp.classmethod.aws.lambda'
 
 	repositories {
+		maven {
+			url "http://repo.unifiedapi.psu.edu.s3-website-us-east-1.amazonaws.com/snapshots"
+		}
 		mavenCentral()
 	}
 
