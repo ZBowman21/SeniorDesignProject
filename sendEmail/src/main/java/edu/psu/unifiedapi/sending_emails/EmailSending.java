@@ -10,6 +10,14 @@ import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.internet.MimeMessage;
+import java.util.Date;
+import java.util.Properties;
+
 
 public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
@@ -44,9 +52,30 @@ public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
                 testEmail.setSocketTimeout(5000);
                 testEmail.setSocketConnectionTimeout(5000);
                 testEmail.send();
+
+                //copy to outbox
+                Properties prop = new Properties();
+                prop.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                prop.setProperty("mail.imap.socketFactory.port", "993");
+
+                Session session = Session.getDefaultInstance(prop);
+
+                MimeMessage msg = new MimeMessage(session);
+                msg.setFrom(eA.username + "@psu.edu");
+                msg.setRecipients(Message.RecipientType.TO, eA.destination + "@psu.edu");
+                msg.setSubject(eA.subject);
+                msg.setSentDate(new Date());
+                msg.setText(eA.body);
+
+                Store store = session.getStore("imap");
+                store.connect("email.psu.edu", eA.username, eA.password);
+                Folder folder = store.getFolder("Sent Items");
+                folder.open(Folder.READ_WRITE);
+                folder.appendMessages(new Message[]{msg});
+
                 output = true;
                 context.getLogger().log("Message sent on " + testEmail.getSentDate().toString() + ".");
-            } catch (EmailException e) {
+            } catch (Exception e) {
                 context.getLogger().log("Message failed to send. " + e.getCause());
             }
         } else {
