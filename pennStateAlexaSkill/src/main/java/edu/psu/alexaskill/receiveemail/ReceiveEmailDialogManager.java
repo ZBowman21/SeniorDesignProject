@@ -84,7 +84,6 @@ public class ReceiveEmailDialogManager
         state.setEmail(email);
 
         return response;
-
     }
 
     private SpeechletResponse generateFirstUnreadSpeechlet(ReceivedEmail email)
@@ -131,7 +130,6 @@ public class ReceiveEmailDialogManager
                 if(intent.getName().equals("Skip") && state.getCurrentUnread() == 1)
                 {
                     state.setState(ReceiveEmailState.State.NoUnread);
-                    getNewEmail = true;
                 }
                 else if(intent.getName().equals("Skip") && state.getCurrentUnread() > 1)
                 {
@@ -196,14 +194,7 @@ public class ReceiveEmailDialogManager
             email = result.getReceivedEmail();
         }
 
-        if(email.getUnread() == 0)
-        {
-            state.setCurrentUnread(0);
-        }
-        else
-        {
-            state.setCurrentUnread(email.getUnread().intValue());
-        }
+        state.setCurrentUnread(email.getUnread().intValue());
 
         switch(state.getState())
         {
