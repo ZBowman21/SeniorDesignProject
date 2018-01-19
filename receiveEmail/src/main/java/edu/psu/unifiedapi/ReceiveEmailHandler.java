@@ -61,19 +61,24 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 				Message[] messages = inbox.search(flagTerm);
 
-				//also return # of unread (size of messages)
-				returnMessages.add(new EmailObject(messages[input.getStart()].getFrom()[0].toString(),
-						messages[input.getStart()].getReceivedDate().toString(), messages[input.getStart()].getSubject(),
-						getMessage(messages[input.getStart()]), messages.length));
+				if(messages.length > 0) {
+					//also return # of unread (size of messages)
+					returnMessages.add(new EmailObject(messages[input.getStart()].getFrom()[0].toString(),
+							messages[input.getStart()].getReceivedDate().toString(), messages[input.getStart()].getSubject(),
+							getMessage(messages[input.getStart()]), messages.length));
+				}
+				else{
+					returnMessages.add(new EmailObject("","","","",0));
+				}
 
 			} catch (MessagingException e) {
 				e.printStackTrace();
-				//context.getLogger().log("Problem retrieving emails: " + e.toString());
+				context.getLogger().log("Problem retrieving emails: " + e.toString());
 			}
-			//context.getLogger().log("Emails retrieved.");
+			context.getLogger().log("Emails retrieved.");
 		}
 		else{
-			//context.getLogger().log("Authentication failed.");
+			context.getLogger().log("Authentication failed.");
 		}
 		return returnMessages;
 	}
