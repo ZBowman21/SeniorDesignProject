@@ -25,15 +25,15 @@ public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolea
 
 		//Authentication
 		GetLinkedPlainAccountArgs aA = new GetLinkedPlainAccountArgs();
-		aA.passphrase = input.getPassword();
+		aA.passphrase = input.password;
 		aA.service = "webmail";
-		aA.username = input.getUsername();
+		aA.username = input.username;
 
 		//Call authenticate with AuthArgs
 		Auth authService = LambdaInvokerFactory.builder().build(Auth.class);
-		input.setPassword(authService.auth(aA));
+		input.password = authService.auth(aA);
 
-		if(input.getPassword() != null) {
+		if(input.password != null) {
 			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 			props.setProperty("mail.imap.socketFactory.port", "993");
 
@@ -46,7 +46,7 @@ public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolea
 
 			try {
 				Store store = session.getStore("imap");
-				store.connect("email.psu.edu", input.getUsername(), input.getPassword());
+				store.connect("email.psu.edu", input.username, input.password);
 
 				Folder inbox = store.getFolder("INBOX"); //INBOX or Sent
 				inbox.open(Folder.READ_WRITE);
@@ -54,7 +54,7 @@ public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolea
 				Message[] messages = inbox.search(flagTerm);
 
 				//Implicitly marked as read when viewed.
-				getMessage(messages[input.getStart()]);
+				getMessage(messages[input.start]);
 			} catch (Exception e) {
 				e.printStackTrace();
 				context.getLogger().log("Problem marking email as read" + e.toString());
@@ -70,7 +70,7 @@ public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolea
 	}
 
 	private String getMessage(Part p){
-		String s = "Could not read the message's content.";
+		String s = "";
 		try {
 			String tmp = p.getContentType();
 			if (tmp.contains("text/plain")) {
