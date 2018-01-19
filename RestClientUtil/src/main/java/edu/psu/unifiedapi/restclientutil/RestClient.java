@@ -1,3 +1,5 @@
+package edu.psu.unifiedapi.restclientutil;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
