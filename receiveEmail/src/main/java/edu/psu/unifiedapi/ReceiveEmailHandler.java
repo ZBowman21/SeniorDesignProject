@@ -38,7 +38,6 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 		if(input.getPassword() != null) {
 			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-			//props.setProperty("mail.imap.ssl.enable", "true");
 			props.setProperty("mail.imap.socketFactory.port", "993");
 
 			// Flags for unread messages
@@ -57,18 +56,19 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 				Message[] messages = inbox.search(flagTerm);
 
-				for (int i = input.getStart(); i <= input.getFinish() && i < messages.length; i++) {
-					returnMessages.add(new EmailObject(messages[i].getFrom()[0].toString(),messages[i].getReceivedDate().toString(),
-							messages[i].getSubject(),getMessage(messages[i])));
-				}
+				//also return # of unread (size of messages)
+				returnMessages.add(new EmailObject(messages[input.getStart()].getFrom()[0].toString(),
+						messages[input.getStart()].getReceivedDate().toString(), messages[input.getStart()].getSubject(),
+						getMessage(messages[input.getStart()]), messages.length));
+
 			} catch (MessagingException e) {
 				e.printStackTrace();
-				context.getLogger().log("Problem retrieving emails: " + e.toString());
+				//context.getLogger().log("Problem retrieving emails: " + e.toString());
 			}
-			context.getLogger().log("Emails retrieved.");
+			//context.getLogger().log("Emails retrieved.");
 		}
 		else{
-			context.getLogger().log("Authentication failed.");
+			//context.getLogger().log("Authentication failed.");
 		}
 		return returnMessages;
 	}
