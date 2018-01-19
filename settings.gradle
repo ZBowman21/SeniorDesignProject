@@ -15,4 +15,7 @@ include 'getLinkedTokenAccount'
 include 'getLinkedTokenAccount'
 include 'RestClientUtil'
 include 'capstoneWrapper'
-
+include 'capstoneCurSprintId'
+include 'capstoneTaskList'
+include 'capstoneClockIn'
+include 'capstoneClockOut'

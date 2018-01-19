@@ -45,7 +45,6 @@ public class RestClient {
             con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
             wr.writeBytes(param);
-            wr.flush();
             wr.close();
 
             responseCode = con.getResponseCode();

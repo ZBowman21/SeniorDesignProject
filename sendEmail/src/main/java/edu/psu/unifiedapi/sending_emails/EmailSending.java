@@ -17,7 +17,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Date;
 import java.util.Properties;
 
-public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
+public class  EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
     private interface Auth{
         @LambdaFunction(functionName = "getLinkedPlainAccount")
