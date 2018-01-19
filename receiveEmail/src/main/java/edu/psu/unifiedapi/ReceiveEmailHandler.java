@@ -4,8 +4,16 @@ import com.amazonaws.services.lambda.invoke.LambdaFunction;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import edu.psu.unifiedapi.authentication.AuthArgs;
-import javax.mail.*;
+import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
+
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.search.FlagTerm;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -16,8 +24,8 @@ import java.util.Properties;
 public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, ArrayList> {
 
 	private interface Auth{
-		@LambdaFunction(functionName = "getAuth")
-		String auth(AuthArgs aA);
+		@LambdaFunction(functionName = "getLinkedPlainAccount")
+		String auth(GetLinkedPlainAccountArgs aA);
 	}
 
 	@Override
@@ -27,7 +35,7 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 		Properties props = new Properties();
 
 		//Authentication
-		AuthArgs aA = new AuthArgs();
+		GetLinkedPlainAccountArgs aA = new GetLinkedPlainAccountArgs();
 		aA.passphrase = input.getPassword();
 		aA.service = "webmail";
 		aA.username = input.getUsername();
