@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':authUtils')
+    compile 'org.postgresql:postgresql:42.1.4'
+}

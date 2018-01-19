@@ -66,3 +66,4 @@ uploadArchives {
 AWS_ACCESS_KEY=<ACESS_KEY>
 AWS_SECRET_KEY=<SECRET_KEY>
 ```
+* run `./gradlew uploadArchives`

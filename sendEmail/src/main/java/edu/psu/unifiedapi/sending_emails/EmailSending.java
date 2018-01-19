@@ -4,10 +4,11 @@ import com.amazonaws.services.lambda.invoke.LambdaFunction;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import edu.psu.unifiedapi.authentication.AuthArgs;
+import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -19,15 +20,15 @@ import java.util.Properties;
 public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
     private interface Auth{
-        @LambdaFunction(functionName = "getAuth")
-        String auth(AuthArgs aA);
+        @LambdaFunction(functionName = "getLinkedPlainAccount")
+        String auth(GetLinkedPlainAccountArgs aA);
     }
 
     @Override
     public Boolean handleRequest(EmailArgs eA, Context context) {
         boolean output = false;
 
-        AuthArgs aA = new AuthArgs();
+        GetLinkedPlainAccountArgs aA = new GetLinkedPlainAccountArgs();
         aA.passphrase = eA.password;
         aA.service = "webmail";
         aA.username = eA.username;
