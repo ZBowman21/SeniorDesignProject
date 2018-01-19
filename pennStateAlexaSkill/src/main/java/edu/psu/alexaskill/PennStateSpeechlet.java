@@ -10,13 +10,13 @@ import com.amazon.speech.speechlet.dialog.directives.DialogIntent;
 import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
+import edu.psu.alexaskill.receiveemail.ReceiveEmailDialogManager;
 
 import java.util.*;
 
 public class PennStateSpeechlet implements SpeechletV2 {
 
     private RequestHandler requestHandler;
-    private ReceiveEmailDialogManager receiveEmailDialogManager = new ReceiveEmailDialogManager();
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
@@ -61,7 +61,8 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 }
                 else if(dialogState.equals(DialogState.COMPLETED)) //passphrase received. will always go here for reading back emails
                 {
-                    return receiveEmailDialogManager.GenerateResponse(intent, requestEnvelope.getSession().getUser().getAccessToken());
+                    ReceiveEmailDialogManager receiveEmailDialogManager = new ReceiveEmailDialogManager(requestEnvelope);
+                    return receiveEmailDialogManager.generateResponse();
                 }
                 else
                 {
