@@ -5,9 +5,13 @@ package edu.psu.unifiedapi.auth;
  */
 public class Credentials {
 
-	private String username;
+	private final String username;
 
-	private String password;
+	private final String password;
+
+	public Credentials() {
+		this(null, null);
+	}
 
 	public Credentials(String username, String password) {
 		this.username = username;
