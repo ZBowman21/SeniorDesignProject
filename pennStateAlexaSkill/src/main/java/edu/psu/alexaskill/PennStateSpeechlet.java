@@ -16,6 +16,7 @@ import java.util.*;
 public class PennStateSpeechlet implements SpeechletV2 {
 
     private RequestHandler requestHandler;
+    private ReceiveEmailDialogManager receiveEmailDialogManager = new ReceiveEmailDialogManager();
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
@@ -34,9 +35,8 @@ public class PennStateSpeechlet implements SpeechletV2 {
         IntentRequest request = requestEnvelope.getRequest();
         Intent intent = request.getIntent();
         String intentName = (intent != null) ? intent.getName() : null;
-
         DialogState dialogState = request.getDialogState();
-
+        //Check session attribute of state, if in receive email, go to or call seperate method  or look through seperate switch. If no state or default state, continue because we are in the initial state and could be sending emails, getting grades, etc.
         switch(intentName)
         {
             case "SendMail":
@@ -54,7 +54,21 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 {
                     return GenerateMultiDialogInProgressResponse();
                 }
+            case "ReceiveEmails" :
+                if(dialogState.equals(DialogState.STARTED))
+                {
+                    return GenerateMultiDialogStartedResponse(intentName, intent);
+                }
+                else if(dialogState.equals(DialogState.COMPLETED)) //passphrase received. will always go here for reading back emails
+                {
+                    return receiveEmailDialogManager.GenerateResponse(intent, requestEnvelope.getSession().getUser().getAccessToken());
+                }
+                else
+                {
+                    return GenerateMultiDialogInProgressResponse();
+                }
         }
+
         return getDefaultResponse();
     }
 
