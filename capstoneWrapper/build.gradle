@@ -1,0 +1,4 @@
+dependencies {
+    compile 'com.amazonaws:aws-java-sdk-lambda:1.11.226'
+    compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
+}

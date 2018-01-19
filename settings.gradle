@@ -7,3 +7,6 @@ include 'receiveEmail'
 include 'addLinkedAccount'
 include 'delLinkedAccount'
 include 'psuDining'
+include 'RestClientUtil'
+include 'capstoneWrapper'
+
