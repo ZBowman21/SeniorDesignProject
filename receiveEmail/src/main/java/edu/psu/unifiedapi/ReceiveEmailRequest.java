@@ -9,6 +9,10 @@ public class ReceiveEmailRequest {
 	private String password;
 	private int start;
 
+	ReceiveEmailRequest(){
+
+	}
+	
 	ReceiveEmailRequest(String username, String password, int start) {
 		this.username = username;
 		this.password = password;
