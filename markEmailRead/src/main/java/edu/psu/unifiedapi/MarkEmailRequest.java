@@ -3,17 +3,19 @@ package edu.psu.unifiedapi;
 /**
  * @author mthwate
  */
-public class ReceiveEmailRequest {
+public class MarkEmailRequest {
 
 	private String username;
 	private String password;
 	private int start;
 
-	ReceiveEmailRequest(){
-
+	MarkEmailRequest(String username, String password){
+		this.username = username;
+		this.password = password;
+		this.start = 0;
 	}
-	
-	ReceiveEmailRequest(String username, String password, int start) {
+
+	MarkEmailRequest(String username, String password, int start) {
 		this.username = username;
 		this.password = password;
 		this.start = start;
@@ -34,4 +36,5 @@ public class ReceiveEmailRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 }

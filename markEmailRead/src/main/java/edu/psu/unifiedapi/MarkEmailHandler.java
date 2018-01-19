@@ -5,23 +5,14 @@ import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
-
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import javax.mail.search.FlagTerm;
-import java.util.ArrayList;
 import java.util.Properties;
 
 /**
  * @author mthwate and Corey!
  */
-public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, ArrayList> {
+public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolean> {
 
 	private interface Auth{
 		@LambdaFunction(functionName = "getLinkedPlainAccount")
@@ -29,9 +20,7 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 	}
 
 	@Override
-	public ArrayList<EmailObject> handleRequest(ReceiveEmailRequest input, Context context) {
-		//String retStr = "No messages to display at this time.";
-		ArrayList<EmailObject> returnMessages = new ArrayList<>();
+	public Boolean handleRequest(MarkEmailRequest input, Context context) {
 		Properties props = new Properties();
 
 		//Authentication
@@ -60,25 +49,24 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 				store.connect("email.psu.edu", input.getUsername(), input.getPassword());
 
 				Folder inbox = store.getFolder("INBOX"); //INBOX or Sent
-				inbox.open(Folder.READ_ONLY);
+				inbox.open(Folder.READ_WRITE);
 
 				Message[] messages = inbox.search(flagTerm);
 
-				//also return # of unread (size of messages)
-				returnMessages.add(new EmailObject(messages[input.getStart()].getFrom()[0].toString(),
-						messages[input.getStart()].getReceivedDate().toString(), messages[input.getStart()].getSubject(),
-						getMessage(messages[input.getStart()]), messages.length));
-
-			} catch (MessagingException e) {
+				//Implicitly marked as read when viewed.
+				getMessage(messages[input.getStart()]);
+			} catch (Exception e) {
 				e.printStackTrace();
-				//context.getLogger().log("Problem retrieving emails: " + e.toString());
+				context.getLogger().log("Problem marking email as read" + e.toString());
+				return false;
 			}
-			//context.getLogger().log("Emails retrieved.");
+			context.getLogger().log("Email marked as read.");
 		}
 		else{
-			//context.getLogger().log("Authentication failed.");
+			context.getLogger().log("Authentication failed.");
+			return false;
 		}
-		return returnMessages;
+		return true;
 	}
 
 	private String getMessage(Part p){
