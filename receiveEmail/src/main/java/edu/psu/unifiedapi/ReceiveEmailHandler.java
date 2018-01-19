@@ -5,6 +5,8 @@ import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
+import edu.psu.unifiedapi.account.IGetLinkedPlainAccount;
+import edu.psu.unifiedapi.auth.Credentials;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -23,11 +25,6 @@ import java.util.Properties;
  */
 public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, ArrayList> {
 
-	private interface Auth{
-		@LambdaFunction(functionName = "getLinkedPlainAccount")
-		String auth(GetLinkedPlainAccountArgs aA);
-	}
-
 	@Override
 	public ArrayList<EmailObject> handleRequest(ReceiveEmailRequest input, Context context) {
 		//String retStr = "No messages to display at this time.";
@@ -41,8 +38,8 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 		aA.username = input.getUsername();
 
 		//Call authenticate with AuthArgs
-		Auth authService = LambdaInvokerFactory.builder().build(Auth.class);
-		input.setPassword(authService.auth(aA));
+		IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
+		input.setPassword(authService.getLinkedPlainAccount(aA).getPassword());
 
 		if(input.getPassword() != null) {
 			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
