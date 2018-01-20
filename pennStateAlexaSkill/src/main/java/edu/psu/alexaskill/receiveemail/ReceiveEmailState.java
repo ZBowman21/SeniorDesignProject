@@ -2,8 +2,6 @@ package edu.psu.alexaskill.receiveemail;
 
 import edu.pennstate.api.model.ReceivedEmail;
 
-import java.io.Serializable;
-
 public class ReceiveEmailState
 {
     public ReceivedEmail email;

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.pennstate.api.model.ReceiveEmailsResult;
 import edu.pennstate.api.model.ReceivedEmail;
 
-
 public class ReceiveEmailDialogManager
 {
     private ReceiveEmailRequestSender requestSender = new ReceiveEmailRequestSender();
@@ -29,15 +28,12 @@ public class ReceiveEmailDialogManager
             state = mapper.readValue(mappedJsonState, ReceiveEmailState.class);
         }
         catch(Exception e)
-        {
+        {}
 
-        }
-
-        if(state == null)
+        if(state == null) //Occurs on initial execution, as there is no mid-interaction state.
         {
             state = new ReceiveEmailState();
-            String passphrase = intent.getSlot("passphrase").getValue();
-            session.setAttribute("passphrase", passphrase.toLowerCase());
+            session.setAttribute("passphrase", intent.getSlot("passphrase").getValue().toLowerCase());
         }
     }
 
@@ -203,6 +199,7 @@ public class ReceiveEmailDialogManager
                 break;
         }
 
+        //Requests a new email if one is needed, such as when the user requests their next email
         if(!getNewEmail)
         {
             email = state.getEmail();
