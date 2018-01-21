@@ -10,6 +10,7 @@ import com.amazon.speech.speechlet.dialog.directives.DialogIntent;
 import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
+import edu.psu.alexaskill.receiveemail.ReceiveEmailDialogManager;
 
 import java.util.*;
 
@@ -34,9 +35,8 @@ public class PennStateSpeechlet implements SpeechletV2 {
         IntentRequest request = requestEnvelope.getRequest();
         Intent intent = request.getIntent();
         String intentName = (intent != null) ? intent.getName() : null;
-
         DialogState dialogState = request.getDialogState();
-
+        //Check session attribute of state, if in receive email, go to or call seperate method  or look through seperate switch. If no state or default state, continue because we are in the initial state and could be sending emails, getting grades, etc.
         switch(intentName)
         {
             case "SendMail":
@@ -54,7 +54,30 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 {
                     return GenerateMultiDialogInProgressResponse();
                 }
+            case "GetMail" :
+                if(dialogState.equals(DialogState.STARTED))
+                {
+                    return GenerateMultiDialogStartedResponse(intentName, intent);
+                }
+                else if(dialogState.equals(DialogState.COMPLETED)) //passphrase received. will always go here for reading back emails
+                {
+                    ReceiveEmailDialogManager receiveEmailDialogManager = new ReceiveEmailDialogManager(requestEnvelope);
+                    return receiveEmailDialogManager.generateResponse();
+                }
+                else
+                {
+                    return GenerateMultiDialogInProgressResponse();
+                }
         }
+
+        //Used to detect in-progress dialog for receiving email. Primarily used to detect mid-dialog feature specific intents such as repeat and skip
+        if(requestEnvelope.getSession().getAttribute("state") != null && (intentName.equals("Repeat") || intentName.equals("Skip")
+        || intentName.equals("Read") || intentName.equals("Next")))
+        {
+            ReceiveEmailDialogManager receiveEmailDialogManager = new ReceiveEmailDialogManager(requestEnvelope);
+            return receiveEmailDialogManager.generateResponse();
+        }
+
         return getDefaultResponse();
     }
 

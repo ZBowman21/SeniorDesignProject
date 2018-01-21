@@ -5,6 +5,8 @@ import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
+import edu.psu.unifiedapi.account.IGetLinkedPlainAccount;
+import edu.psu.unifiedapi.auth.Credentials;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -23,11 +25,6 @@ import java.util.Properties;
  */
 public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, ArrayList> {
 
-	private interface Auth{
-		@LambdaFunction(functionName = "getLinkedPlainAccount")
-		String auth(GetLinkedPlainAccountArgs aA);
-	}
-
 	@Override
 	public ArrayList<EmailObject> handleRequest(ReceiveEmailRequest input, Context context) {
 		//String retStr = "No messages to display at this time.";
@@ -36,17 +33,16 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 		//Authentication
 		GetLinkedPlainAccountArgs aA = new GetLinkedPlainAccountArgs();
-		aA.passphrase = input.getPassword();
+		aA.passphrase = input.password;
 		aA.service = "webmail";
-		aA.username = input.getUsername();
+		aA.username = input.username;
 
 		//Call authenticate with AuthArgs
-		Auth authService = LambdaInvokerFactory.builder().build(Auth.class);
-		input.setPassword(authService.auth(aA));
+		IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
+		input.password = authService.getLinkedPlainAccount(aA).getPassword();
 
-		if(input.getPassword() != null) {
+		if(input.password != null) {
 			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-			//props.setProperty("mail.imap.ssl.enable", "true");
 			props.setProperty("mail.imap.socketFactory.port", "993");
 
 			// Flags for unread messages
@@ -58,25 +54,31 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 			try {
 				Store store = session.getStore("imap");
-				store.connect("email.psu.edu", input.getUsername(), input.getPassword());
+				store.connect("email.psu.edu", input.username, input.password);
 
 				Folder inbox = store.getFolder("INBOX"); //INBOX or Sent
 				inbox.open(Folder.READ_ONLY);
 
 				Message[] messages = inbox.search(flagTerm);
 
-				for (int i = input.getStart(); i <= input.getFinish() && i < messages.length; i++) {
-					returnMessages.add(new EmailObject(messages[i].getFrom()[0].toString(),messages[i].getReceivedDate().toString(),
-							messages[i].getSubject(),getMessage(messages[i])));
+				if(messages.length > 0) {
+					//also return # of unread (size of messages)
+					returnMessages.add(new EmailObject(messages[input.start].getFrom()[0].toString(),
+							messages[input.start].getReceivedDate().toString(), messages[input.start].getSubject(),
+							getMessage(messages[input.start]), messages.length));
 				}
+				else{
+					returnMessages.add(new EmailObject("","","","",0));
+				}
+
 			} catch (MessagingException e) {
 				e.printStackTrace();
-				context.getLogger().log("Problem retrieving emails: " + e.toString());
+				//context.getLogger().log("Problem retrieving emails: " + e.toString());
 			}
-			context.getLogger().log("Emails retrieved.");
+			//context.getLogger().log("Emails retrieved.");
 		}
 		else{
-			context.getLogger().log("Authentication failed.");
+			//context.getLogger().log("Authentication failed.");
 		}
 		return returnMessages;
 	}

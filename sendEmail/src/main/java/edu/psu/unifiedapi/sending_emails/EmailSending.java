@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
+import edu.psu.unifiedapi.auth.Credentials;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
@@ -21,7 +22,7 @@ public class  EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
     private interface Auth{
         @LambdaFunction(functionName = "getLinkedPlainAccount")
-        String auth(GetLinkedPlainAccountArgs aA);
+        Credentials auth(GetLinkedPlainAccountArgs aA);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class  EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
         //Call authenticate with AuthArgs
         Auth authService = LambdaInvokerFactory.builder().build(Auth.class);
-        eA.password = authService.auth(aA);
+        eA.password = authService.auth(aA).getPassword();
 
         if(eA.password != null) {
             try {

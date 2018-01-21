@@ -2,6 +2,7 @@ package edu.psu.unifiedapi.account;
 
 import com.amazonaws.services.lambda.invoke.LambdaFunction;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
+import edu.psu.unifiedapi.auth.Credentials;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNull;
@@ -11,14 +12,9 @@ import static org.junit.Assert.assertNull;
  */
 public class GetLinkedPlainAccountTest {
 
-	private interface Auth {
-		@LambdaFunction(functionName = "getLinkedPlainAccount")
-		String auth(GetLinkedPlainAccountArgs args);
-	}
-
 	@Test
 	public void invalidCredentials() {
-		Auth service = LambdaInvokerFactory.builder().build(Auth.class);
+		IGetLinkedPlainAccount service = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
 
 		GetLinkedPlainAccountArgs args = new GetLinkedPlainAccountArgs();
 
@@ -26,7 +22,7 @@ public class GetLinkedPlainAccountTest {
 		args.passphrase = "pass";
 		args.service = "webmail";
 
-		String result = service.auth(args);
+		Credentials result = service.getLinkedPlainAccount(args);
 
 		assertNull(result);
 	}

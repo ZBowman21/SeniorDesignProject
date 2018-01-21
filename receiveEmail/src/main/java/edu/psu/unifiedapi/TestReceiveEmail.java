@@ -15,7 +15,7 @@ public class TestReceiveEmail {
         ArrayList<EmailObject> s = hand.handleRequest(new ReceiveEmailRequest("mkb5413", "cheese", 4), null);
 
         for(int i = 0; i < s.size(); i++){
-            System.out.println(s.get(i).from + " " + s.get(i).date);
+            System.out.println(s.get(i).from + " " + s.get(i).date + " " + s.get(i).subject + " " + s.get(i).body + " " + s.get(i).unread);
         }
     }
 }
