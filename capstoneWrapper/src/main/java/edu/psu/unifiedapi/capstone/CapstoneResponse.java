@@ -1,6 +1,10 @@
 package edu.psu.unifiedapi.capstone;
 
+import com.google.api.client.util.Key;
+
 public class CapstoneResponse {
-    public String response;
+    @Key
+    public Object response;
+    @Key
     public ResponseAuth AuthenticateObject;
 }

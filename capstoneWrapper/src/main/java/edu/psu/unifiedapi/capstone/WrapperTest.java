@@ -8,7 +8,7 @@ public class WrapperTest {
         cargs.params = "csid=4";
 
         CapstoneWrapper cap = new CapstoneWrapper();
-        String response = cap.handleRequest(cargs, null);
+        Object response = cap.handleRequest(cargs, null);
 
         System.out.println("Response:" + response);
     }

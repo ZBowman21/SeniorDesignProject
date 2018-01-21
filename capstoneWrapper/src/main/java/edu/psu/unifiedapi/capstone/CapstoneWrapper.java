@@ -1,7 +1,5 @@
 package edu.psu.unifiedapi.capstone;
 
-import com.amazonaws.services.lambda.invoke.LambdaFunction;
-import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.Context;
 import edu.psu.unifiedapi.restclientutil.RestClient;
@@ -12,12 +10,12 @@ import java.io.IOException;
 import java.io.StringReader;
 
 
-public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,String>{
+public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,Object>{
 
     private final String baseUrl = "http://capstone.bd.psu.edu:8090";
     @Override
-    public String handleRequest(CapstoneWrapperArgs input, Context context) {
-        CapstoneAuth capAuth = new CapstoneAuth("fa63eb77e6d6c7dd31d087a6345ca4f3c2abc7a3969dba6c6aa02d1d42961316");
+    public Object handleRequest(CapstoneWrapperArgs input, Context context) {
+        CapstoneAuth capAuth = new CapstoneAuth("94e61ea81c7c74937ddbd6c5636d9cfaea081c3a8903a160cae779cec36281c1");
 
         RestClient client = new RestClient(baseUrl + input.url, input.params + capAuth.BuildAuthString());
         String response = client.GetRequest();
@@ -25,12 +23,13 @@ public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,Strin
         JacksonFactory jack = new JacksonFactory();
         JsonObjectParser parser = new JsonObjectParser(jack);
         CapstoneResponse capRes = new CapstoneResponse();
-        capRes.response = ""; // to avoid null pointer exception
+        //capRes.response = ""; // to avoid null pointer exception
         try {
             capRes = parser.parseAndClose(new StringReader(response), CapstoneResponse.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // manipulate the capRes.Auth here....
 
         return capRes.response;
     }
