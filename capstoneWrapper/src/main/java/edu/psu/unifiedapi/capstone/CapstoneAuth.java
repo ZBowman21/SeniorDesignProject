@@ -11,11 +11,8 @@ public class CapstoneAuth {
 
     public String BuildAuthString(){
         String temp = "";
-        temp = "&AuthicateID=" + authID + "&AuthenticateRole=" + AuthRole
+        temp = "&AuthenticateID=" + authID + "&AuthenticateRole=" + AuthRole
                 + "&NounceCode=" + nounceCode;
-        // Create RestClient
-        // make request
-        // print return string
 
         return temp;
     }

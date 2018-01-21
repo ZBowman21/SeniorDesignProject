@@ -1,10 +1,11 @@
 package edu.psu.unifiedapi.restclientutil;
 
-import javax.net.ssl.HttpsURLConnection;
+//import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.HttpURLConnection;
 
 /* Inspiration from https://www.mkyong.com/java/how-to-send-http-request-getpost-in-java/ */
 
@@ -13,18 +14,19 @@ public class RestClient {
     private String param;
     private final String USER_AGENT = "Mozilla/5.0";
     private URL obj;
-    private HttpsURLConnection con;
+    private HttpURLConnection con;
     private int responseCode;
 
     public RestClient(String baseurl, String param) {
-        this.url = baseurl + "&" + param;
+        this.url = baseurl + "?" + param;
 
         try {
             obj = new URL(url);
-            con = (HttpsURLConnection) obj.openConnection();
+            con = (HttpURLConnection) obj.openConnection();
             con.setRequestProperty("User-Agent", USER_AGENT);
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
         } catch(Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -33,8 +35,8 @@ public class RestClient {
             con.setRequestMethod("GET");
             return ReadResponse();
         } catch(Exception e) {
+            return "Unable to connect to URL";
         }
-        return "";
     }
     public String PostRequest(String param) {
         try {
@@ -50,30 +52,31 @@ public class RestClient {
             responseCode = con.getResponseCode();
             return ReadResponse();
         } catch (Exception e) {
-
+            return "Unable to connect to URL";
         }
-        return "";
     }
 
     private String ReadResponse() {
-        String inputLine = "";
+        String response = "";
 
         try {
             responseCode = con.getResponseCode();
             if(responseCode/100 == 2) {
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(con.getInputStream()));
-                StringBuffer response = new StringBuffer();
-
+                StringBuffer buffer = new StringBuffer();
+                String inputLine;
                 while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                    buffer.append(inputLine);
                 }
                 in.close();
+                response = buffer.toString();
             } else {
-                inputLine = "Received Response Code " + responseCode;
+                response = "Received Response Code " + responseCode;
             }
-        } catch(Exception e) {
+        } catch(Exception e){
+            response = "Error occurec in reading response" + e.getMessage();
         }
-        return inputLine;
+        return response;
     }
 }
