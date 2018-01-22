@@ -1,11 +1,13 @@
 package edu.psu.unifiedapi;
 
 public class EmailObject {
-    String from;
-    String date;
-    String subject;
-    String body;
-    int unread;
+    public String from;
+    public String date;
+    public String subject;
+    public String body;
+    public int unread;
+
+    EmailObject(){}
 
     EmailObject(String f, String d, String s, String b, int u){
         this.from = f;
