@@ -54,7 +54,7 @@ public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolea
 				Message[] messages = inbox.search(flagTerm);
 
 				//Implicitly marked as read when viewed.
-				getMessage(messages[input.start]);
+				getMessage(messages[messages.length - input.start - 1]);
 			} catch (Exception e) {
 				e.printStackTrace();
 				context.getLogger().log("Problem marking email as read" + e.toString());

@@ -14,6 +14,11 @@ import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.search.FlagTerm;
+import javax.swing.text.DateFormatter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 /**
@@ -57,10 +62,19 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 				Message[] messages = inbox.search(flagTerm);
 
 				if(messages.length > 0) {
+					//format return strings
+					String from = messages[messages.length - input.start - 1].getFrom()[0].toString();
+
+					Date d = messages[messages.length - input.start - 1].getReceivedDate();
+					Calendar c = Calendar.getInstance();
+					c.setTime(d);
+					String date = new SimpleDateFormat("MMM dd yyyy hh:mm a").format(c.getTime());
+
+					String subject =messages[messages.length - input.start - 1].getSubject();
+					String message = getMessage(messages[messages.length - input.start - 1]);
+
 					//also return # of unread (size of messages)
-					returnEmail = new EmailObject(messages[input.start].getFrom()[0].toString(),
-							messages[input.start].getReceivedDate().toString(), messages[input.start].getSubject(),
-							getMessage(messages[input.start]), messages.length);
+					returnEmail = new EmailObject(from, date, subject, message, messages.length);
 				}
 				else{
 					returnEmail = new EmailObject("","","","",0);
