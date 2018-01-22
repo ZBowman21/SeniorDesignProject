@@ -11,4 +11,5 @@ pipelines:
         caches:
           - gradle
         script:
-          - bash ./gradlew uploadZip
+          - bash ./gradlew test
+          - bash ./gradlew updateLambdaFunction
