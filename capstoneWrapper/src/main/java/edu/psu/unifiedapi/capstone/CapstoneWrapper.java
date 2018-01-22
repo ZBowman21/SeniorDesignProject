@@ -1,7 +1,12 @@
 package edu.psu.unifiedapi.capstone;
 
+import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.Context;
+import edu.psu.unifiedapi.account.GetLinkedTokenAccountArgs;
+import edu.psu.unifiedapi.account.IGetLinkedTokenAccount;
+import edu.psu.unifiedapi.account.IUpdateLinkedTokenAccount;
+import edu.psu.unifiedapi.account.UpdateLinkedTokenAccountArgs;
 import edu.psu.unifiedapi.restclientutil.RestClient;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -16,7 +21,15 @@ public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,Objec
     private final String baseUrl = "http://capstone.bd.psu.edu:8090";
     @Override
     public Object handleRequest(CapstoneWrapperArgs input, Context context) {
-        CapstoneAuth capAuth = new CapstoneAuth("94e61ea81c7c74937ddbd6c5636d9cfaea081c3a8903a160cae779cec36281c1");
+
+        GetLinkedTokenAccountArgs ta = new GetLinkedTokenAccountArgs();
+        ta.username = input.username;
+        ta.service = "capstone";    // Don't know if it will be uppercase or not
+
+        IGetLinkedTokenAccount tokenAccount = LambdaInvokerFactory.builder().build(IGetLinkedTokenAccount.class);
+        String nounce = tokenAccount.getLinkedTokenAccount(ta);
+
+        CapstoneAuth capAuth = new CapstoneAuth(nounce);
 
         RestClient client = new RestClient(baseUrl + input.url, input.params + capAuth.BuildAuthString());
         String response = client.GetRequest();
@@ -30,7 +43,15 @@ public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,Objec
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         // manipulate the capRes.Auth here....
+        UpdateLinkedTokenAccountArgs ua = new UpdateLinkedTokenAccountArgs();
+        ua.username = input.username;
+        ua.service = "capstone";
+        ua.value = capRes.AuthenticateObject.NounceCode;
+
+        IUpdateLinkedTokenAccount updateToken = LambdaInvokerFactory.builder().build(IUpdateLinkedTokenAccount.class);
+        updateToken.updateLinkedTokenAccount(ua);
 
         return capRes.response;
     }

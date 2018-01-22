@@ -125,7 +125,7 @@ public class Database {
 
 		String token = null;
 
-		String queryString = "select token from plain_credentials where username = ? AND service = ?";
+		String queryString = "select token from token_credentials where username = ? AND service = ?";
 		PreparedStatement statement = getConnection().prepareStatement(queryString);
 		statement.setString(1, userId);
 		statement.setString(2, service);
@@ -138,4 +138,30 @@ public class Database {
 		return token;
 	}
 
+	public static boolean update(String table, Object... values) throws SQLException {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("UPDATE INTO ? VALUES (");
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+			sb.append("?");
+		}
+		sb.append(")");
+
+		PreparedStatement statement = getConnection().prepareStatement(sb.toString());
+
+		statement.setString(1, table);
+
+		for (int i = 0; i < values.length; i++) {
+			statement.setObject(i+2, values[i]);
+		}
+
+		return statement.executeUpdate() > 0;
+	}
+
+	public static boolean updateTokenCredentials(String userId, String service, String token) throws SQLException {
+		return update("token_credentials", userId, service, token);
+	}
 }
