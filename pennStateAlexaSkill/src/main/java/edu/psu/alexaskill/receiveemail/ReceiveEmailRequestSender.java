@@ -14,21 +14,18 @@ public class ReceiveEmailRequestSender extends RequestHandler {
     @Override
     public BaseResult sendRequest(Intent requestIntent, String token)
     {
-
-        ReceiveEmailsResult result = (ReceiveEmailsResult)sendRequest(requestIntent, token, 0);
-        return result;
+        throw new NotImplementedException();
     }
 
-    public BaseResult sendRequest(Intent requestIntent, String token, int emailIndex)
+    public BaseResult sendRequest(String passphrase, String token, int emailIndex)
     {
-        String passphrase = requestIntent.getSlot("passphrase").getValue();
         String username = "bra130";
         String emailIndexString = String.valueOf(emailIndex);
 
         ReceiveEmailsRequest request = new ReceiveEmailsRequest();
-        request.setPassphrase(passphrase);
+        request.setPassword(passphrase);
         request.setUsername(username);
-        request.setStartingemailindex(emailIndexString);
+        request.setStart(emailIndexString);
 
         request.sdkRequestConfig(
                 SdkRequestConfig.builder()

@@ -54,7 +54,7 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 {
                     return GenerateMultiDialogInProgressResponse();
                 }
-            case "ReceiveEmails" :
+            case "GetMail" :
                 if(dialogState.equals(DialogState.STARTED))
                 {
                     return GenerateMultiDialogStartedResponse(intentName, intent);
@@ -68,6 +68,14 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 {
                     return GenerateMultiDialogInProgressResponse();
                 }
+        }
+
+        //Used to detect in-progress dialog for receiving email. Primarily used to detect mid-dialog feature specific intents such as repeat and skip
+        if(requestEnvelope.getSession().getAttribute("state") != null && (intentName.equals("Repeat") || intentName.equals("Skip")
+        || intentName.equals("Read") || intentName.equals("Next")))
+        {
+            ReceiveEmailDialogManager receiveEmailDialogManager = new ReceiveEmailDialogManager(requestEnvelope);
+            return receiveEmailDialogManager.generateResponse();
         }
 
         return getDefaultResponse();
