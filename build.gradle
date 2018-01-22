@@ -1,5 +1,5 @@
 import com.amazonaws.auth.AWSCredentials
-import com.amazonaws.auth.profile.ProfileCredentialsProvider
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import jp.classmethod.aws.gradle.lambda.AWSLambdaUpdateFunctionCodeTask
 import jp.classmethod.aws.gradle.lambda.S3File
 import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
@@ -23,7 +23,7 @@ subprojects {
 		maven {
 			url "s3://repo.unifiedapi.psu.edu/snapshots"
 			credentials(AwsCredentials) {
-				AWSCredentials credentials = new ProfileCredentialsProvider().credentials
+				AWSCredentials credentials = DefaultAWSCredentialsProviderChain.getInstance().credentials
 				accessKey credentials.AWSAccessKeyId
 				secretKey credentials.AWSSecretKey
 			}
