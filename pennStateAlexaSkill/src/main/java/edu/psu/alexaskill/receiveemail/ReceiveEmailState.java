@@ -4,9 +4,9 @@ import edu.pennstate.api.model.ReceivedEmail;
 
 public class ReceiveEmailState
 {
-    private ReceivedEmail email;
-    private int currentEmailIndex;
-    private int currentUnread;
+    public ReceivedEmail email;
+    public int currentEmailIndex;
+    public int currentUnread;
     public enum State
     {
         Initial,
@@ -16,12 +16,12 @@ public class ReceiveEmailState
         NextEmail,
     }
 
-    private State state;
+    public State state;
 
     public ReceiveEmailState()
     {
         email = new ReceivedEmail();
-        currentEmailIndex = 0;
+        currentEmailIndex = -1;
         state = State.Initial;
     }
 

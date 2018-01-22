@@ -4,7 +4,9 @@ import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.*;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
+import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.pennstate.api.model.ReceiveEmailsResult;
 import edu.pennstate.api.model.ReceivedEmail;
 
@@ -19,11 +21,19 @@ public class ReceiveEmailDialogManager
     {
         session = requestEnvelope.getSession();
         intent = requestEnvelope.getRequest().getIntent();
-        state = (ReceiveEmailState)session.getAttribute("state");
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            String mappedJsonState = mapper.writeValueAsString(session.getAttribute("state"));
+            state = mapper.readValue(mappedJsonState, ReceiveEmailState.class);
+        }
+        catch(Exception e)
+        {}
 
-        if(state == null)
+        if(state == null) //Occurs on initial execution, as there is no mid-interaction state.
         {
             state = new ReceiveEmailState();
+            session.setAttribute("passphrase", intent.getSlot("passphrase").getValue().toLowerCase());
         }
     }
 
@@ -62,7 +72,10 @@ public class ReceiveEmailDialogManager
 
         state.setState(ReceiveEmailState.State.ReadingEmail);
 
-        return response;
+        Reprompt reprompt = new Reprompt();
+        reprompt.setOutputSpeech(outputSpeech);
+
+        return SpeechletResponse.newAskResponse(outputSpeech, reprompt, card);
     }
 
     private SpeechletResponse generateNextEmailSpeechlet(ReceivedEmail email)
@@ -83,8 +96,10 @@ public class ReceiveEmailDialogManager
         state.setState(ReceiveEmailState.State.NextEmail);
         state.setEmail(email);
 
-        return response;
-    }
+        Reprompt reprompt = new Reprompt();
+        reprompt.setOutputSpeech(outputSpeech);
+
+        return SpeechletResponse.newAskResponse(outputSpeech, reprompt, card);    }
 
     private SpeechletResponse generateFirstUnreadSpeechlet(ReceivedEmail email)
     {
@@ -104,8 +119,10 @@ public class ReceiveEmailDialogManager
         state.setState(ReceiveEmailState.State.FirstUnread);
         state.setEmail(email);
 
-        return response;
-    }
+        Reprompt reprompt = new Reprompt();
+        reprompt.setOutputSpeech(outputSpeech);
+
+        return SpeechletResponse.newAskResponse(outputSpeech, reprompt, card);    }
 
     public SpeechletResponse generateResponse()
     {
@@ -117,6 +134,12 @@ public class ReceiveEmailDialogManager
         switch(state.getState())
         {
             case Initial:
+                result = (ReceiveEmailsResult)requestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), 0);
+                email = result.getReceivedEmail();
+                state.setEmail(email);
+                state.setCurrentEmailIndex(0);
+                state.setCurrentUnread(email.getUnread().intValue());
+
                 if(state.getCurrentUnread() == 0)
                 {
                     state.setState(ReceiveEmailState.State.NoUnread);
@@ -176,25 +199,16 @@ public class ReceiveEmailDialogManager
                 break;
         }
 
+        //Requests a new email if one is needed, such as when the user requests their next email
         if(!getNewEmail)
         {
             email = state.getEmail();
         }
         else
         {
-            if(state.getState() == ReceiveEmailState.State.Initial)
-            {
-                result = (ReceiveEmailsResult)requestSender.sendRequest(intent, session.getUser().getAccessToken());
-            }
-            else
-            {
-                result = (ReceiveEmailsResult)requestSender.sendRequest(intent, session.getUser().getAccessToken(), state.getCurrentEmailIndex());
-            }
-
+            result = (ReceiveEmailsResult)requestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), state.getCurrentEmailIndex());
             email = result.getReceivedEmail();
         }
-
-        state.setCurrentUnread(email.getUnread().intValue());
 
         switch(state.getState())
         {
