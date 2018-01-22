@@ -1,11 +1,10 @@
 package edu.psu.unifiedapi.sending_emails;
 
-import com.amazonaws.services.lambda.invoke.LambdaFunction;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
-import edu.psu.unifiedapi.auth.Credentials;
+import edu.psu.unifiedapi.account.IGetLinkedPlainAccount;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
@@ -20,11 +19,6 @@ import java.util.Properties;
 
 public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
-    private interface Auth{
-        @LambdaFunction(functionName = "getLinkedPlainAccount")
-        Credentials auth(GetLinkedPlainAccountArgs aA);
-    }
-
     @Override
     public Boolean handleRequest(EmailArgs eA, Context context) {
         boolean output = false;
@@ -35,8 +29,8 @@ public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
         aA.username = eA.username;
 
         //Call authenticate with AuthArgs
-        Auth authService = LambdaInvokerFactory.builder().build(Auth.class);
-        eA.password = authService.auth(aA).getPassword();
+        IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
+        eA.password = authService.getLinkedPlainAccount(aA).getPassword();
 
         if(eA.password != null) {
             try {
