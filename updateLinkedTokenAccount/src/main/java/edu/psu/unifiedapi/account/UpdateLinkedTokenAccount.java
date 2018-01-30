@@ -14,8 +14,6 @@ public class UpdateLinkedTokenAccount implements RequestHandler<UpdateLinkedToke
     @Override
     public Boolean handleRequest(UpdateLinkedTokenAccountArgs aA, Context context) {
 
-        String token = null;
-
         try {
             return Database.updateTokenCredentials(aA.username, aA.service, aA.value);
         } catch (SQLException e) {
