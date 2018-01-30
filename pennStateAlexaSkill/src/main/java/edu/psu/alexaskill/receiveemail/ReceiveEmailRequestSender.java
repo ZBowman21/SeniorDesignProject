@@ -2,19 +2,18 @@ package edu.psu.alexaskill.receiveemail;
 
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.SpeechletResponse;
-import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.SdkRequestConfig;
-import edu.pennstate.api.model.*;
+import edu.pennstate.api.model.ReceiveEmailsRequest;
+import edu.pennstate.api.model.ReceiveEmailsResult;
 import edu.psu.alexaskill.RequestHandler;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ReceiveEmailRequestSender extends RequestHandler {
 
     @Override
     public BaseResult sendRequest(Intent requestIntent, String token)
     {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public BaseResult sendRequest(String passphrase, String token, int emailIndex)
@@ -42,6 +41,6 @@ public class ReceiveEmailRequestSender extends RequestHandler {
     @Override
     public SpeechletResponse parseResponse(BaseResult response)
     {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

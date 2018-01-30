@@ -5,36 +5,15 @@ package edu.psu.unifiedapi;
  */
 public class MarkEmailRequest {
 
-	private String username;
-	private String password;
-	private int start;
+	public String username;
+	public String password;
+	public int start;
 
-	MarkEmailRequest(String username, String password){
-		this.username = username;
-		this.password = password;
-		this.start = 0;
-	}
+	MarkEmailRequest(){}
 
 	MarkEmailRequest(String username, String password, int start) {
 		this.username = username;
 		this.password = password;
 		this.start = start;
 	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public int getStart() {
-		return start;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 }

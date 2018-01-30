@@ -6,6 +6,7 @@ import com.amazon.speech.speechlet.*;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
+import com.amazon.speech.ui.StandardCard;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.pennstate.api.model.ReceiveEmailsResult;
 import edu.pennstate.api.model.ReceivedEmail;
@@ -61,8 +62,13 @@ public class ReceiveEmailDialogManager
         PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
         SimpleCard card = new SimpleCard();
 
-        String message = "Your email from " + email.getFrom() + " sent " + email.getDate() + " with a subject of " +
-                email.getSubject() + ". The email reads: " + email.getBody() + " Would you like to repeat that or hear your next email.";
+        String from = email.getFrom().replaceAll("<.*>", "");
+
+        String bodyToRead = email.getBody().replaceAll("www\\..* ", "");
+        bodyToRead = bodyToRead.replaceAll("http.* ", "");
+        
+        String message = "Your email from " + from + " sent " + email.getDate() + " with a subject of " +
+                email.getSubject() + ". The email reads: " + bodyToRead + " Would you like to repeat that or hear your next email.";
 
         card.setContent(message);
         outputSpeech.setText(message);
@@ -83,8 +89,9 @@ public class ReceiveEmailDialogManager
         SpeechletResponse response = new SpeechletResponse();
         PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
         SimpleCard card = new SimpleCard();
+        String from = email.getFrom().replaceAll("<.*>", "");
 
-        String message = "Your next email is from " + email.getFrom() + " sent " + email.getDate() + "." +
+        String message = "Your next email is from " + from + " sent " + email.getDate() + "." +
                 "Would you like to hear it or skip it?";
 
         card.setContent(message);
@@ -107,8 +114,10 @@ public class ReceiveEmailDialogManager
         PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
         SimpleCard card = new SimpleCard();
 
+        String from = email.getFrom().replaceAll("<.*>", "");
+
         String message = "You have " + email.getUnread() + " unread messages. Your first message is from " +
-                email.getFrom() + " sent " + email.getDate() + ". Would you like to hear it or skip it?";
+                from + " sent " + email.getDate() + ". Would you like to hear it or skip it?";
 
         card.setContent(message);
         outputSpeech.setText(message);
