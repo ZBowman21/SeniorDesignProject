@@ -1,19 +1,15 @@
 package edu.psu.unifiedapi.capstonecursprintid;
 
-import com.amazonaws.services.lambda.invoke.LambdaFunction;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import edu.psu.unifiedapi.capstoneutils.CapstoneCurSprintIdArgs;
 import edu.psu.unifiedapi.capstoneutils.CapstoneWrapperArgs;
+import edu.psu.unifiedapi.capstoneutils.ICapstoneWrapper;
 
 public class CapstoneCurSprintId implements RequestHandler<CapstoneCurSprintIdArgs,String> {
     private final String path = "/AgileTask/EGetCurrentSprint";
     private final String param = "csid=4";
-
-    private interface Capstone {
-        @LambdaFunction(functionName = "capstoneWrapper")
-        String send(CapstoneWrapperArgs cwa);
-    }
 
     @Override
     public String handleRequest(CapstoneCurSprintIdArgs input, Context context) {
@@ -22,11 +18,10 @@ public class CapstoneCurSprintId implements RequestHandler<CapstoneCurSprintIdAr
         cwa.params = param;
         cwa.username = input.username;
 
-        Capstone cap = LambdaInvokerFactory.builder().build(Capstone.class);
+        ICapstoneWrapper cap = LambdaInvokerFactory.builder().build(ICapstoneWrapper.class);
 
-        String response = cap.send(cwa);
-        // Parse response here
+        ResponseSprintId response = (ResponseSprintId)cap.send(cwa);
 
-        return response;
+        return response.sprint_id;
     }
 }

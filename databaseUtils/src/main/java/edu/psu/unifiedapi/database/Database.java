@@ -138,7 +138,7 @@ public class Database {
 		return token;
 	}
 
-	public static boolean update(String table, Object... values) throws SQLException {
+	private static boolean update(String table, Object... values) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("UPDATE INTO ? VALUES (");

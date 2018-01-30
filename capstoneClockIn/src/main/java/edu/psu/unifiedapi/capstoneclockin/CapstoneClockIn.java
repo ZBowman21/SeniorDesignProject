@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstoneClockOut;
+package edu.psu.unifiedapi.capstoneclockin;
 
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -6,19 +6,19 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.capstoneutils.CapstoneWrapperArgs;
 import edu.psu.unifiedapi.capstoneutils.ICapstoneWrapper;
 
-public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boolean>{
-    private final String path = "/AgileTask/EStudentTaskIn";
+public class CapstoneClockIn implements RequestHandler<CapstoneClockInArgs,Boolean>{
+    private final String path = "/AgileTask/EStudentTaskOut";
 
     @Override
-    public Boolean handleRequest(CapstoneClockOutArgs input, Context context) {
+    public Boolean handleRequest(CapstoneClockInArgs input, Context context) {
 
         CapstoneWrapperArgs cwa = new CapstoneWrapperArgs();
         cwa.username = input.username;
         cwa.url = path;
         cwa.params = "taskid=" + input.taskId + "&teamid=" + input.teamId;
         ICapstoneWrapper cap = LambdaInvokerFactory.builder().build(ICapstoneWrapper.class);
-        ResponseTaskedOut response = (ResponseTaskedOut) cap.send(cwa);
+        ResponseTaskedIn response = (ResponseTaskedIn) cap.send(cwa);
 
-        return response.stopped;
+        return response.taskedIn;
     }
 }

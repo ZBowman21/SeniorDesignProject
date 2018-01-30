@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstonecursprintid;
+package edu.psu.unifiedapi.capstoneutils;
 
 public class CapstoneCurSprintIdArgs {
     public String username;

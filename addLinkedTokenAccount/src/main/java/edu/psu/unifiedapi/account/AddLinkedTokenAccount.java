@@ -16,7 +16,7 @@ public class AddLinkedTokenAccount implements RequestHandler<AddLinkedTokenAccou
 	@Override
 	public Boolean handleRequest(AddLinkedTokenAccountArgs args, Context context) {
 		try {
-			return Database.insertTokenCredentials(args.userId, args.passphrase, args.token);
+			return Database.insertTokenCredentials(args.userId, args.service, args.token);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
