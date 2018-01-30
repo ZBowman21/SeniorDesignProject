@@ -1,5 +1,7 @@
 package edu.psu.unifiedapi.capstone;
 
+import edu.psu.unifiedapi.capstoneutils.CapstoneWrapperArgs;
+
 public class WrapperTest {
     public static void main(String[] args) {
         CapstoneWrapperArgs cargs = new CapstoneWrapperArgs();
