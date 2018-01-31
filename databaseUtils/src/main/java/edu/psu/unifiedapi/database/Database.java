@@ -5,11 +5,7 @@ import edu.psu.unifiedapi.auth.Encryption;
 import edu.psu.unifiedapi.auth.Hashing;
 
 import java.security.GeneralSecurityException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Arrays;
 
 /**
@@ -31,9 +27,9 @@ public class Database {
 				//TODO log this
 			}
 
-			String url = "jdbc:postgresql://unifiedapi.ckrjtyihoqf3.us-east-1.rds.amazonaws.com:5432/unifiedapi";
-			String user = "master";
-			String pass = "SkyIsTheLimit!";
+			String url = System.getenv("DB_URL");
+			String user = System.getenv("DB_USER");
+			String pass = System.getenv("DB_PASS");
 
 			try {
 				connection = DriverManager.getConnection(url, user, pass);
@@ -136,28 +132,6 @@ public class Database {
 		}
 
 		return token;
-	}
-
-	public static void main(String[] args) throws Exception {
-		String id = "be51fbdb-691b-4caa-a002-d7124a33787c";
-
-		Connection conn = getConnection();
-
-		PreparedStatement statement = conn.prepareStatement("UPDATE plain_credentials SET password = ?, hash = ? WHERE id = ?");
-
-		String passphrase = "cheese";
-
-		String password = "";
-
-		statement.setBytes(1, Encryption.encrypt(password, passphrase));
-		statement.setBytes(2, Hashing.hash(password));
-		statement.setString(3, id);
-
-
-		statement.executeUpdate();
-
-
-
 	}
 
 }
