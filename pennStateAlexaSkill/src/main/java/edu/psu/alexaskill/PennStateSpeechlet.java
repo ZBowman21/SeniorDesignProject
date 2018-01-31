@@ -11,16 +11,19 @@ import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
 import edu.psu.alexaskill.receiveemail.ReceiveEmailDialogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class PennStateSpeechlet implements SpeechletV2 {
 
     private RequestHandler requestHandler;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
-
+        logger.info("Session Started");
     }
 
     @Override
