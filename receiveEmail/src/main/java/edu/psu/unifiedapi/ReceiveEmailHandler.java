@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+import java.util.TimeZone;
 
 /**
  * @author mthwate and Corey!
@@ -66,9 +67,12 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 					String from = messages[messages.length - input.start - 1].getFrom()[0].toString();
 
 					Date d = messages[messages.length - input.start - 1].getReceivedDate();
+
 					Calendar c = Calendar.getInstance();
-					c.setTime(d);
-					String date = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a").format(c.getTime());
+					c.setTimeInMillis(d.getTime() - 18000000);
+
+					SimpleDateFormat estDF = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a");
+					String date = estDF.format(c.getTime());
 
 					String subject =messages[messages.length - input.start - 1].getSubject();
 					String message = getMessage(messages[messages.length - input.start - 1]);
