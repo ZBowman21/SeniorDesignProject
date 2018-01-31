@@ -1,7 +1,7 @@
 package edu.psu.unifiedapi.account;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClient;
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.GetUserRequest;
 import com.amazonaws.services.cognitoidp.model.GetUserResult;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -12,14 +12,12 @@ import io.TokenAuthorizerContext;
 
 public class Authenticate implements RequestHandler<TokenAuthorizerContext, AuthPolicy> {
 
+	private static AWSCognitoIdentityProvider identityClient = AWSCognitoIdentityProviderClientBuilder.defaultClient();
+
 	@Override
 	public AuthPolicy handleRequest(TokenAuthorizerContext input, Context context) {
 
 		String token = input.getAuthorizationToken();
-
-
-
-		AWSCognitoIdentityProvider identityClient = AWSCognitoIdentityProviderClient.builder().build();
 
 		GetUserRequest req = new GetUserRequest();
 
