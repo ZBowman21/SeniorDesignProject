@@ -30,10 +30,10 @@ public class ReceiveEmailRequestSender extends RequestHandler {
                 SdkRequestConfig.builder()
                         .httpRequestTimeout(30000)
                         .totalExecutionTimeout(30000)
-                        .customHeader("Authorization", token)
                         .build()
         );
 
+        GenerateClient(token);
         ReceiveEmailsResult result = client.receiveEmails(request);
         return result;
     }
