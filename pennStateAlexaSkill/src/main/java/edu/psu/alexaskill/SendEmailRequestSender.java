@@ -23,17 +23,16 @@ public class SendEmailRequestSender extends RequestHandler {
 		request.setDestination(corrector.CorrectAddress(destination));
 		request.setSubject(corrector.CorrectSubject(subject));
 		request.setBody(corrector.CorrectBody(body));
-		request.setUsername("bra130");
 		request.setPassphrase(requestIntent.getSlot("passphrase").getValue()); //really passphrase
 
 		request.sdkRequestConfig(
 				SdkRequestConfig.builder()
 						.httpRequestTimeout(30000)
 						.totalExecutionTimeout(30000)
-						.customHeader("Authorization", token)
 						.build()
 		);
 
+		GenerateClient(token);
 		SendEmailResult response = client.sendEmail(request);
 		return response;
 

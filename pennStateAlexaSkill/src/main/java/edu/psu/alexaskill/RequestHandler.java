@@ -12,6 +12,9 @@ public abstract class RequestHandler
     protected PennStateUnified client;
 
     public RequestHandler()
+    { }
+
+    public void GenerateClient(String signature)
     {
         client = PennStateUnified.builder().connectionConfiguration(new ConnectionConfiguration()
                 .maxConnections(100)
@@ -19,7 +22,8 @@ public abstract class RequestHandler
                 .timeoutConfiguration(new TimeoutConfiguration()
                         .httpRequestTimeout(30000)
                         .totalExecutionTimeout(30000)
-                        .socketTimeout(30000)).build();
+                        .socketTimeout(30000))
+                .signer(R -> signature).build();
     }
 
     public abstract BaseResult sendRequest(Intent requestIntent, String token);
