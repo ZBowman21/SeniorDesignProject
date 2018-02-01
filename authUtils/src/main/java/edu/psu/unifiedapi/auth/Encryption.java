@@ -29,7 +29,7 @@ public class Encryption {
 
 	private static SecretKey getSecretKey(String password) throws GeneralSecurityException {
 		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-		KeySpec spec = new PBEKeySpec(password.toCharArray(), SALT, 65536, 256);
+		KeySpec spec = new PBEKeySpec(password.toCharArray(), SALT, 65536, 128);
 		SecretKey tmp = factory.generateSecret(spec);
 		return new SecretKeySpec(tmp.getEncoded(), "AES");
 	}

@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
 import edu.psu.unifiedapi.account.IGetLinkedPlainAccount;
+import edu.psu.unifiedapi.auth.Credentials;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
@@ -30,15 +31,17 @@ public class  EmailSending implements RequestHandler<EmailArgs, Boolean> {
 
         //Call authenticate with AuthArgs
         IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
-        eA.password = authService.getLinkedPlainAccount(aA).getPassword();
+		Credentials creds = authService.getLinkedPlainAccount(aA);
+        String username = creds.getUsername();
+        String password = creds.getPassword();
 
-        if(eA.password != null) {
+        if(username != null && password != null) {
             try {
                 Email testEmail = new SimpleEmail();
                 testEmail.setHostName("authsmtp.psu.edu");
-                testEmail.setAuthenticator(new DefaultAuthenticator(eA.username, eA.password));
+                testEmail.setAuthenticator(new DefaultAuthenticator(username, password));
                 testEmail.setSSLOnConnect(true);
-                testEmail.setFrom(eA.username + "@psu.edu");
+                testEmail.setFrom(username + "@psu.edu");
                 testEmail.addTo(eA.destination + "@psu.edu");
                 testEmail.setSubject(eA.subject);
                 testEmail.setMsg(eA.body);
@@ -54,14 +57,14 @@ public class  EmailSending implements RequestHandler<EmailArgs, Boolean> {
                 Session session = Session.getDefaultInstance(prop);
 
                 MimeMessage msg = new MimeMessage(session);
-                msg.setFrom(eA.username + "@psu.edu");
+                msg.setFrom(username + "@psu.edu");
                 msg.setRecipients(Message.RecipientType.TO, eA.destination + "@psu.edu");
                 msg.setSubject(eA.subject);
                 msg.setSentDate(new Date());
                 msg.setText(eA.body);
 
                 Store store = session.getStore("imap");
-                store.connect("email.psu.edu", eA.username, eA.password);
+                store.connect("email.psu.edu", username, password);
 
                 //check for "Sent" folder if doesn't exist, make it.
                 if(!store.getFolder("Sent").exists()) {

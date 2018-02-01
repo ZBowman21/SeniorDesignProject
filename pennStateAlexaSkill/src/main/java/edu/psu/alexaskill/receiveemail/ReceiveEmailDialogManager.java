@@ -3,20 +3,21 @@ package edu.psu.alexaskill.receiveemail;
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.*;
-import com.amazon.speech.ui.PlainTextOutputSpeech;
-import com.amazon.speech.ui.Reprompt;
-import com.amazon.speech.ui.SimpleCard;
-import com.amazon.speech.ui.StandardCard;
+import com.amazon.speech.ui.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.pennstate.api.model.ReceiveEmailsResult;
 import edu.pennstate.api.model.ReceivedEmail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReceiveEmailDialogManager
 {
     private ReceiveEmailRequestSender requestSender = new ReceiveEmailRequestSender();
+    private MarkEmailReadRequestSender markEmailRequestSender = new MarkEmailReadRequestSender();
     private ReceiveEmailState state;
     private Intent intent;
     private Session session;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ReceiveEmailDialogManager(SpeechletRequestEnvelope<IntentRequest> requestEnvelope)
     {
@@ -64,10 +65,11 @@ public class ReceiveEmailDialogManager
 
         String from = email.getFrom().replaceAll("<.*>", "");
 
-        String bodyToRead = email.getBody().replaceAll("www\\..* ", "");
-        bodyToRead = bodyToRead.replaceAll("http.* ", "");
-        
-        String message = "Your email from " + from + " sent " + email.getDate() + " with a subject of " +
+        String bodyToRead = email.getBody().replaceAll("www\\..*\\s", "");
+        bodyToRead = bodyToRead.replaceAll("http.*\\s", "");
+        bodyToRead = bodyToRead.replaceAll("https.*\\s", "");
+
+        String message = "Your email from " + from + " has a subject of " +
                 email.getSubject() + ". The email reads: " + bodyToRead + " Would you like to repeat that or hear your next email.";
 
         card.setContent(message);
@@ -77,6 +79,8 @@ public class ReceiveEmailDialogManager
         response.setOutputSpeech(outputSpeech);
 
         state.setState(ReceiveEmailState.State.ReadingEmail);
+
+        markEmailRequestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), state.getCurrentEmailIndex());
 
         Reprompt reprompt = new Reprompt();
         reprompt.setOutputSpeech(outputSpeech);
@@ -111,16 +115,23 @@ public class ReceiveEmailDialogManager
     private SpeechletResponse generateFirstUnreadSpeechlet(ReceivedEmail email)
     {
         SpeechletResponse response = new SpeechletResponse();
-        PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
+        SsmlOutputSpeech outputSpeech = new SsmlOutputSpeech();
+        //PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
+
         SimpleCard card = new SimpleCard();
 
         String from = email.getFrom().replaceAll("<.*>", "");
 
-        String message = "You have " + email.getUnread() + " unread messages. Your first message is from " +
+        String message = "You have " + email.getUnread().intValue() + " unread messages. Your first message is from " +
                 from + " sent " + email.getDate() + ". Would you like to hear it or skip it?";
 
+        String ssmlMessage = "<speak> <audio src=\"https://s3.amazonaws.com/psuunifiedwebsite/mail_time_new.mp3\" /> You have " + email.getUnread().intValue() + " unread messages. Your first message is from " +
+                from + " sent " + email.getDate() + ". Would you like to hear it or skip it? </speak>";
+
+        logger.info(ssmlMessage);
         card.setContent(message);
-        outputSpeech.setText(message);
+
+        outputSpeech.setSsml(ssmlMessage);
 
         response.setCard(card);
         response.setOutputSpeech(outputSpeech);
@@ -131,7 +142,8 @@ public class ReceiveEmailDialogManager
         Reprompt reprompt = new Reprompt();
         reprompt.setOutputSpeech(outputSpeech);
 
-        return SpeechletResponse.newAskResponse(outputSpeech, reprompt, card);    }
+        return SpeechletResponse.newAskResponse(outputSpeech, reprompt, card);
+    }
 
     public SpeechletResponse generateResponse()
     {
@@ -166,7 +178,7 @@ public class ReceiveEmailDialogManager
                 else if(intent.getName().equals("Skip") && state.getCurrentUnread() > 1)
                 {
                     state.setState(ReceiveEmailState.State.NextEmail);
-                    state.setCurrentEmailIndex(state.getCurrentEmailIndex() + 1);
+                    state.setCurrentEmailIndex(state.getCurrentEmailIndex());
                     getNewEmail = true;
                 }
                 else
@@ -186,7 +198,7 @@ public class ReceiveEmailDialogManager
                 else
                 {
                     state.setState(ReceiveEmailState.State.NextEmail);
-                    state.setCurrentEmailIndex(state.getCurrentEmailIndex() + 1);
+                    state.setCurrentEmailIndex(state.getCurrentEmailIndex());
                     getNewEmail = true;
                 }
                 break;
@@ -198,7 +210,7 @@ public class ReceiveEmailDialogManager
                 else if(intent.getName().equals("Skip") && state.getCurrentUnread() > 0)
                 {
                     state.setState(ReceiveEmailState.State.NextEmail);
-                    state.setCurrentEmailIndex(state.getCurrentEmailIndex() + 1);
+                    state.setCurrentEmailIndex(state.getCurrentEmailIndex());
                     getNewEmail = true;
                 }
                 else
@@ -236,6 +248,6 @@ public class ReceiveEmailDialogManager
         }
 
         session.setAttribute("state", state);
-        return  response;
+        return response;
     }
 }
