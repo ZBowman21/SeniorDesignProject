@@ -21,6 +21,6 @@ public class CapstoneClockIn implements RequestHandler<CapstoneClockInArgs,Boole
         ICapstoneWrapper cap = LambdaInvokerFactory.builder().build(ICapstoneWrapper.class);
         TaskedInResponse response = (TaskedInResponse) cap.send(cwa);
 
-        return response.ti.taskedIn;
+        return response.response.taskedIn;
     }
 }

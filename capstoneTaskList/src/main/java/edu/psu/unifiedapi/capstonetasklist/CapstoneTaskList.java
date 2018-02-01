@@ -23,11 +23,16 @@ public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, St
         cwa.username = input.unsername;
         cwa.url = path;
         cwa.params = param + "&teamid=" + input.teamId + "&sprintid=" + sprintId;
+        cwa.typeClass = ResponseTask.class;
+
         ICapstoneWrapper cap = LambdaInvokerFactory.builder().build(ICapstoneWrapper.class);
-        ResponseTask[] response = (ResponseTask[]) cap.send(cwa);
+        ResponseTask response = (ResponseTask) cap.send(cwa);
 
         // Handle the response (Work with Brandon here)
-
-        return new String[0];
+        String[] temp = new String[response.response.length];
+        for (int i = 0; i < response.response.length; i++) {
+            temp[i] = response.response[i].taskid + " : " + response.response[i].task_desp;
+        }
+        return temp;
     }
 }

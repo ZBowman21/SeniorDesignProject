@@ -17,11 +17,12 @@ public class CapstoneCurSprintId implements RequestHandler<CapstoneCurSprintIdAr
         cwa.url = path;
         cwa.params = param;
         cwa.username = input.username;
+        cwa.typeClass = ResponseSprint.class;
 
         ICapstoneWrapper cap = LambdaInvokerFactory.builder().build(ICapstoneWrapper.class);
 
-        ResponseSprintId response = (ResponseSprintId)cap.send(cwa);
+        ResponseSprint response = (ResponseSprint) cap.send(cwa);
 
-        return response.sprint_id;
+        return response.response.sprint_id;
     }
 }

@@ -1,5 +1,5 @@
 package edu.psu.unifiedapi.capstonecursprintid;
 
-public class ResponseSprintId {
+public class SprintId {
     public String sprint_id;
 }

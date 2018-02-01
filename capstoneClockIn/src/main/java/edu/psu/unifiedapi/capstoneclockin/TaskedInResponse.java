@@ -5,5 +5,5 @@ import edu.psu.unifiedapi.capstoneutils.CapstoneResponse;
 
 public class TaskedInResponse extends CapstoneResponse {
     @Key
-    public TaskedIn ti;
+    public TaskedIn response;
 }

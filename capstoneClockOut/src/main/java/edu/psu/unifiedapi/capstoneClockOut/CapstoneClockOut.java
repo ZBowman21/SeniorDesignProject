@@ -16,9 +16,10 @@ public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boo
         cwa.username = input.username;
         cwa.url = path;
         cwa.params = "taskid=" + input.taskId + "&teamid=" + input.teamId;
+        cwa.typeClass = ResponseTaskedOut.class;
         ICapstoneWrapper cap = LambdaInvokerFactory.builder().build(ICapstoneWrapper.class);
         ResponseTaskedOut response = (ResponseTaskedOut) cap.send(cwa);
 
-        return response.stopped;
+        return response.response.stopped;
     }
 }

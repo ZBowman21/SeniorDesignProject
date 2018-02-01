@@ -42,7 +42,7 @@ public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,Capst
         CapstoneResponse capRes = new CapstoneResponse();
         //capRes.response = ""; // to avoid null pointer exception
         try {
-            capRes = parser.parseAndClose(new StringReader(response), CapstoneResponse.class);
+            capRes = (CapstoneResponse)parser.parseAndClose(new StringReader(response), input.typeClass);
         } catch (IOException e) {
             context.getLogger().log(e.getMessage());
         }
