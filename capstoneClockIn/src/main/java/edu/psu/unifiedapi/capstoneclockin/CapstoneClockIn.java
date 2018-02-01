@@ -16,9 +16,11 @@ public class CapstoneClockIn implements RequestHandler<CapstoneClockInArgs,Boole
         cwa.username = input.username;
         cwa.url = path;
         cwa.params = "taskid=" + input.taskId + "&teamid=" + input.teamId;
-        ICapstoneWrapper cap = LambdaInvokerFactory.builder().build(ICapstoneWrapper.class);
-        ResponseTaskedIn response = (ResponseTaskedIn) cap.send(cwa);
+        cwa.typeClass = TaskedInResponse.class;
 
-        return response.taskedIn;
+        ICapstoneWrapper cap = LambdaInvokerFactory.builder().build(ICapstoneWrapper.class);
+        TaskedInResponse response = (TaskedInResponse) cap.send(cwa);
+
+        return response.ti.taskedIn;
     }
 }

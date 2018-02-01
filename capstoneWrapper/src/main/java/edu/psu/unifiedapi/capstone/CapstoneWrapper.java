@@ -7,7 +7,7 @@ import edu.psu.unifiedapi.account.GetLinkedTokenAccountArgs;
 import edu.psu.unifiedapi.account.IGetLinkedTokenAccount;
 import edu.psu.unifiedapi.account.IUpdateLinkedTokenAccount;
 import edu.psu.unifiedapi.account.UpdateLinkedTokenAccountArgs;
-import edu.psu.unifiedapi.capstoneutils.CapResponse;
+import edu.psu.unifiedapi.capstoneutils.CapstoneResponse;
 import edu.psu.unifiedapi.restclientutil.RestClient;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -17,11 +17,11 @@ import java.io.IOException;
 import java.io.StringReader;
 
 
-public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,Object>{
+public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,CapstoneResponse>{
 
     private final String baseUrl = "http://capstone.bd.psu.edu:8090";
     @Override
-    public CapResponse handleRequest(CapstoneWrapperArgs input, Context context) {
+    public CapstoneResponse handleRequest(CapstoneWrapperArgs input, Context context) {
 
         GetLinkedTokenAccountArgs ta = new GetLinkedTokenAccountArgs();
         ta.username = input.username;
@@ -57,6 +57,6 @@ public class CapstoneWrapper implements RequestHandler<CapstoneWrapperArgs,Objec
         IUpdateLinkedTokenAccount updateToken = LambdaInvokerFactory.builder().build(IUpdateLinkedTokenAccount.class);
         updateToken.updateLinkedTokenAccount(ua);
 
-        return capRes.response;
+        return capRes;
     }
 }

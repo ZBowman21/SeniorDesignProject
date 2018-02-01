@@ -1,5 +1,5 @@
 package edu.psu.unifiedapi.capstoneclockin;
 
-public class ResponseTaskedIn {
+public class TaskedIn {
     public boolean taskedIn;
 }

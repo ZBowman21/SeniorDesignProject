@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstone;
+package edu.psu.unifiedapi.capstoneutils;
 
 import com.google.api.client.util.Key;
 
