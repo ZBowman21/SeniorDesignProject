@@ -20,23 +20,20 @@ public class MarkEmailReadRequestSender extends RequestHandler
 
     public BaseResult sendRequest(String passphrase, String token, int emailIndex)
     {
-        String username = "bra130";
         String emailIndexString = String.valueOf(emailIndex);
 
         MarkEmailReadRequest request = new MarkEmailReadRequest();
         request.setPassword(passphrase);
-        request.setUsername(username);
         request.setStart(emailIndexString);
 
         request.sdkRequestConfig(
                 SdkRequestConfig.builder()
                         .httpRequestTimeout(30000)
                         .totalExecutionTimeout(30000)
-                        .customHeader("Authentication", token)
                         .build()
         );
 
-        ///GenerateClient(token);
+        GenerateClient(token);
         MarkEmailReadResult result = client.markEmailRead(request);
         return result;
     }

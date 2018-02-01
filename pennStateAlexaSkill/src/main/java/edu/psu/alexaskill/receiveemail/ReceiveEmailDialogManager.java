@@ -67,7 +67,8 @@ public class ReceiveEmailDialogManager
 
         String bodyToRead = email.getBody().replaceAll("www\\..* ", "");
         bodyToRead = bodyToRead.replaceAll("http.* ", "");
-        
+        bodyToRead = bodyToRead.replaceAll("https.* ", "");
+
         String message = "Your email from " + from + " sent " + email.getDate() + " with a subject of " +
                 email.getSubject() + ". The email reads: " + bodyToRead + " Would you like to repeat that or hear your next email.";
 
