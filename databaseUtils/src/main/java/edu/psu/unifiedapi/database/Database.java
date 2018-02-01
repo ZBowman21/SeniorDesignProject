@@ -86,7 +86,7 @@ public class Database {
 
 		Credentials creds = null;
 
-		String queryString = "select id, password, hash from plain_credentials where id = ? AND service = ?";
+		String queryString = "select username, password, hash from plain_credentials where id = ? AND service = ?";
 		PreparedStatement statement = getConnection().prepareStatement(queryString);
 		statement.setString(1, userId);
 		statement.setString(2, service);
