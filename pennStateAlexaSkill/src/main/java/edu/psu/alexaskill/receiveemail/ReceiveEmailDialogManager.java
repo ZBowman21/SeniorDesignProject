@@ -65,11 +65,11 @@ public class ReceiveEmailDialogManager
 
         String from = email.getFrom().replaceAll("<.*>", "");
 
-        String bodyToRead = email.getBody().replaceAll("www\\..* ", "");
-        bodyToRead = bodyToRead.replaceAll("http.* ", "");
-        bodyToRead = bodyToRead.replaceAll("https.* ", "");
+        String bodyToRead = email.getBody().replaceAll("www\\..*\\s", "");
+        bodyToRead = bodyToRead.replaceAll("http.*\\s", "");
+        bodyToRead = bodyToRead.replaceAll("https.*\\s", "");
 
-        String message = "Your email from " + from + " sent " + email.getDate() + " with a subject of " +
+        String message = "Your email from " + from + " has a subject of " +
                 email.getSubject() + ". The email reads: " + bodyToRead + " Would you like to repeat that or hear your next email.";
 
         card.setContent(message);
@@ -80,7 +80,7 @@ public class ReceiveEmailDialogManager
 
         state.setState(ReceiveEmailState.State.ReadingEmail);
 
-        //markEmailRequestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), state.getCurrentEmailIndex());
+        markEmailRequestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), state.getCurrentEmailIndex());
 
         Reprompt reprompt = new Reprompt();
         reprompt.setOutputSpeech(outputSpeech);
@@ -142,7 +142,8 @@ public class ReceiveEmailDialogManager
         Reprompt reprompt = new Reprompt();
         reprompt.setOutputSpeech(outputSpeech);
 
-        return SpeechletResponse.newAskResponse(outputSpeech, reprompt, card);    }
+        return SpeechletResponse.newAskResponse(outputSpeech, reprompt, card);
+    }
 
     public SpeechletResponse generateResponse()
     {
@@ -177,7 +178,7 @@ public class ReceiveEmailDialogManager
                 else if(intent.getName().equals("Skip") && state.getCurrentUnread() > 1)
                 {
                     state.setState(ReceiveEmailState.State.NextEmail);
-                    state.setCurrentEmailIndex(state.getCurrentEmailIndex() + 1);
+                    state.setCurrentEmailIndex(state.getCurrentEmailIndex());
                     getNewEmail = true;
                 }
                 else
@@ -197,7 +198,7 @@ public class ReceiveEmailDialogManager
                 else
                 {
                     state.setState(ReceiveEmailState.State.NextEmail);
-                    state.setCurrentEmailIndex(state.getCurrentEmailIndex() + 1);
+                    state.setCurrentEmailIndex(state.getCurrentEmailIndex());
                     getNewEmail = true;
                 }
                 break;
@@ -209,7 +210,7 @@ public class ReceiveEmailDialogManager
                 else if(intent.getName().equals("Skip") && state.getCurrentUnread() > 0)
                 {
                     state.setState(ReceiveEmailState.State.NextEmail);
-                    state.setCurrentEmailIndex(state.getCurrentEmailIndex() + 1);
+                    state.setCurrentEmailIndex(state.getCurrentEmailIndex());
                     getNewEmail = true;
                 }
                 else
@@ -247,6 +248,6 @@ public class ReceiveEmailDialogManager
         }
 
         session.setAttribute("state", state);
-        return  response;
+        return response;
     }
 }
