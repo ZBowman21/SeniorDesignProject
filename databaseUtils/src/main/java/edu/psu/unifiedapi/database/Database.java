@@ -113,7 +113,7 @@ public class Database {
 
 		String token = null;
 
-		String queryString = "select token from token_credentials where username = ? AND service = ?";
+		String queryString = "select token from token_credentials where id = ? AND service = ?";
 		PreparedStatement statement = getConnection().prepareStatement(queryString);
 		statement.setString(1, userId);
 		statement.setString(2, service);
