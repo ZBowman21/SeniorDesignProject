@@ -11,16 +11,19 @@ import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
 import edu.psu.alexaskill.receiveemail.ReceiveEmailDialogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class PennStateSpeechlet implements SpeechletV2 {
 
     private RequestHandler requestHandler;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
-
+        logger.info("Session Started");
     }
 
     @Override
@@ -36,7 +39,7 @@ public class PennStateSpeechlet implements SpeechletV2 {
         Intent intent = request.getIntent();
         String intentName = (intent != null) ? intent.getName() : null;
         DialogState dialogState = request.getDialogState();
-        //Check session attribute of state, if in receive email, go to or call seperate method  or look through seperate switch. If no state or default state, continue because we are in the initial state and could be sending emails, getting grades, etc.
+        //Check session attribute of state, if in receive email, go to or call separate method  or look through separate switch. If no state or default state, continue because we are in the initial state and could be sending emails, getting grades, etc.
         switch(intentName)
         {
             case "SendMail":
@@ -63,6 +66,32 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 {
                     ReceiveEmailDialogManager receiveEmailDialogManager = new ReceiveEmailDialogManager(requestEnvelope);
                     return receiveEmailDialogManager.generateResponse();
+                }
+                else
+                {
+                    return GenerateMultiDialogInProgressResponse();
+                }
+            case "GetHours":
+                if(dialogState.equals(DialogState.STARTED))
+                {
+                    return GenerateMultiDialogStartedResponse(intentName, intent);
+                }
+                else if(dialogState.equals(DialogState.COMPLETED))
+                {
+
+                }
+                else
+                {
+                    return GenerateMultiDialogInProgressResponse();
+                }
+            case "GetClipperLocation":
+                if(dialogState.equals(DialogState.STARTED))
+                {
+                    return GenerateMultiDialogStartedResponse(intentName, intent);
+                }
+                else if(dialogState.equals(DialogState.COMPLETED))
+                {
+
                 }
                 else
                 {

@@ -12,4 +12,3 @@ pipelines:
           - gradle
         script:
           - bash ./gradlew test
-          - bash ./gradlew updateLambdaFunction

@@ -5,6 +5,8 @@ import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
+import edu.psu.unifiedapi.account.IGetLinkedPlainAccount;
+import edu.psu.unifiedapi.auth.Credentials;
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
 import java.util.Properties;
@@ -30,8 +32,10 @@ public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolea
 		aA.username = input.username;
 
 		//Call authenticate with AuthArgs
-		Auth authService = LambdaInvokerFactory.builder().build(Auth.class);
-		input.password = authService.auth(aA);
+		IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
+		Credentials creds = authService.getLinkedPlainAccount(aA);
+		input.username = creds.getUsername();
+		input.password = creds.getPassword();
 
 		if(input.password != null) {
 			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");

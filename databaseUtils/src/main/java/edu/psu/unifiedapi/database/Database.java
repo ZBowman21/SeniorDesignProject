@@ -5,11 +5,7 @@ import edu.psu.unifiedapi.auth.Encryption;
 import edu.psu.unifiedapi.auth.Hashing;
 
 import java.security.GeneralSecurityException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Arrays;
 
 /**
@@ -45,37 +41,29 @@ public class Database {
 		return connection;
 	}
 
-	private static boolean insert(String table, Object ... values) throws SQLException {
-		StringBuilder sb = new StringBuilder();
+	public static boolean insertPlainCredentials(String userId, String passphrase, String service, String username, String password) throws SQLException, GeneralSecurityException {
+		byte[] encryptedPassword = Encryption.encrypt(password, passphrase);
+		byte[] hashedPassword = Hashing.hash(password);
 
-		sb.append("INSERT INTO ? VALUES (");
-		for (int i = 0; i < values.length; i++) {
-			if (i > 0) {
-				sb.append(", ");
-			}
-			sb.append("?");
-		}
-		sb.append(")");
+		PreparedStatement statement = getConnection().prepareStatement("INSERT INTO plain_credentials VALUES (?, ?, ?, ?, ?)");
 
-		PreparedStatement statement = getConnection().prepareStatement(sb.toString());
-
-		statement.setString(1, table);
-
-		for (int i = 0; i < values.length; i++) {
-			statement.setObject(i+2, values[i]);
-		}
+		statement.setString(1, userId);
+		statement.setString(2, service);
+		statement.setString(3, username);
+		statement.setBytes(4, encryptedPassword);
+		statement.setBytes(5, hashedPassword);
 
 		return statement.executeUpdate() > 0;
 	}
 
-	public static boolean insertPlainCredentials(String userId, String passphrase, String service, String username, String password) throws SQLException, GeneralSecurityException {
-		byte[] encryptedPassword = Encryption.encrypt(password, passphrase);
-		byte[] hashedPassword = Hashing.hash(password);
-		return insert("plain_credentials", userId, service, username, encryptedPassword, hashedPassword);
-	}
-
 	public static boolean insertTokenCredentials(String userId, String service, String token) throws SQLException {
-		return insert("token_credentials", userId, service, token);
+		PreparedStatement statement = getConnection().prepareStatement("INSERT INTO token_credentials VALUES (?, ?, ?)");
+
+		statement.setString(1, userId);
+		statement.setString(2, service);
+		statement.setString(3, token);
+
+		return statement.executeUpdate() > 0;
 	}
 
 	public static boolean deletePlainCredentials(String userId, String service) throws SQLException {
@@ -98,7 +86,7 @@ public class Database {
 
 		Credentials creds = null;
 
-		String queryString = "select username, password, hash from plain_credentials where username = ? AND service = ?";
+		String queryString = "select username, password, hash from plain_credentials where id = ? AND service = ?";
 		PreparedStatement statement = getConnection().prepareStatement(queryString);
 		statement.setString(1, userId);
 		statement.setString(2, service);
@@ -125,7 +113,7 @@ public class Database {
 
 		String token = null;
 
-		String queryString = "select token from token_credentials where username = ? AND service = ?";
+		String queryString = "select token from token_credentials where id = ? AND service = ?";
 		PreparedStatement statement = getConnection().prepareStatement(queryString);
 		statement.setString(1, userId);
 		statement.setString(2, service);

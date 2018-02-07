@@ -1,4 +1,4 @@
 dependencies {
     compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
-    compile 'com.amazonaws:aws-java-sdk-cognitoidp:1.11.267'
+    compile 'com.amazonaws:aws-java-sdk-cognitoidp:1.11.271'
 }
