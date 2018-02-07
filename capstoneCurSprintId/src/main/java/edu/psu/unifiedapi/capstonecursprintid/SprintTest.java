@@ -2,7 +2,7 @@ package edu.psu.unifiedapi.capstonecursprintid;
 
 import edu.psu.unifiedapi.capstoneutils.CapstoneCurSprintIdArgs;
 
-public class sprintTest {
+public class SprintTest {
 
     public static void main(String[] args) {
         CapstoneCurSprintIdArgs arg = new CapstoneCurSprintIdArgs();

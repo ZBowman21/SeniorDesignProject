@@ -1,17 +1,12 @@
 package edu.psu.unifiedapi.capstone;
 
-import edu.psu.unifiedapi.capstoneutils.CapstoneWrapperArgs;
 
 public class WrapperTest {
-    public static void main(String[] args) {
-        CapstoneWrapperArgs cargs = new CapstoneWrapperArgs();
-        cargs.username = "cuz126";
-        cargs.url = "/AgileTask/EGetCurrentSprint";
-        cargs.params = "csid=4";
+    public static void main(String[] args) throws CapstoneException {
+//
+//        CapstoneWrapper cap = new CapstoneWrapper("cuz126", "/AgileTask/EGetCurrentSprint", "csid=4");
+//        Object response = cap.CapCall(ResponseTest.class, null);
 
-        CapstoneWrapper cap = new CapstoneWrapper();
-        Object response = cap.handleRequest(cargs, null);
-
-        System.out.println("Response:" + response);
+        //System.out.println("Response:" + response);
     }
 }
