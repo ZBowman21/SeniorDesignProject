@@ -5,6 +5,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.account.GetLinkedPlainAccountArgs;
 import edu.psu.unifiedapi.account.IGetLinkedPlainAccount;
+import edu.psu.unifiedapi.auth.Credentials;
+
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -40,7 +42,9 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 		//Call authenticate with AuthArgs
 		IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
-		input.password = authService.getLinkedPlainAccount(aA).getPassword();
+		Credentials creds = authService.getLinkedPlainAccount(aA);
+		input.username = creds.getUsername();
+		input.password = creds.getPassword();
 
 		if(input.password != null) {
 			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
