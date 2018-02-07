@@ -178,7 +178,7 @@ public class ReceiveEmailDialogManager
                 else if(intent.getName().equals("Skip") && state.getCurrentUnread() > 1)
                 {
                     state.setState(ReceiveEmailState.State.NextEmail);
-                    state.setCurrentEmailIndex(state.getCurrentEmailIndex());
+                    state.setCurrentEmailIndex(state.getCurrentEmailIndex() + 1);
                     getNewEmail = true;
                 }
                 else
@@ -210,7 +210,7 @@ public class ReceiveEmailDialogManager
                 else if(intent.getName().equals("Skip") && state.getCurrentUnread() > 0)
                 {
                     state.setState(ReceiveEmailState.State.NextEmail);
-                    state.setCurrentEmailIndex(state.getCurrentEmailIndex());
+                    state.setCurrentEmailIndex(state.getCurrentEmailIndex() + 1);
                     getNewEmail = true;
                 }
                 else
