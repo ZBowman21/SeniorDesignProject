@@ -26,6 +26,16 @@ public abstract class RequestHandler
                 .signer(R -> signature).build();
     }
 
+    public void GenerateClient()
+    {
+        client = PennStateUnified.builder().connectionConfiguration(new ConnectionConfiguration()
+                .maxConnections(100)
+                .connectionMaxIdleMillis(30000))
+                .timeoutConfiguration(new TimeoutConfiguration()
+                        .httpRequestTimeout(30000)
+                        .totalExecutionTimeout(30000)
+                        .socketTimeout(30000)).build();
+    }
     public abstract BaseResult sendRequest(Intent requestIntent, String token);
     public abstract SpeechletResponse parseResponse(BaseResult response);
 }

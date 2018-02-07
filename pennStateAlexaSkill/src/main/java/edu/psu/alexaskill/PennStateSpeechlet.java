@@ -91,7 +91,9 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 }
                 else if(dialogState.equals(DialogState.COMPLETED))
                 {
-
+                    requestHandler = new GetClipperLocationRequestSender();
+                    BaseResult result = requestHandler.sendRequest(intent, requestEnvelope.getSession().getUser().getAccessToken());
+                    return requestHandler.parseResponse(result);
                 }
                 else
                 {
