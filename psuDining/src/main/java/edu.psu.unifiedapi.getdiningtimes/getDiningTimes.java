@@ -38,8 +38,8 @@ public class getDiningTimes {
                 }
                 lactaid += fairLife.get(j).text() + " ";
             }
-            //lactaid = lactaid.replaceAll(" - ", " through ");
-            //lactaid = lactaid.replaceAll("\\.","");
+            lactaid = lactaid.replaceAll(" - ", " to ");
+            lactaid = lactaid.replaceAll("\\.","");
             //lactaid = lactaid.replaceAll(": ", " ");
             //lactaid = lactaid.replaceAll("\\s*", "");
             milk.add(lactaid);
