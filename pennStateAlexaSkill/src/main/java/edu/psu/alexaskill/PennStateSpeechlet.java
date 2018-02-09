@@ -10,10 +10,13 @@ import com.amazon.speech.speechlet.dialog.directives.DialogIntent;
 import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
-import edu.psu.alexaskill.receiveemail.ReceiveEmailDialogManager;
+import edu.psu.alexaskill.request_handlers.receive_email.ReceiveEmailDialogManager;
+import edu.psu.alexaskill.request_handlers.dining.GetClipperLocationRequestSender;
+import edu.psu.alexaskill.request_handlers.dining.GetHoursRequestSender;
+import edu.psu.alexaskill.request_handlers.RequestHandler;
+import edu.psu.alexaskill.request_handlers.send_email.SendEmailRequestSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.*;
 
 public class PennStateSpeechlet implements SpeechletV2 {
@@ -28,18 +31,19 @@ public class PennStateSpeechlet implements SpeechletV2 {
 
     @Override
     public SpeechletResponse onLaunch(SpeechletRequestEnvelope<LaunchRequest> requestEnvelope) {
-
         return getDefaultResponse();
     }
 
     @Override
     public SpeechletResponse onIntent(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
 
+        logger.info("onSessionStartedValue: " + requestEnvelope.getSession().getAttribute("test"));
         IntentRequest request = requestEnvelope.getRequest();
         Intent intent = request.getIntent();
         String intentName = (intent != null) ? intent.getName() : null;
         DialogState dialogState = request.getDialogState();
         //Check session attribute of state, if in receive email, go to or call separate method  or look through separate switch. If no state or default state, continue because we are in the initial state and could be sending emails, getting grades, etc.
+
         switch(intentName)
         {
             case "SendMail":

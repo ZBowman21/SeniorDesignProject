@@ -1,4 +1,4 @@
-package edu.psu.alexaskill.receiveemail;
+package edu.psu.alexaskill.request_handlers.receive_email;
 
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.slu.Intent;

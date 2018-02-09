@@ -1,4 +1,4 @@
-package edu.psu.alexaskill;
+package edu.psu.alexaskill.request_handlers.send_email;
 
 import org.apache.commons.lang3.text.WordUtils;
 

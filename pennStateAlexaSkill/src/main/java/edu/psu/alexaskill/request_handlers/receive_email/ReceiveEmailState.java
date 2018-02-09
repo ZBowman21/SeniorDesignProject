@@ -1,4 +1,4 @@
-package edu.psu.alexaskill.receiveemail;
+package edu.psu.alexaskill.request_handlers.receive_email;
 
 import edu.pennstate.api.model.ReceivedEmail;
 
