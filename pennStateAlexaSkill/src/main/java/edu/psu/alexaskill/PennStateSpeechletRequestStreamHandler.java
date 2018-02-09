@@ -1,4 +1,4 @@
-package edu.psu.alexaskill.request_handlers; /**
+package edu.psu.alexaskill; /**
  * Created by helios on 9/22/16.
  */
 
