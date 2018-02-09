@@ -1,4 +1,4 @@
-package edu.psu.alexaskill;
+package edu.psu.alexaskill.request_handlers;
 
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.SpeechletResponse;

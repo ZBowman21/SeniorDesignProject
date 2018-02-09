@@ -22,16 +22,11 @@ public class GetHoursRequestSender extends RequestHandler
         String day = requestIntent.getSlot("time").getValue();
         Calendar c = Calendar.getInstance();
 
-        if(day == null)
-        {
-            day = "today";
-        }
-
         if(day.equalsIgnoreCase("tomorrow"))
         {
             day = strDays[c.get(Calendar.DAY_OF_WEEK)];
         }
-        if(day.equalsIgnoreCase("now") || day.equalsIgnoreCase("today"))
+        if(day == null || day.equalsIgnoreCase("now") || day.equalsIgnoreCase("today"))
         {
             day = strDays[c.get(Calendar.DAY_OF_WEEK) - 1];
         }

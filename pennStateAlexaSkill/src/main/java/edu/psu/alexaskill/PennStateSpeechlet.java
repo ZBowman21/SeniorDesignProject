@@ -10,7 +10,11 @@ import com.amazon.speech.speechlet.dialog.directives.DialogIntent;
 import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
-import edu.psu.alexaskill.receiveemail.ReceiveEmailDialogManager;
+import edu.psu.alexaskill.request_handlers.receive_email.ReceiveEmailDialogManager;
+import edu.psu.alexaskill.request_handlers.dining.GetClipperLocationRequestSender;
+import edu.psu.alexaskill.request_handlers.dining.GetHoursRequestSender;
+import edu.psu.alexaskill.request_handlers.RequestHandler;
+import edu.psu.alexaskill.request_handlers.send_email.SendEmailRequestSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package edu.psu.alexaskill;
+package edu.psu.alexaskill.request_handlers.send_email;
 
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.SpeechletResponse;
@@ -7,6 +7,7 @@ import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.SdkRequestConfig;
 import edu.pennstate.api.model.SendEmailRequest;
 import edu.pennstate.api.model.SendEmailResult;
+import edu.psu.alexaskill.request_handlers.RequestHandler;
 
 public class SendEmailRequestSender extends RequestHandler {
 
