@@ -20,10 +20,10 @@ public class GetLinkedPlainAccount implements RequestHandler<GetLinkedPlainAccou
         Credentials creds = null;
 
         try {
-            context.getLogger().log("Getting plain credentials for user: " + aA.username + " and service: " + aA.service);
-            creds = Database.getPlainCredentials(aA.username, aA.passphrase, aA.service);
+            context.getLogger().log("Getting plain credentials for user: " + aA.userId + " and service: " + aA.service);
+            creds = Database.getPlainCredentials(aA.userId, aA.passphrase, aA.service);
             if (creds == null) {
-                context.getLogger().log("User '" + aA.username + "' not found in the database");
+                context.getLogger().log("User '" + aA.userId + "' not found in the database");
             }
         } catch (SQLException e) {
             context.getLogger().log("Error accessing database: " + e.getMessage());
