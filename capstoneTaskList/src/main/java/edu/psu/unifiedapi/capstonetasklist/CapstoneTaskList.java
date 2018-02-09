@@ -3,13 +3,14 @@ package edu.psu.unifiedapi.capstonetasklist;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstoneutils.CapstoneCurSprintIdArgs;
 import edu.psu.unifiedapi.capstoneutils.ICapstoneCurSprintId;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 
 public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, String[]> {
     private final String path = "/AgileTask/EGetTaskList";
-    private final String param = "?csid=4";
+    private final String param = "csid=4";
 
     @Override
     public String[] handleRequest(CapstoneTaskListArgs input, Context context) {
@@ -21,7 +22,12 @@ public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, St
         String params = param + "&teamid=" + input.teamId + "&sprintid=" + sprintId;
 
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
-        ResponseTask response = (ResponseTask) cap.CapCall(ResponseTask.class, context);
+        ResponseTask response;
+        try {
+            response = (ResponseTask) cap.CapCall(ResponseTask.class, context);
+        } catch (CapstoneException e) {
+            throw new RuntimeException(e.getMessage());
+        }
 
         // Handle the response (Work with Brandon here)
         String[] temp = new String[response.response.length];

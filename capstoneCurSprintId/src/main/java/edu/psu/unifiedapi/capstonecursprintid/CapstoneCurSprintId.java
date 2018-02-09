@@ -14,7 +14,7 @@ public class CapstoneCurSprintId implements RequestHandler<CapstoneCurSprintIdAr
 
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, param);
 
-        ResponseSprint response = null;
+        ResponseSprint response;
         try {
             response = (ResponseSprint) cap.CapCall(ResponseSprint.class, context);
             context.getLogger().log(response.response.sprint_id);
@@ -22,8 +22,7 @@ public class CapstoneCurSprintId implements RequestHandler<CapstoneCurSprintIdAr
             return response.response.sprint_id;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
-        return null;
     }
 }
