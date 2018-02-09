@@ -21,6 +21,10 @@ public class CognitoUtils {
 		return passphrase.length() == 128;
 	}
 
+	public static boolean checkPassphrase(String userId, String passphrase) {
+		return getPassphrase(userId).equals(passphrase);
+	}
+
 	public static String getPassphrase(String userId) {
 
 		AdminGetUserRequest getReq = new AdminGetUserRequest();
