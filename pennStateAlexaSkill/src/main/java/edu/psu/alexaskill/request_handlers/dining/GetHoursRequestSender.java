@@ -1,4 +1,4 @@
-package edu.psu.alexaskill;
+package edu.psu.alexaskill.request_handlers.dining;
 
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.SpeechletResponse;
@@ -8,6 +8,7 @@ import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.SdkRequestConfig;
 import edu.pennstate.api.model.GetHoursRequest;
 import edu.pennstate.api.model.GetHoursResult;
+import edu.psu.alexaskill.request_handlers.RequestHandler;
 
 import java.util.Calendar;
 
