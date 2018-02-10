@@ -1,26 +1,28 @@
-package edu.psu.alexaskill.receiveemail;
+package edu.psu.alexaskill.request_handlers.receive_email;
 
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.SdkRequestConfig;
-import edu.pennstate.api.model.ReceiveEmailsRequest;
-import edu.pennstate.api.model.ReceiveEmailsResult;
-import edu.psu.alexaskill.RequestHandler;
+import edu.pennstate.api.model.MarkEmailReadRequest;
+import edu.pennstate.api.model.MarkEmailReadResult;
+import edu.psu.alexaskill.request_handlers.RequestHandler;
 
-public class ReceiveEmailRequestSender extends RequestHandler {
+public class MarkEmailReadRequestSender extends RequestHandler
+{
+    @Override
+    public BaseResult sendRequest(Intent requestIntent, String token) {
+        throw new UnsupportedOperationException();    }
 
     @Override
-    public BaseResult sendRequest(Intent requestIntent, String token)
-    {
-        throw new UnsupportedOperationException();
-    }
+    public SpeechletResponse parseResponse(BaseResult response) {
+        throw new UnsupportedOperationException();    }
 
     public BaseResult sendRequest(String passphrase, String token, int emailIndex)
     {
         String emailIndexString = String.valueOf(emailIndex);
 
-        ReceiveEmailsRequest request = new ReceiveEmailsRequest();
+        MarkEmailReadRequest request = new MarkEmailReadRequest();
         request.setPassword(passphrase);
         request.setStart(emailIndexString);
 
@@ -32,13 +34,7 @@ public class ReceiveEmailRequestSender extends RequestHandler {
         );
 
         GenerateClient(token);
-        ReceiveEmailsResult result = client.receiveEmails(request);
+        MarkEmailReadResult result = client.markEmailRead(request);
         return result;
-    }
-
-    @Override
-    public SpeechletResponse parseResponse(BaseResult response)
-    {
-        throw new UnsupportedOperationException();
     }
 }
