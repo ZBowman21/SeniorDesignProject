@@ -16,9 +16,8 @@ public class CognitoUtils {
 
 	private static String POOL_ID = System.getenv("POOL_ID");
 
-	public static boolean isDefaultPassphrase(String userId) {
-		String passphrase = getPassphrase(userId);
-		return passphrase.length() == 128;
+	public static boolean hasPassphrase(String userId) {
+		return getPassphrase(userId) != null;
 	}
 
 	public static boolean checkPassphrase(String userId, String passphrase) {
