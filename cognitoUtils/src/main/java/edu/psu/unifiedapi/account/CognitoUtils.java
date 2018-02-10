@@ -25,15 +25,15 @@ public class CognitoUtils {
 	}
 
 	public static String getPassphrase(String userId) {
-		return getAttribute(userId, "passphrase");
+		return getAttribute(userId, "custom:passphrase");
 	}
 
 	public static void setPassphrase(String userId, String passphrase) {
-		setAttribute(userId, "passphrase", passphrase);
+		setAttribute(userId, "custom:passphrase", passphrase);
 	}
 
 	public static String getEncryptionKey(String userId) {
-		String encryptionKey = getAttribute(userId, "encryptionKey");
+		String encryptionKey = getAttribute(userId, "custom:encryptionKey");
 
 		if (encryptionKey == null) {
 
@@ -46,7 +46,7 @@ public class CognitoUtils {
 			}
 
 			encryptionKey = sb.toString();
-			setAttribute(userId, "encryptionKey", encryptionKey);
+			setAttribute(userId, "custom:encryptionKey", encryptionKey);
 		}
 
 		return encryptionKey;
@@ -84,6 +84,7 @@ public class CognitoUtils {
 		attributes.add(attr);
 
 		updateReq.setUserPoolId(POOL_ID);
+		updateReq.setUsername(userId);
 		updateReq.setUserAttributes(attributes);
 
 		identityClient.adminUpdateUserAttributes(updateReq);
