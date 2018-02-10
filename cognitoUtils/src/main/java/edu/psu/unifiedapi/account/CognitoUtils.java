@@ -29,6 +29,11 @@ public class CognitoUtils {
 
 	}
 
+	public static String getEncryptionKey(String userId) {
+		return getAttribute(userId, "encryptionKey");
+
+	}
+
 	private static String getAttribute(String userId, String attribute) {
 
 		AdminGetUserRequest getReq = new AdminGetUserRequest();
