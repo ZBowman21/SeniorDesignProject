@@ -26,15 +26,34 @@ public class CognitoUtils {
 
 	public static String getPassphrase(String userId) {
 		return getAttribute(userId, "passphrase");
+	}
 
+	public static void setPassphrase(String userId, String passphrase) {
+		setAttribute(userId, "passphrase", passphrase);
 	}
 
 	public static String getEncryptionKey(String userId) {
-		return getAttribute(userId, "encryptionKey");
+		String encryptionKey = getAttribute(userId, "encryptionKey");
+
+		if (encryptionKey == null) {
+
+			Random rand = new Random();
+
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 128; i++) {
+				sb.append(rand.nextInt(10));
+			}
+
+			encryptionKey = sb.toString();
+			setAttribute(userId, "encryptionKey", encryptionKey);
+		}
+
+		return encryptionKey;
 
 	}
 
-	private static String getAttribute(String userId, String attribute) {
+	private static String getAttribute(String userId, String name) {
 
 		AdminGetUserRequest getReq = new AdminGetUserRequest();
 		getReq.setUserPoolId(POOL_ID);
@@ -42,7 +61,7 @@ public class CognitoUtils {
 
 		AdminGetUserResult getRes = identityClient.adminGetUser(getReq);
 
-		Optional<AttributeType> first = getRes.getUserAttributes().stream().filter(a -> a.getName().equals(attribute)).findFirst();
+		Optional<AttributeType> first = getRes.getUserAttributes().stream().filter(a -> a.getName().equals(name)).findFirst();
 
 		if (first.isPresent()) {
 			return first.get().getValue();
@@ -50,6 +69,24 @@ public class CognitoUtils {
 			return null;
 		}
 
+	}
+
+	private static void setAttribute(String userId, String name, String value) {
+
+		AdminUpdateUserAttributesRequest updateReq = new AdminUpdateUserAttributesRequest();
+
+		List<AttributeType> attributes = new ArrayList<>();
+
+		AttributeType attr = new AttributeType();
+		attr.setName(name);
+		attr.setValue(value);
+
+		attributes.add(attr);
+
+		updateReq.setUserPoolId(POOL_ID);
+		updateReq.setUserAttributes(attributes);
+
+		identityClient.adminUpdateUserAttributes(updateReq);
 	}
 
 }
