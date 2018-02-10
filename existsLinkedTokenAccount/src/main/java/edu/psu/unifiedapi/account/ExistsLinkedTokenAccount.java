@@ -10,8 +10,14 @@ public class ExistsLinkedTokenAccount {
         Database.init();
     }
 
-    public boolean handleRequest(ExistsLinkedTokenAccountArgs aA) throws SQLException {
-        return Database.existsTokenCredentials(aA.userId, aA.service);
+    public void handleRequest(ExistsLinkedTokenAccountArgs aA) throws RuntimeException {
+    	try {
+			if (!Database.existsTokenCredentials(aA.userId, aA.service)) {
+				throw new RuntimeException("Account not found");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Internal server error");
+		}
     }
 
 }

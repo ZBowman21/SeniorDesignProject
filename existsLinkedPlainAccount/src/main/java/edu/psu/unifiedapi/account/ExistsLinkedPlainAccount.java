@@ -10,8 +10,14 @@ public class ExistsLinkedPlainAccount {
         Database.init();
     }
 
-    public boolean handleRequest(ExistsLinkedPlainAccountArgs aA) throws SQLException {
-        return Database.existsPlainCredentials(aA.userId, aA.service);
+    public void handleRequest(ExistsLinkedPlainAccountArgs aA) throws RuntimeException {
+        try {
+            if (!Database.existsPlainCredentials(aA.userId, aA.service)) {
+                throw new RuntimeException("Account not found");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Internal server error");
+        }
     }
 
 }
