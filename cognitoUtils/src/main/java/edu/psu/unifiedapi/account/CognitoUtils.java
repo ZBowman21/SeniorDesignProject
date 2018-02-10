@@ -25,6 +25,11 @@ public class CognitoUtils {
 	}
 
 	public static String getPassphrase(String userId) {
+		return getAttribute(userId, "passphrase");
+
+	}
+
+	private static String getAttribute(String userId, String attribute) {
 
 		AdminGetUserRequest getReq = new AdminGetUserRequest();
 		getReq.setUserPoolId(POOL_ID);
@@ -32,36 +37,12 @@ public class CognitoUtils {
 
 		AdminGetUserResult getRes = identityClient.adminGetUser(getReq);
 
-		Optional<AttributeType> first = getRes.getUserAttributes().stream().filter(a -> a.getName().equals("passphrase")).findFirst();
+		Optional<AttributeType> first = getRes.getUserAttributes().stream().filter(a -> a.getName().equals(attribute)).findFirst();
 
 		if (first.isPresent()) {
 			return first.get().getValue();
 		} else {
-
-			AdminUpdateUserAttributesRequest updateReq = new AdminUpdateUserAttributesRequest();
-
-			Random rand = new Random();
-
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 128; i++) {
-				sb.append(rand.nextInt(10));
-			}
-
-			List<AttributeType> attributes = new ArrayList<>();
-
-			AttributeType attr = new AttributeType();
-			attr.setName("passphrase");
-			attr.setValue(sb.toString());
-
-			attributes.add(attr);
-
-			updateReq.setUserPoolId(POOL_ID);
-			updateReq.setUserAttributes(attributes);
-
-			identityClient.adminUpdateUserAttributes(updateReq);
-
-			return sb.toString();
+			return null;
 		}
 
 	}
