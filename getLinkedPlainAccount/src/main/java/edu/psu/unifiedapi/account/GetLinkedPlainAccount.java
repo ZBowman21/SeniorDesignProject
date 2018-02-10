@@ -19,7 +19,8 @@ public class GetLinkedPlainAccount {
 
         context.getLogger().log("Getting plain credentials for user: " + aA.userId + " and service: " + aA.service);
         try {
-			creds = Database.getPlainCredentials(aA.userId, aA.passphrase, aA.service);
+			String encryptionKey = CognitoUtils.getEncryptionKey(aA.userId);
+			creds = Database.getPlainCredentials(aA.userId, encryptionKey, aA.service);
 		} catch (SQLException | GeneralSecurityException e) {
 			throw new RuntimeException("Internal server error");
 		}

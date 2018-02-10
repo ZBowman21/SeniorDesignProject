@@ -14,7 +14,8 @@ public class AddLinkedPlainAccount implements RequestHandler<AddLinkedPlainAccou
 	@Override
 	public Boolean handleRequest(AddLinkedPlainAccountArgs args, Context context) {
 		try {
-			return Database.insertPlainCredentials(args.userId, args.passphrase, args.service, args.username, args.password);
+			String encryptionKey = CognitoUtils.getEncryptionKey(args.userId);
+			return Database.insertPlainCredentials(args.userId, encryptionKey, args.service, args.username, args.password);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

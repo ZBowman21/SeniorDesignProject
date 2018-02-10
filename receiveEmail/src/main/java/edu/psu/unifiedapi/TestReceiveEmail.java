@@ -6,7 +6,7 @@ package edu.psu.unifiedapi;
 public class TestReceiveEmail {
     public static void main(String[] args) {
         ReceiveEmailHandler hand = new ReceiveEmailHandler();
-        EmailObject s = hand.handleRequest(new ReceiveEmailRequest("mkb5413", "cheese", 0), null);
+        EmailObject s = hand.handleRequest(new ReceiveEmailRequest("mkb5413", 0), null);
 
         System.out.println(s.from + " " + s.date + " " + s.subject + " " + s.body + "\n" + s.unread);
     }

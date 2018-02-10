@@ -41,8 +41,8 @@ public class Database {
 		return connection;
 	}
 
-	public static boolean insertPlainCredentials(String userId, String passphrase, String service, String username, String password) throws SQLException, GeneralSecurityException {
-		byte[] encryptedPassword = Encryption.encrypt(password, passphrase);
+	public static boolean insertPlainCredentials(String userId, String encryptionKey, String service, String username, String password) throws SQLException, GeneralSecurityException {
+		byte[] encryptedPassword = Encryption.encrypt(password, encryptionKey);
 		byte[] hashedPassword = Hashing.hash(password);
 
 		PreparedStatement statement = getConnection().prepareStatement("INSERT INTO plain_credentials VALUES (?, ?, ?, ?, ?)");
@@ -100,7 +100,7 @@ public class Database {
 		return result.next();
 	}
 
-	public static Credentials getPlainCredentials(String userId, String passphrase, String service) throws SQLException, GeneralSecurityException {
+	public static Credentials getPlainCredentials(String userId, String encryptionKey, String service) throws SQLException, GeneralSecurityException {
 
 		Credentials creds = null;
 
@@ -116,7 +116,7 @@ public class Database {
 			byte[] pwHash = result.getBytes(3);
 
 
-			String decryptedPass = Encryption.decrypt(encryptedPass, passphrase);
+			String decryptedPass = Encryption.decrypt(encryptedPass, encryptionKey);
 			byte[] pwHashCheck = Hashing.hash(decryptedPass);
 
 			if (Arrays.equals(pwHash, pwHashCheck)) {

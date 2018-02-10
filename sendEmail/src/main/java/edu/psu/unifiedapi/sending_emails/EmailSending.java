@@ -25,9 +25,8 @@ public class EmailSending implements RequestHandler<EmailArgs, Boolean> {
         boolean output = false;
 
         GetLinkedPlainAccountArgs aA = new GetLinkedPlainAccountArgs();
-        aA.passphrase = eA.password;
         aA.service = "webmail";
-        aA.userId = eA.username;
+        aA.userId = eA.userId;
 
         //Call authenticate with AuthArgs
         IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
