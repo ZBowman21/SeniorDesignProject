@@ -10,6 +10,7 @@ import com.amazon.speech.speechlet.dialog.directives.DialogIntent;
 import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
+import edu.psu.alexaskill.request_handlers.check_accounts.LinkAccountsRequestSender;
 import edu.psu.alexaskill.request_handlers.receive_email.ReceiveEmailDialogManager;
 import edu.psu.alexaskill.request_handlers.dining.GetClipperLocationRequestSender;
 import edu.psu.alexaskill.request_handlers.dining.GetHoursRequestSender;
@@ -37,7 +38,6 @@ public class PennStateSpeechlet implements SpeechletV2 {
     @Override
     public SpeechletResponse onIntent(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
 
-        logger.info("onSessionStartedValue: " + requestEnvelope.getSession().getAttribute("test"));
         IntentRequest request = requestEnvelope.getRequest();
         Intent intent = request.getIntent();
         String intentName = (intent != null) ? intent.getName() : null;
@@ -49,7 +49,7 @@ public class PennStateSpeechlet implements SpeechletV2 {
             case "SendMail":
                 if(dialogState.equals(DialogState.STARTED))
                 {
-                    return GenerateMultiDialogStartedResponse(intentName, intent);
+                    return GenerateLinkedAccountCheckSpeechletResponse(intent, "webmail", requestEnvelope.getSession().getUser().getAccessToken());
                 }
                 else if(dialogState.equals(DialogState.COMPLETED))
                 {
@@ -64,7 +64,7 @@ public class PennStateSpeechlet implements SpeechletV2 {
             case "GetMail" :
                 if(dialogState.equals(DialogState.STARTED))
                 {
-                    return GenerateMultiDialogStartedResponse(intentName, intent);
+                    return GenerateLinkedAccountCheckSpeechletResponse(intent, "webmail", requestEnvelope.getSession().getUser().getAccessToken());
                 }
                 else if(dialogState.equals(DialogState.COMPLETED)) //passphrase received. will always go here for reading back emails
                 {
@@ -78,7 +78,7 @@ public class PennStateSpeechlet implements SpeechletV2 {
             case "GetHours":
                 if(dialogState.equals(DialogState.STARTED))
                 {
-                    return GenerateMultiDialogStartedResponse(intentName, intent);
+                    return GenerateMultiDialogStartedResponse(intent);
                 }
                 else if(dialogState.equals(DialogState.COMPLETED))
                 {
@@ -93,7 +93,7 @@ public class PennStateSpeechlet implements SpeechletV2 {
             case "GetClipperLocation":
                 if(dialogState.equals(DialogState.STARTED))
                 {
-                    return GenerateMultiDialogStartedResponse(intentName, intent);
+                    return GenerateMultiDialogStartedResponse(intent);
                 }
                 else if(dialogState.equals(DialogState.COMPLETED))
                 {
@@ -130,11 +130,11 @@ public class PennStateSpeechlet implements SpeechletV2 {
         return SpeechletResponse.newTellResponse(speech);
     }
 
-    private SpeechletResponse GenerateMultiDialogStartedResponse(String intentName, Intent intent)
+    private SpeechletResponse GenerateMultiDialogStartedResponse(Intent intent)
     {
         //Build the DialogIntent to build a speechlet from, to generate a reprompt and to keep intent state
         DialogIntent dialogIntent = new DialogIntent();
-        dialogIntent.setName(intentName);
+        dialogIntent.setName(intent.getName());
         Map<String, DialogSlot> dialogSlots = new HashMap<>();
 
         Iterator iter = intent.getSlots().entrySet().iterator();
@@ -172,6 +172,25 @@ public class PennStateSpeechlet implements SpeechletV2 {
         speechletResponse.setDirectives(directiveList);
         speechletResponse.setNullableShouldEndSession(false);
         return speechletResponse;
+    }
+
+    private SpeechletResponse GenerateLinkedAccountCheckSpeechletResponse(Intent intent, String service, String token)
+    {
+        LinkAccountsRequestSender linkAccountsRequestSender = new LinkAccountsRequestSender();
+        boolean accountLinked = linkAccountsRequestSender.sendRequest(token, service);
+
+        if(!accountLinked)
+        {
+            SpeechletResponse response = new SpeechletResponse();
+            PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
+            speech.setText("You have not linked your " + service + " account. Please visit dokistone.bd.psu.edu to do so.");
+            response.setOutputSpeech(speech);
+            return response;
+        }
+        else
+        {
+            return GenerateMultiDialogStartedResponse(intent);
+        }
     }
 
 }
