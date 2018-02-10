@@ -44,8 +44,7 @@ public class GetHoursRequestSender extends RequestHandler
         );
 
         GenerateClient();
-        GetHoursResult response = client.getHours(request);
-        return response;
+        return client.getHours(request);
     }
 
     @Override
