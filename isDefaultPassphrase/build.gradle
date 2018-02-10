@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':cognitoUtils')
+    compile 'com.amazonaws:aws-lambda-java-core:1.2.0'
+}

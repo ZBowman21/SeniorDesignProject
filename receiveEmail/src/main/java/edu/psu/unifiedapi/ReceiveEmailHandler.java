@@ -38,7 +38,7 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 		GetLinkedPlainAccountArgs aA = new GetLinkedPlainAccountArgs();
 		aA.passphrase = input.password;
 		aA.service = "webmail";
-		aA.username = input.username;
+		aA.userId = input.username;
 
 		//Call authenticate with AuthArgs
 		IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);

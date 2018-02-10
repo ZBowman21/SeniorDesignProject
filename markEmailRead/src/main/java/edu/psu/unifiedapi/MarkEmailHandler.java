@@ -29,7 +29,7 @@ public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolea
 		GetLinkedPlainAccountArgs aA = new GetLinkedPlainAccountArgs();
 		aA.passphrase = input.password;
 		aA.service = "webmail";
-		aA.username = input.username;
+		aA.userId = input.username;
 
 		//Call authenticate with AuthArgs
 		IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);

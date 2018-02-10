@@ -1,8 +1,6 @@
 package edu.psu.unifiedapi.account;
 
-public class GetLinkedPlainAccountArgs {
+public class ExistsLinkedTokenAccountArgs {
     public String userId;
-    public String passphrase;
     public String service;
-
 }
