@@ -33,7 +33,7 @@ public class CognitoUtils {
 	}
 
 	public static String getEncryptionKey(String userId) throws UserNotFoundException {
-		String encryptionKey = getAttribute(userId, "custom:encryptionKey");
+		String encryptionKey = getAttributeAdmin(userId, "custom:encryptionKey");
 
 		if (encryptionKey == null) {
 
@@ -46,14 +46,49 @@ public class CognitoUtils {
 			}
 
 			encryptionKey = sb.toString();
-			setAttribute(userId, "custom:encryptionKey", encryptionKey);
+			setAttributeAdmin(userId, "custom:encryptionKey", encryptionKey);
 		}
 
 		return encryptionKey;
 
 	}
 
-	private static String getAttribute(String userId, String name) throws UserNotFoundException {
+	private static String getAttribute(String token, String name) {
+
+		GetUserRequest getReq = new GetUserRequest();
+		getReq.setAccessToken(token);
+
+		GetUserResult getRes = identityClient.getUser(getReq);
+
+		Optional<AttributeType> first = getRes.getUserAttributes().stream().filter(a -> a.getName().equals(name)).findFirst();
+
+		if (first.isPresent()) {
+			return first.get().getValue();
+		} else {
+			return null;
+		}
+
+	}
+
+	private static void setAttribute(String token, String name, String value) {
+
+		UpdateUserAttributesRequest updateReq = new UpdateUserAttributesRequest();
+
+		List<AttributeType> attributes = new ArrayList<>();
+
+		AttributeType attr = new AttributeType();
+		attr.setName(name);
+		attr.setValue(value);
+
+		attributes.add(attr);
+
+		updateReq.setAccessToken(token);
+		updateReq.setUserAttributes(attributes);
+
+		identityClient.updateUserAttributes(updateReq);
+	}
+
+	private static String getAttributeAdmin(String userId, String name) throws UserNotFoundException {
 
 		AdminGetUserRequest getReq = new AdminGetUserRequest();
 		getReq.setUserPoolId(POOL_ID);
@@ -71,7 +106,7 @@ public class CognitoUtils {
 
 	}
 
-	private static void setAttribute(String userId, String name, String value) throws UserNotFoundException {
+	private static void setAttributeAdmin(String userId, String name, String value) throws UserNotFoundException {
 
 		AdminUpdateUserAttributesRequest updateReq = new AdminUpdateUserAttributesRequest();
 
