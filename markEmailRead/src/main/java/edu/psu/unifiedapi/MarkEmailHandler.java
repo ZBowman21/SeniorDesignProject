@@ -16,11 +16,6 @@ import java.util.Properties;
  */
 public class MarkEmailHandler implements RequestHandler<MarkEmailRequest, Boolean> {
 
-	private interface Auth{
-		@LambdaFunction(functionName = "getLinkedPlainAccount")
-		String auth(GetLinkedPlainAccountArgs aA);
-	}
-
 	@Override
 	public Boolean handleRequest(MarkEmailRequest input, Context context) {
 		Properties props = new Properties();
