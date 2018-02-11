@@ -42,7 +42,7 @@ public abstract class SecureIntentHandler implements IntentHandler
             //Check if user has a passphrase setup
             if(slot.getName().equalsIgnoreCase("passphrase") && !hasPassphrase)
             {
-                dialogSlot.setValue("null");
+                dialogSlot.setValue("abcdefg");
                 dialogSlot.setConfirmationStatus(ConfirmationStatus.CONFIRMED);
             }
             else
@@ -85,7 +85,7 @@ public abstract class SecureIntentHandler implements IntentHandler
 
             if(dialogSlot.getName().equalsIgnoreCase("passphrase"))
             {
-                if(dialogSlot.getValue() != null && !(boolean)requestEnvelope.getSession().getAttribute("passphraseChecked"))
+                if(dialogSlot.getValue() != null && !dialogSlot.getValue().equals("abcdefg") && !(boolean)requestEnvelope.getSession().getAttribute("passphraseChecked"))
                 {
                     //Check if passphrase is correct
                     logger.info("Checking Passphrase");
