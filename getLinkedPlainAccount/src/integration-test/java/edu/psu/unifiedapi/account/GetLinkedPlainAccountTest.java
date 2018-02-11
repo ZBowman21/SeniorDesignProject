@@ -18,8 +18,7 @@ public class GetLinkedPlainAccountTest {
 
 		GetLinkedPlainAccountArgs args = new GetLinkedPlainAccountArgs();
 
-		args.username = "user";
-		args.passphrase = "pass";
+		args.userId = "user";
 		args.service = "webmail";
 
 		Credentials result = service.getLinkedPlainAccount(args);

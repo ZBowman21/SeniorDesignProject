@@ -1,5 +1,6 @@
 package edu.psu.unifiedapi.account;
 
+import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.amazonaws.services.lambda.runtime.Context;
 import edu.psu.unifiedapi.auth.Credentials;
 import edu.psu.unifiedapi.database.Database;
@@ -23,6 +24,8 @@ public class GetLinkedPlainAccount {
 			creds = Database.getPlainCredentials(aA.userId, encryptionKey, aA.service);
 		} catch (SQLException | GeneralSecurityException e) {
 			throw new RuntimeException("Internal server error");
+		} catch (UserNotFoundException e) {
+			throw new RuntimeException("Account not found");
 		}
         if (creds == null) {
             context.getLogger().log("User '" + aA.userId + "' not found in the database");
