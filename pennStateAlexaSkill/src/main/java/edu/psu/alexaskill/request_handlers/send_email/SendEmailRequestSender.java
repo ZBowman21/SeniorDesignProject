@@ -24,7 +24,6 @@ public class SendEmailRequestSender extends RequestHandler {
 		request.setDestination(corrector.CorrectAddress(destination));
 		request.setSubject(corrector.CorrectSubject(subject));
 		request.setBody(corrector.CorrectBody(body));
-		request.setPassphrase(requestIntent.getSlot("passphrase").getValue()); //really passphrase
 
 		request.sdkRequestConfig(
 				SdkRequestConfig.builder()

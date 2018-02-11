@@ -21,7 +21,6 @@ public class ReceiveEmailRequestSender extends RequestHandler {
         String emailIndexString = String.valueOf(emailIndex);
 
         ReceiveEmailsRequest request = new ReceiveEmailsRequest();
-        request.setPassword(passphrase);
         request.setStart(emailIndexString);
 
         request.sdkRequestConfig(

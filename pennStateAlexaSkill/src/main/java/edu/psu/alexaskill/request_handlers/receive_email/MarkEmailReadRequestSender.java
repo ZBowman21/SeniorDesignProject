@@ -23,7 +23,6 @@ public class MarkEmailReadRequestSender extends RequestHandler
         String emailIndexString = String.valueOf(emailIndex);
 
         MarkEmailReadRequest request = new MarkEmailReadRequest();
-        request.setPassword(passphrase);
         request.setStart(emailIndexString);
 
         request.sdkRequestConfig(

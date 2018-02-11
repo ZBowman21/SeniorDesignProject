@@ -21,7 +21,14 @@ public class CognitoUtils {
 	}
 
 	public static boolean checkPassphrase(String token, String passphrase) throws UserNotFoundException {
-		return getPassphrase(token).equals(passphrase);
+		String currentPassphrase = getPassphrase(token);
+		if(currentPassphrase == null){
+			return passphrase == null;
+		}
+		else
+		{
+			return currentPassphrase.equals(passphrase);
+		}
 	}
 
 	public static String getPassphrase(String token) throws UserNotFoundException {
