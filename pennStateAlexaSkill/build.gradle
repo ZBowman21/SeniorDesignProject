@@ -1,7 +1,7 @@
 dependencies {
-    compile 'com.amazon.alexa:alexa-skills-kit:1.6.0'
-    compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
-    compile 'edu.pennstate.api:PennStateUnified:1.0-SNAPSHOT'
-    compile 'org.reflections:reflections:0.9.11'
     compile project(':cognitoUtils')
+    compile alexa_skills_kit
+    compile aws_lambda_java_core
+    compile psuapi
+    compile reflections
 }

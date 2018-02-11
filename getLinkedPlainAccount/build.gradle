@@ -1,6 +1,6 @@
 dependencies {
     compile project(':databaseUtils')
     compile project(':cognitoUtils')
-    compile 'com.amazonaws:aws-lambda-java-core:1.2.0'
-    compile 'com.amazonaws:aws-java-sdk-lambda:1.11.226'
+    compile aws_lambda_java_core
+    compile aws_java_sdk_lambda
 }

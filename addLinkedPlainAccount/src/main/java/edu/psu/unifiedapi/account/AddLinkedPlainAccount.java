@@ -6,13 +6,13 @@ import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 
 
-public class AddLinkedPlainAccount {
+public class AddLinkedPlainAccount implements IAddLinkedPlainAccount {
 
 	public AddLinkedPlainAccount() {
 		Database.init();
 	}
 
-	public void handleRequest(AddLinkedPlainAccountArgs args) throws RuntimeException {
+	public void addLinkedPlainAccount(AddLinkedPlainAccountArgs args) throws RuntimeException {
 		String encryptionKey = CognitoUtils.getEncryptionKey(args.userId);
 		try {
 			if (!Database.insertPlainCredentials(args.userId, encryptionKey, args.service, args.username, args.password)) {

@@ -1,5 +1,5 @@
 dependencies {
     compile project(':getLinkedPlainAccount')
-    compile 'com.amazonaws:aws-lambda-java-core:1.2.0'
-    compile 'org.apache.commons:commons-email:1.5'
+    compile aws_lambda_java_core
+    compile commons_email
 }
