@@ -19,6 +19,7 @@ public class GetLinkedPlainAccount {
         Credentials creds;
 
         context.getLogger().log("Getting plain credentials for user: " + aA.userId + " and service: " + aA.service);
+
         try {
 			String encryptionKey = CognitoUtils.getEncryptionKey(aA.userId);
 			creds = Database.getPlainCredentials(aA.userId, encryptionKey, aA.service);
@@ -27,6 +28,7 @@ public class GetLinkedPlainAccount {
 		} catch (UserNotFoundException e) {
 			throw new RuntimeException("Account not found");
 		}
+
         if (creds == null) {
             context.getLogger().log("User '" + aA.userId + "' not found in the database");
 			throw new RuntimeException("Account not found");
