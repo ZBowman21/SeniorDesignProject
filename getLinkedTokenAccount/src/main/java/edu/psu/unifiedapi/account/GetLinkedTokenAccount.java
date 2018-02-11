@@ -8,27 +8,30 @@ import edu.psu.unifiedapi.database.Database;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 
-public class GetLinkedTokenAccount implements RequestHandler<GetLinkedTokenAccountArgs, String> {
+public class GetLinkedTokenAccount {
 
-    public GetLinkedTokenAccount() {
-        Database.init();
-    }
+	public GetLinkedTokenAccount() {
+		Database.init();
+	}
 
-    @Override
-    public String handleRequest(GetLinkedTokenAccountArgs aA, Context context) {
+	public String handleRequest(GetLinkedTokenAccountArgs aA, Context context) {
 
-        String token = null;
+		String token = null;
 
-        try {
-            token = Database.getTokenCredentials(aA.username, aA.service);
-            if (token == null) {
-                context.getLogger().log("User '" + aA.username + "' not found in the database");
-            }
-        } catch (SQLException e) {
-            context.getLogger().log("Error accessing database: " + e.getMessage());
-        }
+		context.getLogger().log("Getting token credentials for user: " + aA.userId + " and service: " + aA.service);
 
-        return token;
-    }
+		try {
+			token = Database.getTokenCredentials(aA.userId, aA.service);
+		} catch (SQLException e) {
+			context.getLogger().log("Error accessing database: " + e.getMessage());
+		}
+
+		if (token == null) {
+			context.getLogger().log("User '" + aA.userId + "' not found in the database");
+			throw new RuntimeException("Account not found");
+		}
+
+		return token;
+	}
 
 }

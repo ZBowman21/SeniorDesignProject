@@ -12,13 +12,13 @@ import static org.junit.Assert.assertNull;
 /**
  * @author mthwate
  */
-public class GetLinkedPlainAccountTest {
+public class GetLinkedTokenAccountTest {
 
 	@Test
 	public void invalidCredentials() {
-		IGetLinkedPlainAccount service = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
+		IGetLinkedTokenAccount service = LambdaInvokerFactory.builder().build(IGetLinkedTokenAccount.class);
 
-		GetLinkedPlainAccountArgs args = new GetLinkedPlainAccountArgs();
+		GetLinkedTokenAccountArgs args = new GetLinkedTokenAccountArgs();
 
 		args.userId = "user";
 		args.service = "webmail";
@@ -26,7 +26,7 @@ public class GetLinkedPlainAccountTest {
 		String message = null;
 
 		try {
-			service.getLinkedPlainAccount(args);
+			service.getLinkedTokenAccount(args);
 		} catch (LambdaFunctionException e) {
 			message = e.getMessage();
 		}
