@@ -30,9 +30,6 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class PennStateSpeechlet implements SpeechletV2 {
@@ -65,8 +62,9 @@ public class PennStateSpeechlet implements SpeechletV2 {
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
         logger.info("Session Started: Checking for passphrase");
         logger.info("Current passphrase: {}" , CognitoUtils.getPassphrase(requestEnvelope.getSession().getUser().getAccessToken()));
-        boolean hasPassphrase = CognitoUtils.hasPassphrase(requestEnvelope.getSession().getUser().getAccessToken());
-        requestEnvelope.getSession().setAttribute("hasPassphrase", hasPassphrase);
+
+        requestEnvelope.getSession().setAttribute("hasPassphrase",
+                CognitoUtils.hasPassphrase(requestEnvelope.getSession().getUser().getAccessToken()));
         requestEnvelope.getSession().setAttribute("passphraseChecked", false);
     }
 
@@ -98,22 +96,6 @@ public class PennStateSpeechlet implements SpeechletV2 {
         logger.info("Intent: {} State: {}", intentName, dialogState);
         switch(intentName)
         {
-            case "SendMail":
-                if(dialogState.equals(DialogState.STARTED))
-                {
-                    return GenerateLinkedAccountCheckSpeechletResponse(intent, "webmail", requestEnvelope.getSession().getUser().getAccessToken(),
-                           requestEnvelope.getSession());
-                }
-                else if(dialogState.equals(DialogState.COMPLETED))
-                {
-                    requestHandler = new SendEmailRequestSender();
-                    BaseResult result = requestHandler.sendRequest(intent, requestEnvelope.getSession().getUser().getAccessToken());
-                    return requestHandler.parseResponse(result);
-                }
-                else
-                {
-                    return GenerateMultiDialogInProgressResponse();
-                }
             case "GetMail" :
                 if(dialogState.equals(DialogState.STARTED))
                 {
@@ -124,36 +106,6 @@ public class PennStateSpeechlet implements SpeechletV2 {
                 {
                     ReceiveEmailDialogManager receiveEmailDialogManager = new ReceiveEmailDialogManager(requestEnvelope);
                     return receiveEmailDialogManager.generateResponse();
-                }
-                else
-                {
-                    return GenerateMultiDialogInProgressResponse();
-                }
-            case "GetHours":
-                if(dialogState.equals(DialogState.STARTED))
-                {
-                    return GenerateMultiDialogStartedResponseNoPassphrase(intent);
-                }
-                else if(dialogState.equals(DialogState.COMPLETED))
-                {
-                    requestHandler = new GetHoursRequestSender();
-                    BaseResult result = requestHandler.sendRequest(intent, requestEnvelope.getSession().getUser().getAccessToken());
-                    return requestHandler.parseResponse(result);
-                }
-                else
-                {
-                    return GenerateMultiDialogInProgressResponse();
-                }
-            case "GetClipperLocation":
-                if(dialogState.equals(DialogState.STARTED))
-                {
-                    return GenerateMultiDialogStartedResponseNoPassphrase(intent);
-                }
-                else if(dialogState.equals(DialogState.COMPLETED))
-                {
-                    requestHandler = new GetClipperLocationRequestSender();
-                    BaseResult result = requestHandler.sendRequest(intent, requestEnvelope.getSession().getUser().getAccessToken());
-                    return requestHandler.parseResponse(result);
                 }
                 else
                 {
@@ -292,39 +244,5 @@ public class PennStateSpeechlet implements SpeechletV2 {
         {
             return GenerateMultiDialogStartedResponse(intent, session);
         }
-    }
-
-    private SpeechletResponse GenerateMultiDialogStartedResponseNoPassphrase(Intent intent)
-    {
-        //Build the DialogIntent to build a speechlet from, to generate a reprompt and to keep intent state
-        DialogIntent dialogIntent = new DialogIntent();
-        dialogIntent.setName(intent.getName());
-        Map<String, DialogSlot> dialogSlots = new HashMap<>();
-
-        Iterator iter = intent.getSlots().entrySet().iterator();
-        while(iter.hasNext())
-        {
-            Map.Entry pair = (Map.Entry)iter.next();
-            Slot slot = (Slot) pair.getValue();
-            DialogSlot dialogSlot = new DialogSlot();
-            dialogSlot.setName(slot.getName());
-            dialogSlot.setValue(slot.getValue());
-
-
-            dialogSlots.put((String)pair.getKey(), dialogSlot);
-        }
-
-        dialogIntent.setSlots(dialogSlots);
-
-        DelegateDirective dd = new DelegateDirective();
-        dd.setUpdatedIntent(dialogIntent);
-
-        List<Directive> directiveList = new ArrayList<>();
-        directiveList.add(dd);
-
-        SpeechletResponse speechletResponse = new SpeechletResponse();
-        speechletResponse.setDirectives(directiveList);
-        speechletResponse.setNullableShouldEndSession(false);
-        return speechletResponse;
     }
 }
