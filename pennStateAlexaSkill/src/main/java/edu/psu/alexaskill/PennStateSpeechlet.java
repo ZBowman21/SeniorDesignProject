@@ -50,7 +50,10 @@ public class PennStateSpeechlet implements SpeechletV2 {
         {
             try
             {
-                intentHandlers.put(c.getAnnotation(Handler.class).value(), (IntentHandler)c.newInstance());
+                IntentHandler instance = (IntentHandler)c.newInstance();
+                for (Handler annotation : c.getAnnotationsByType(Handler.class)) {
+                    intentHandlers.put(annotation.value(), instance);
+                }
             }
             catch (IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
