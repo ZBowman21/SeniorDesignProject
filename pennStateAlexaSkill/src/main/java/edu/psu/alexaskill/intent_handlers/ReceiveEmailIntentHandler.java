@@ -6,6 +6,10 @@ import com.amazon.speech.speechlet.SpeechletResponse;
 import edu.psu.alexaskill.request_handlers.receive_email.ReceiveEmailDialogManager;
 
 @Handler("GetMail")
+@Handler("Next")
+@Handler("Skip")
+@Handler("Repeat")
+@Handler("Read")
 public class ReceiveEmailIntentHandler extends SecureLinkedAccountIntentHandler
 {
     @Override

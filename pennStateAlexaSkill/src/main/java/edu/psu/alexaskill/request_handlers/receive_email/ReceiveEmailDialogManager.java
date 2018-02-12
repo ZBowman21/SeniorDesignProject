@@ -26,7 +26,7 @@ public class ReceiveEmailDialogManager
         ObjectMapper mapper = new ObjectMapper();
         try
         {
-            String mappedJsonState = mapper.writeValueAsString(session.getAttribute("state"));
+            String mappedJsonState = mapper.writeValueAsString(session.getAttribute("receiveEmailState"));
             state = mapper.readValue(mappedJsonState, ReceiveEmailState.class);
         }
         catch(Exception e)
@@ -247,7 +247,7 @@ public class ReceiveEmailDialogManager
                 break;
         }
 
-        session.setAttribute("state", state);
+        session.setAttribute("receiveEmailState", state);
         return response;
     }
 }
