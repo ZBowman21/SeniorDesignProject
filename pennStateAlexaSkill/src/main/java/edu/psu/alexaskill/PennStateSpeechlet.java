@@ -13,6 +13,7 @@ import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazonaws.opensdk.BaseResult;
 import edu.psu.alexaskill.intent_handlers.Handler;
+import edu.psu.alexaskill.intent_handlers.Handlers;
 import edu.psu.alexaskill.intent_handlers.IntentHandler;
 import edu.psu.alexaskill.passphrase.PassphraseManager;
 import edu.psu.alexaskill.request_handlers.check_accounts.LinkAccountsRequestSender;
@@ -44,7 +45,9 @@ public class PennStateSpeechlet implements SpeechletV2 {
         .setUrls(ClasspathHelper.forPackage("edu.psu.alexaskill.intent_handlers"))
         .setScanners(new SubTypesScanner(), new TypeAnnotationsScanner()));
 
-        Set<Class<?>> intentHandlerConstructors = reflections.getTypesAnnotatedWith(Handler.class);
+		Set<Class<?>> intentHandlerConstructors = reflections.getTypesAnnotatedWith(Handler.class);
+
+		intentHandlerConstructors.addAll(reflections.getTypesAnnotatedWith(Handlers.class));
 
         for(Class<?> c: intentHandlerConstructors)
         {
