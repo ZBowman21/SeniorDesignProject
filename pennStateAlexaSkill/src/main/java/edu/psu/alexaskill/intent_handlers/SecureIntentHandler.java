@@ -9,7 +9,7 @@ import com.amazon.speech.speechlet.IntentRequest;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.speechlet.dialog.directives.*;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
-import edu.psu.alexaskill.passphrase.PassphraseManager;
+import edu.psu.alexaskill.PassphraseManager;
 import edu.psu.unifiedapi.account.CognitoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

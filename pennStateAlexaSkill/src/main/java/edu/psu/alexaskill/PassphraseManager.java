@@ -1,4 +1,4 @@
-package edu.psu.alexaskill.passphrase;
+package edu.psu.alexaskill;
 
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.SpeechletResponse;
