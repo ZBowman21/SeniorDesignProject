@@ -3,7 +3,7 @@ package edu.psu.alexaskill.intent_handlers;
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.speechlet.IntentRequest;
 import com.amazon.speech.speechlet.SpeechletResponse;
-import edu.psu.alexaskill.passphrase.PassphraseManager;
+import edu.psu.alexaskill.PassphraseManager;
 
 @Handler("RemovePassphrase")
 public class DeletePassphraseIntentHandler extends SecureIntentHandler
