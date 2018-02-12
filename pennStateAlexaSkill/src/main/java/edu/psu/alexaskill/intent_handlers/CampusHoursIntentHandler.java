@@ -13,7 +13,7 @@ public class CampusHoursIntentHandler extends BasicIntentHandler
     @Override
     public SpeechletResponse IntentCompleted(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
         RequestHandler requestHandler = new GetHoursRequestSender();
-        BaseResult result = requestHandler.sendRequest(requestEnvelope.getRequest().getIntent(), requestEnvelope.getSession().getUser().getAccessToken());
+        BaseResult result = requestHandler.sendRequest(requestEnvelope.getRequest().getIntent());
         return requestHandler.parseResponse(result);
     }
 }

@@ -9,9 +9,9 @@ import edu.psu.alexaskill.request_handlers.check_accounts.LinkAccountsRequestSen
 public abstract class SecureLinkedAccountIntentHandler extends SecureIntentHandler {
 
     public final SpeechletResponse IntentStarted(SpeechletRequestEnvelope<IntentRequest> requestEnvelope, String service) {
-        LinkAccountsRequestSender linkAccountsRequestSender = new LinkAccountsRequestSender();
+        LinkAccountsRequestSender linkAccountsRequestSender = new LinkAccountsRequestSender(requestEnvelope.getSession().getUser().getAccessToken());
         logger.info("Check if account is linked to {}", service);
-        if(!linkAccountsRequestSender.sendRequest(requestEnvelope.getSession().getUser().getAccessToken(), service))
+        if(!linkAccountsRequestSender.sendRequest(service))
         {
             SpeechletResponse response = new SpeechletResponse();
             PlainTextOutputSpeech speech = new PlainTextOutputSpeech();

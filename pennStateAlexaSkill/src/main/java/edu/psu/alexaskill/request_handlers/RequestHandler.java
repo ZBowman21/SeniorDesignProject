@@ -6,36 +6,32 @@ import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.config.ConnectionConfiguration;
 import com.amazonaws.opensdk.config.TimeoutConfiguration;
 import edu.pennstate.api.PennStateUnified;
+import edu.pennstate.api.PennStateUnifiedClientBuilder;
 
 public abstract class RequestHandler
 {
     protected PennStateUnified client;
 
     public RequestHandler()
-    { }
-
-    public void GenerateClient(String signature)
     {
-        client = PennStateUnified.builder().connectionConfiguration(new ConnectionConfiguration()
+        client = getBuilder().build();
+    }
+
+    public RequestHandler(String token)
+    {
+        client = getBuilder().signer(R -> token).build();
+    }
+
+    private PennStateUnifiedClientBuilder getBuilder() {
+        return PennStateUnified.builder().connectionConfiguration(new ConnectionConfiguration()
                 .maxConnections(100)
                 .connectionMaxIdleMillis(30000))
                 .timeoutConfiguration(new TimeoutConfiguration()
                         .httpRequestTimeout(30000)
                         .totalExecutionTimeout(30000)
-                        .socketTimeout(30000))
-                .signer(R -> signature).build();
+                        .socketTimeout(30000));
     }
 
-    public void GenerateClient()
-    {
-        client = PennStateUnified.builder().connectionConfiguration(new ConnectionConfiguration()
-                .maxConnections(100)
-                .connectionMaxIdleMillis(30000))
-                .timeoutConfiguration(new TimeoutConfiguration()
-                        .httpRequestTimeout(30000)
-                        .totalExecutionTimeout(30000)
-                        .socketTimeout(30000)).build();
-    }
-    public abstract BaseResult sendRequest(Intent requestIntent, String token);
+    public abstract BaseResult sendRequest(Intent requestIntent);
     public abstract SpeechletResponse parseResponse(BaseResult response);
 }

@@ -13,7 +13,7 @@ public class ClipperLocationsIntentHandler extends BasicIntentHandler
     @Override
     public SpeechletResponse IntentCompleted(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
         RequestHandler requestHandler = new GetClipperLocationRequestSender();
-        BaseResult result = requestHandler.sendRequest(requestEnvelope.getRequest().getIntent(), requestEnvelope.getSession().getUser().getAccessToken());
+        BaseResult result = requestHandler.sendRequest(requestEnvelope.getRequest().getIntent());
         return requestHandler.parseResponse(result);
     }
 }

@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 public class ReceiveEmailDialogManager
 {
-    private ReceiveEmailRequestSender requestSender = new ReceiveEmailRequestSender();
-    private MarkEmailReadRequestSender markEmailRequestSender = new MarkEmailReadRequestSender();
     private ReceiveEmailState state;
     private Intent intent;
     private Session session;
@@ -80,7 +78,9 @@ public class ReceiveEmailDialogManager
 
         state.setState(ReceiveEmailState.State.ReadingEmail);
 
-        markEmailRequestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), state.getCurrentEmailIndex());
+        MarkEmailReadRequestSender markEmailRequestSender = new MarkEmailReadRequestSender(session.getUser().getAccessToken());
+
+        markEmailRequestSender.sendRequest(state.getCurrentEmailIndex());
 
         Reprompt reprompt = new Reprompt();
         reprompt.setOutputSpeech(outputSpeech);
@@ -155,7 +155,8 @@ public class ReceiveEmailDialogManager
         switch(state.getState())
         {
             case Initial:
-                result = (ReceiveEmailsResult)requestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), 0);
+                ReceiveEmailRequestSender requestSender = new ReceiveEmailRequestSender(session.getUser().getAccessToken());
+                result = (ReceiveEmailsResult)requestSender.sendRequest(0);
                 email = result.getReceivedEmail();
                 state.setEmail(email);
                 state.setCurrentEmailIndex(0);
@@ -227,7 +228,8 @@ public class ReceiveEmailDialogManager
         }
         else
         {
-            result = (ReceiveEmailsResult)requestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), state.getCurrentEmailIndex());
+            ReceiveEmailRequestSender requestSender = new ReceiveEmailRequestSender(session.getUser().getAccessToken());
+            result = (ReceiveEmailsResult)requestSender.sendRequest(state.getCurrentEmailIndex());
             email = result.getReceivedEmail();
         }
 

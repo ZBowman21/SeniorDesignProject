@@ -9,8 +9,12 @@ import edu.pennstate.api.model.ExistsPlainAccountRequest;
 
 public class LinkAccountsRequestSender extends RequestHandler {
 
+    public LinkAccountsRequestSender(String token) {
+        super(token);
+    }
+
     @Override
-    public BaseResult sendRequest(Intent requestIntent, String token) {
+    public BaseResult sendRequest(Intent requestIntent) {
         throw new UnsupportedOperationException();
     }
 
@@ -19,12 +23,10 @@ public class LinkAccountsRequestSender extends RequestHandler {
         throw new UnsupportedOperationException();
     }
 
-    public boolean sendRequest(String token, String service)
+    public boolean sendRequest(String service)
     {
         ExistsPlainAccountRequest request = new ExistsPlainAccountRequest();
         request.setService(service);
-
-        GenerateClient(token);
 
         int statusCode = 200;
 

@@ -10,15 +10,20 @@ import edu.psu.alexaskill.request_handlers.RequestHandler;
 
 public class MarkEmailReadRequestSender extends RequestHandler
 {
+
+    public MarkEmailReadRequestSender(String token) {
+        super(token);
+    }
+
     @Override
-    public BaseResult sendRequest(Intent requestIntent, String token) {
+    public BaseResult sendRequest(Intent requestIntent) {
         throw new UnsupportedOperationException();    }
 
     @Override
     public SpeechletResponse parseResponse(BaseResult response) {
         throw new UnsupportedOperationException();    }
 
-    public BaseResult sendRequest(String passphrase, String token, int emailIndex)
+    public BaseResult sendRequest(int emailIndex)
     {
         String emailIndexString = String.valueOf(emailIndex);
 
@@ -32,7 +37,6 @@ public class MarkEmailReadRequestSender extends RequestHandler
                         .build()
         );
 
-        GenerateClient(token);
         MarkEmailReadResult result = client.markEmailRead(request);
         return result;
     }

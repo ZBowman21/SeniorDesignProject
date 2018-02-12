@@ -12,8 +12,8 @@ public class SendEmailIntentHandler extends SecureLinkedAccountIntentHandler {
 
     @Override
     public SpeechletResponse IntentCompleted(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
-        RequestHandler requestHandler = new SendEmailRequestSender();
-        BaseResult result = requestHandler.sendRequest(requestEnvelope.getRequest().getIntent(), requestEnvelope.getSession().getUser().getAccessToken());
+        RequestHandler requestHandler = new SendEmailRequestSender(requestEnvelope.getSession().getUser().getAccessToken());
+        BaseResult result = requestHandler.sendRequest(requestEnvelope.getRequest().getIntent());
         return requestHandler.parseResponse(result);
     }
 
