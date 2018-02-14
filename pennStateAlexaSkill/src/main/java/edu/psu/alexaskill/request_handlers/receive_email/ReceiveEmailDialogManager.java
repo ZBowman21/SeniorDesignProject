@@ -115,8 +115,7 @@ public class ReceiveEmailDialogManager
     private SpeechletResponse generateFirstUnreadSpeechlet(ReceivedEmail email)
     {
         SpeechletResponse response = new SpeechletResponse();
-        SsmlOutputSpeech outputSpeech = new SsmlOutputSpeech();
-        //PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
+        PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
 
         SimpleCard card = new SimpleCard();
 
@@ -125,13 +124,9 @@ public class ReceiveEmailDialogManager
         String message = "You have " + email.getUnread().intValue() + " unread messages. Your first message is from " +
                 from + " sent " + email.getDate() + ". Would you like to hear it or skip it?";
 
-        String ssmlMessage = "<speak> <audio src=\"https://s3.amazonaws.com/psuunifiedwebsite/mail_time_new.mp3\" /> You have " + email.getUnread().intValue() + " unread messages. Your first message is from " +
-                from + " sent " + email.getDate() + ". Would you like to hear it or skip it? </speak>";
-
-        logger.info(ssmlMessage);
         card.setContent(message);
 
-        outputSpeech.setSsml(ssmlMessage);
+        outputSpeech.setText(message);
 
         response.setCard(card);
         response.setOutputSpeech(outputSpeech);
