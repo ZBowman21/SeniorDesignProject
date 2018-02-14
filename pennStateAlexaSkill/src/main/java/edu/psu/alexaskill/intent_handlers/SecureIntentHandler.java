@@ -31,6 +31,8 @@ public abstract class SecureIntentHandler implements IntentHandler
 
         boolean hasPassphrase = CognitoUtils.hasPassphrase(requestEnvelope.getSession().getUser().getAccessToken());
 
+        logger.info("Has passphrase: {}", hasPassphrase);
+
         dialogIntent.setName(intent.getName());
         Map<String, DialogSlot> dialogSlots = new HashMap<>();
         for(Map.Entry<String, Slot> entry : intent.getSlots().entrySet())
@@ -67,8 +69,12 @@ public abstract class SecureIntentHandler implements IntentHandler
     }
 
     @Override
-    public SpeechletResponse IntentInProgress(SpeechletRequestEnvelope<IntentRequest> requestEnvelope)
+    public final SpeechletResponse IntentInProgress(SpeechletRequestEnvelope<IntentRequest> requestEnvelope)
     {
+        if ((boolean) requestEnvelope.getSession().getAttribute("passphraseChecked")) {
+            return inProgress(requestEnvelope);
+        }
+
         Intent intent = requestEnvelope.getRequest().getIntent();
         DialogIntent dialogIntent = new DialogIntent(intent);
         Map<String, DialogSlot> dialogSlots = new HashMap<>();
@@ -134,4 +140,7 @@ public abstract class SecureIntentHandler implements IntentHandler
         speechletResponse.setNullableShouldEndSession(false);
         return speechletResponse;
     }
+
+    protected abstract SpeechletResponse inProgress(SpeechletRequestEnvelope<IntentRequest> requestEnvelope);
+
 }

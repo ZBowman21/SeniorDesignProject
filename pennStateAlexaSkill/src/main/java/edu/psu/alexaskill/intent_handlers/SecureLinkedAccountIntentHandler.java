@@ -15,13 +15,13 @@ public abstract class SecureLinkedAccountIntentHandler extends SecureIntentHandl
         {
             SpeechletResponse response = new SpeechletResponse();
             PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
-            speech.setText("You have not linked your " + service + " account. Please visit dokistone.bd.psu.edu to do so.");
+            speech.setText("You have not linked your " + service + " account. Please visit pennhub.bd.psu.edu to do so.");
             response.setOutputSpeech(speech);
             return response;
         }
         else
         {
-            return super.IntentInProgress(requestEnvelope);
+            return super.IntentStarted(requestEnvelope);
         }
     }
 }

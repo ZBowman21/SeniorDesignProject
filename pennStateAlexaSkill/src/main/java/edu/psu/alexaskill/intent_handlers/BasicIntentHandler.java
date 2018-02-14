@@ -50,13 +50,6 @@ public abstract class BasicIntentHandler implements IntentHandler {
 
     @Override
     public SpeechletResponse IntentInProgress(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
-        DelegateDirective dd = new DelegateDirective();
-        List<Directive> directiveList = new ArrayList<>();
-        directiveList.add(dd);
-
-        SpeechletResponse speechletResponse = new SpeechletResponse();
-        speechletResponse.setDirectives(directiveList);
-        speechletResponse.setNullableShouldEndSession(false);
-        return speechletResponse;
+        return IntentHandler.getDefaultresponse();
     }
 }
