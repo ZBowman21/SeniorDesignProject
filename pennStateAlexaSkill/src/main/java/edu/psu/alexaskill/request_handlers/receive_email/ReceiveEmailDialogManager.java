@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 public class ReceiveEmailDialogManager
 {
-    private ReceiveEmailRequestSender requestSender = new ReceiveEmailRequestSender();
-    private MarkEmailReadRequestSender markEmailRequestSender = new MarkEmailReadRequestSender();
     private ReceiveEmailState state;
     private Intent intent;
     private Session session;
@@ -26,7 +24,7 @@ public class ReceiveEmailDialogManager
         ObjectMapper mapper = new ObjectMapper();
         try
         {
-            String mappedJsonState = mapper.writeValueAsString(session.getAttribute("state"));
+            String mappedJsonState = mapper.writeValueAsString(session.getAttribute("receiveEmailState"));
             state = mapper.readValue(mappedJsonState, ReceiveEmailState.class);
         }
         catch(Exception e)
@@ -80,7 +78,9 @@ public class ReceiveEmailDialogManager
 
         state.setState(ReceiveEmailState.State.ReadingEmail);
 
-        markEmailRequestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), state.getCurrentEmailIndex());
+        MarkEmailReadRequestSender markEmailRequestSender = new MarkEmailReadRequestSender(session.getUser().getAccessToken());
+
+        markEmailRequestSender.sendRequest(state.getCurrentEmailIndex());
 
         Reprompt reprompt = new Reprompt();
         reprompt.setOutputSpeech(outputSpeech);
@@ -115,8 +115,7 @@ public class ReceiveEmailDialogManager
     private SpeechletResponse generateFirstUnreadSpeechlet(ReceivedEmail email)
     {
         SpeechletResponse response = new SpeechletResponse();
-        SsmlOutputSpeech outputSpeech = new SsmlOutputSpeech();
-        //PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
+        PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
 
         SimpleCard card = new SimpleCard();
 
@@ -125,13 +124,9 @@ public class ReceiveEmailDialogManager
         String message = "You have " + email.getUnread().intValue() + " unread messages. Your first message is from " +
                 from + " sent " + email.getDate() + ". Would you like to hear it or skip it?";
 
-        String ssmlMessage = "<speak> <audio src=\"https://s3.amazonaws.com/psuunifiedwebsite/mail_time_new.mp3\" /> You have " + email.getUnread().intValue() + " unread messages. Your first message is from " +
-                from + " sent " + email.getDate() + ". Would you like to hear it or skip it? </speak>";
-
-        logger.info(ssmlMessage);
         card.setContent(message);
 
-        outputSpeech.setSsml(ssmlMessage);
+        outputSpeech.setText(message);
 
         response.setCard(card);
         response.setOutputSpeech(outputSpeech);
@@ -155,7 +150,8 @@ public class ReceiveEmailDialogManager
         switch(state.getState())
         {
             case Initial:
-                result = (ReceiveEmailsResult)requestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), 0);
+                ReceiveEmailRequestSender requestSender = new ReceiveEmailRequestSender(session.getUser().getAccessToken());
+                result = (ReceiveEmailsResult)requestSender.sendRequest(0);
                 email = result.getReceivedEmail();
                 state.setEmail(email);
                 state.setCurrentEmailIndex(0);
@@ -227,7 +223,8 @@ public class ReceiveEmailDialogManager
         }
         else
         {
-            result = (ReceiveEmailsResult)requestSender.sendRequest((String)session.getAttribute("passphrase"), session.getUser().getAccessToken(), state.getCurrentEmailIndex());
+            ReceiveEmailRequestSender requestSender = new ReceiveEmailRequestSender(session.getUser().getAccessToken());
+            result = (ReceiveEmailsResult)requestSender.sendRequest(state.getCurrentEmailIndex());
             email = result.getReceivedEmail();
         }
 
@@ -247,7 +244,7 @@ public class ReceiveEmailDialogManager
                 break;
         }
 
-        session.setAttribute("state", state);
+        session.setAttribute("receiveEmailState", state);
         return response;
     }
 }

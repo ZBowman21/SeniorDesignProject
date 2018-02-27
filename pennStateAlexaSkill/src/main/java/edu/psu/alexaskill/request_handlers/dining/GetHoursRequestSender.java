@@ -18,7 +18,7 @@ public class GetHoursRequestSender extends RequestHandler
             "Friday", "Saturday" };
 
     @Override
-    public BaseResult sendRequest(Intent requestIntent, String token) {
+    public BaseResult sendRequest(Intent requestIntent) {
 
         String day = requestIntent.getSlot("time").getValue();
         Calendar c = Calendar.getInstance();
@@ -43,9 +43,7 @@ public class GetHoursRequestSender extends RequestHandler
                         .build()
         );
 
-        GenerateClient();
-        GetHoursResult response = client.getHours(request);
-        return response;
+        return client.getHours(request);
     }
 
     @Override

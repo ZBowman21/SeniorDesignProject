@@ -11,8 +11,12 @@ import edu.psu.alexaskill.request_handlers.RequestHandler;
 
 public class SendEmailRequestSender extends RequestHandler {
 
+	public SendEmailRequestSender(String token) {
+		super(token);
+	}
+
 	@Override
-	public BaseResult sendRequest(Intent requestIntent, String token)
+	public BaseResult sendRequest(Intent requestIntent)
 	{
 		String destination = requestIntent.getSlot("destination").getValue();
 		String subject = requestIntent.getSlot("subject").getValue();
@@ -24,7 +28,6 @@ public class SendEmailRequestSender extends RequestHandler {
 		request.setDestination(corrector.CorrectAddress(destination));
 		request.setSubject(corrector.CorrectSubject(subject));
 		request.setBody(corrector.CorrectBody(body));
-		request.setPassphrase(requestIntent.getSlot("passphrase").getValue()); //really passphrase
 
 		request.sdkRequestConfig(
 				SdkRequestConfig.builder()
@@ -33,7 +36,6 @@ public class SendEmailRequestSender extends RequestHandler {
 						.build()
 		);
 
-		GenerateClient(token);
 		SendEmailResult response = client.sendEmail(request);
 		return response;
 

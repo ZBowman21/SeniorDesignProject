@@ -1,26 +1,24 @@
 package edu.psu.unifiedapi.account;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.database.Database;
 
 import java.sql.SQLException;
 
 
-public class AddLinkedTokenAccount implements RequestHandler<AddLinkedTokenAccountArgs, Boolean> {
+public class AddLinkedTokenAccount implements IAddLinkedTokenAccount {
 
 	public AddLinkedTokenAccount() {
 		Database.init();
 	}
 
-	@Override
-	public Boolean handleRequest(AddLinkedTokenAccountArgs args, Context context) {
+	public void addLinkedTokenAccount(AddLinkedTokenAccountArgs args) {
 		try {
-			return Database.insertTokenCredentials(args.userId, args.service, args.token);
+			if (!Database.insertTokenCredentials(args.userId, args.service, args.token)) {
+				throw new RuntimeException("Internal server error");
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Internal server error");
 		}
-		return false;
 	}
 
 }

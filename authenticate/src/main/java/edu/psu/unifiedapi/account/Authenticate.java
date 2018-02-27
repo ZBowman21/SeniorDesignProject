@@ -8,8 +8,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.AuthPolicy;
-import io.TokenAuthorizerContext;
 
 
 public class Authenticate implements RequestHandler<TokenAuthorizerContext, AuthPolicy> {

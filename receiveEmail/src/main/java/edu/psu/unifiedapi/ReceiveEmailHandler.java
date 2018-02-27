@@ -36,17 +36,16 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 		//Authentication
 		GetLinkedPlainAccountArgs aA = new GetLinkedPlainAccountArgs();
-		aA.passphrase = input.password;
 		aA.service = "webmail";
-		aA.userId = input.username;
+		aA.userId = input.userId;
 
 		//Call authenticate with AuthArgs
 		IGetLinkedPlainAccount authService = LambdaInvokerFactory.builder().build(IGetLinkedPlainAccount.class);
 		Credentials creds = authService.getLinkedPlainAccount(aA);
-		input.username = creds.getUsername();
-		input.password = creds.getPassword();
+		String username = creds.getUsername();
+		String password = creds.getPassword();
 
-		if(input.password != null) {
+		if(password != null) {
 			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 			props.setProperty("mail.imap.socketFactory.port", "993");
 
@@ -59,7 +58,7 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 
 			try {
 				Store store = session.getStore("imap");
-				store.connect("email.psu.edu", input.username, input.password);
+				store.connect("email.psu.edu", username, password);
 
 				Folder inbox = store.getFolder("INBOX"); //INBOX or Sent
 				inbox.open(Folder.READ_ONLY);

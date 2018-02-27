@@ -1,10 +1,12 @@
 package edu.psu.unifiedapi.account;
 
 import com.amazonaws.services.lambda.invoke.LambdaFunction;
+import com.amazonaws.services.lambda.invoke.LambdaFunctionException;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import edu.psu.unifiedapi.auth.Credentials;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
@@ -18,13 +20,18 @@ public class GetLinkedPlainAccountTest {
 
 		GetLinkedPlainAccountArgs args = new GetLinkedPlainAccountArgs();
 
-		args.username = "user";
-		args.passphrase = "pass";
+		args.userId = "user";
 		args.service = "webmail";
 
-		Credentials result = service.getLinkedPlainAccount(args);
+		String message = null;
 
-		assertNull(result);
+		try {
+			service.getLinkedPlainAccount(args);
+		} catch (LambdaFunctionException e) {
+			message = e.getMessage();
+		}
+
+		assertEquals(message, "Account not found");
 	}
 
 }

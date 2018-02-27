@@ -1,3 +1,3 @@
 dependencies {
-    compile 'com.amazonaws:aws-java-sdk-cognitoidp:1.11.271'
+    compile aws_java_sdk_cognitoidp
 }

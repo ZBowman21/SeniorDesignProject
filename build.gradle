@@ -16,6 +16,16 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+ext.aws_java_sdk_lambda = 'com.amazonaws:aws-java-sdk-lambda:1.11.226'
+ext.aws_lambda_java_core = 'com.amazonaws:aws-lambda-java-core:1.2.0'
+ext.aws_java_sdk_cognitoidp = 'com.amazonaws:aws-java-sdk-cognitoidp:1.11.271'
+ext.postgresql = 'org.postgresql:postgresql:42.1.4'
+ext.commons_email = 'org.apache.commons:commons-email:1.5'
+ext.jsoup = 'org.jsoup:jsoup:1.11.2'
+ext.alexa_skills_kit = 'com.amazon.alexa:alexa-skills-kit:1.6.0'
+ext.psuapi = 'edu.pennstate.api:PennStateUnified:1.0-SNAPSHOT'
+ext.reflections = 'org.reflections:reflections:0.9.11'
+
 subprojects {
 	apply plugin: 'java'
 
@@ -55,6 +65,11 @@ subprojects {
 				srcDir file('src/integration-test/java')
 			}
 		}
+	}
+
+	task integrationTest(type: Test) {
+		testClassesDirs = sourceSets.integrationTest.output.classesDirs
+		classpath = sourceSets.integrationTest.runtimeClasspath
 	}
 
 }

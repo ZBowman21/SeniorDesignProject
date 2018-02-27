@@ -4,15 +4,13 @@ package edu.psu.unifiedapi;
  * @author mthwate
  */
 public class ReceiveEmailRequest {
-	public String username;
-	public String password;
+	public String userId;
 	public int start;
 
 	ReceiveEmailRequest(){};
 
-	ReceiveEmailRequest(String username, String password, int start) {
-		this.username = username;
-		this.password = password;
+	ReceiveEmailRequest(String userId, int start) {
+		this.userId = userId;
 		this.start = start;
 	}
 }

@@ -1,24 +1,26 @@
 package edu.psu.unifiedapi.account;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.database.Database;
 
+import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 
-public class AddLinkedPlainAccount implements RequestHandler<AddLinkedPlainAccountArgs, Boolean> {
+
+public class AddLinkedPlainAccount implements IAddLinkedPlainAccount {
 
 	public AddLinkedPlainAccount() {
 		Database.init();
 	}
 
-	@Override
-	public Boolean handleRequest(AddLinkedPlainAccountArgs args, Context context) {
+	public void addLinkedPlainAccount(AddLinkedPlainAccountArgs args) throws RuntimeException {
+		String encryptionKey = CognitoUtils.getEncryptionKey(args.userId);
 		try {
-			return Database.insertPlainCredentials(args.userId, args.passphrase, args.service, args.username, args.password);
-		} catch (Exception e) {
-			e.printStackTrace();
+			if (!Database.insertPlainCredentials(args.userId, encryptionKey, args.service, args.username, args.password)) {
+				throw new RuntimeException("Internal server error");
+			}
+		} catch (SQLException | GeneralSecurityException e) {
+			throw new RuntimeException("Internal server error");
 		}
-		return false;
 	}
 
 }
