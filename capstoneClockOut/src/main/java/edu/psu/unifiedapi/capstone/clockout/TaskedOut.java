@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstoneClockOut;
+package edu.psu.unifiedapi.capstone.clockout;
 
 import com.google.api.client.util.Key;
 

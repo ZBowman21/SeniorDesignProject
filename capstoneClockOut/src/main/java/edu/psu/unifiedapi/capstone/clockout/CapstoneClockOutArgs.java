@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstoneClockOut;
+package edu.psu.unifiedapi.capstone.clockout;
 
 public class CapstoneClockOutArgs {
     public String username;

@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstoneclockin;
+package edu.psu.unifiedapi.capstone.clockin;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;

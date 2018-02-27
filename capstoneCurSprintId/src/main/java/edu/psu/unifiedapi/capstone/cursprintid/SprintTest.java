@@ -1,6 +1,6 @@
-package edu.psu.unifiedapi.capstonecursprintid;
+package edu.psu.unifiedapi.capstone.cursprintid;
 
-import edu.psu.unifiedapi.capstoneutils.CapstoneCurSprintIdArgs;
+import edu.psu.unifiedapi.capstone.utils.CapstoneCurSprintIdArgs;
 
 public class SprintTest {
 

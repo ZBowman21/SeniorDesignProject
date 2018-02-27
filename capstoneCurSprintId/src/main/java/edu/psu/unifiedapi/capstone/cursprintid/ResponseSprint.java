@@ -1,7 +1,7 @@
-package edu.psu.unifiedapi.capstonecursprintid;
+package edu.psu.unifiedapi.capstone.cursprintid;
 
 import com.google.api.client.util.Key;
-import edu.psu.unifiedapi.capstoneutils.CapstoneResponse;
+import edu.psu.unifiedapi.capstone.utils.CapstoneResponse;
 
 public class ResponseSprint extends CapstoneResponse{
     @Key

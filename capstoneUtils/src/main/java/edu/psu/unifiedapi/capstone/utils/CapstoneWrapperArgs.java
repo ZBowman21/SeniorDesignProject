@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstoneutils;
+package edu.psu.unifiedapi.capstone.utils;
 
 public class CapstoneWrapperArgs {
     public String username;

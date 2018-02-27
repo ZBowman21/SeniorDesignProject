@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstoneclockin;
+package edu.psu.unifiedapi.capstone.clockin;
 
 public class CapstoneClockInArgs {
     public String username;

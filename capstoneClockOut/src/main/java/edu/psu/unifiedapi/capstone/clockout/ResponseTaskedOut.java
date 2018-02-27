@@ -1,7 +1,7 @@
-package edu.psu.unifiedapi.capstoneClockOut;
+package edu.psu.unifiedapi.capstone.clockout;
 
 import com.google.api.client.util.Key;
-import edu.psu.unifiedapi.capstoneutils.CapstoneResponse;
+import edu.psu.unifiedapi.capstone.utils.CapstoneResponse;
 
 public class ResponseTaskedOut extends CapstoneResponse {
     @Key

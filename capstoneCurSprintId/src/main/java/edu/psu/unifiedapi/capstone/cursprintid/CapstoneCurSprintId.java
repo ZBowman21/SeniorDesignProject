@@ -1,8 +1,8 @@
-package edu.psu.unifiedapi.capstonecursprintid;
+package edu.psu.unifiedapi.capstone.cursprintid;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import edu.psu.unifiedapi.capstoneutils.CapstoneCurSprintIdArgs;
+import edu.psu.unifiedapi.capstone.utils.CapstoneCurSprintIdArgs;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 
 public class CapstoneCurSprintId implements RequestHandler<CapstoneCurSprintIdArgs,String> {

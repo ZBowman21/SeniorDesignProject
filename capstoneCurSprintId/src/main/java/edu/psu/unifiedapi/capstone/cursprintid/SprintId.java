@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstonecursprintid;
+package edu.psu.unifiedapi.capstone.cursprintid;
 
 import com.google.api.client.util.Key;
 

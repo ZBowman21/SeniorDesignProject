@@ -1,7 +1,7 @@
-package edu.psu.unifiedapi.capstonetasklist;
+package edu.psu.unifiedapi.capstone.tasklist;
 
 import com.google.api.client.util.Key;
-import edu.psu.unifiedapi.capstoneutils.CapstoneResponse;
+import edu.psu.unifiedapi.capstone.utils.CapstoneResponse;
 
 public class ResponseTask extends CapstoneResponse {
     @Key

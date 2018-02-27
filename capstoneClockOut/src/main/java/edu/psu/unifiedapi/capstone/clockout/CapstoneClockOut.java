@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstoneClockOut;
+package edu.psu.unifiedapi.capstone.clockout;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;

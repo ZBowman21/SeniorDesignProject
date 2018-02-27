@@ -1,11 +1,11 @@
-package edu.psu.unifiedapi.capstonetasklist;
+package edu.psu.unifiedapi.capstone.tasklist;
 
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.capstone.CapstoneException;
-import edu.psu.unifiedapi.capstoneutils.CapstoneCurSprintIdArgs;
-import edu.psu.unifiedapi.capstoneutils.ICapstoneCurSprintId;
+import edu.psu.unifiedapi.capstone.utils.CapstoneCurSprintIdArgs;
+import edu.psu.unifiedapi.capstone.utils.ICapstoneCurSprintId;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 
 public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, String[]> {

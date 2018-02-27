@@ -7,7 +7,7 @@ import edu.psu.unifiedapi.account.IGetLinkedTokenAccount;
 import edu.psu.unifiedapi.account.IUpdateLinkedTokenAccount;
 import edu.psu.unifiedapi.account.UpdateLinkedTokenAccountArgs;
 import edu.psu.unifiedapi.auth.Credentials;
-import edu.psu.unifiedapi.capstoneutils.CapstoneResponse;
+import edu.psu.unifiedapi.capstone.utils.CapstoneResponse;
 import edu.psu.unifiedapi.restclientutil.RestClient;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;

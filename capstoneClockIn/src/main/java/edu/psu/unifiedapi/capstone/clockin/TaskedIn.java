@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.capstoneclockin;
+package edu.psu.unifiedapi.capstone.clockin;
 
 import com.google.api.client.util.Key;
 
