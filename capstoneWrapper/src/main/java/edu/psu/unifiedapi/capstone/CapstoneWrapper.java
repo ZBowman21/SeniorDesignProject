@@ -6,6 +6,7 @@ import edu.psu.unifiedapi.account.GetLinkedTokenAccountArgs;
 import edu.psu.unifiedapi.account.IGetLinkedTokenAccount;
 import edu.psu.unifiedapi.account.IUpdateLinkedTokenAccount;
 import edu.psu.unifiedapi.account.UpdateLinkedTokenAccountArgs;
+import edu.psu.unifiedapi.auth.Credentials;
 import edu.psu.unifiedapi.capstoneutils.CapstoneResponse;
 import edu.psu.unifiedapi.restclientutil.RestClient;
 import com.google.api.client.json.JsonObjectParser;
@@ -23,19 +24,19 @@ public class CapstoneWrapper{
     public CapstoneWrapper(String username, String path, String params){
         this.username = username;
         this. path = path;
-        this. params = params;
+        this. params = params == null ? "" : params;
     }
 
     public CapstoneResponse CapCall(Class responseClass, Context context) throws CapstoneException{
 
         GetLinkedTokenAccountArgs ta = new GetLinkedTokenAccountArgs();
-        ta.username = username;
-        ta.service = "capstone";    // Don't know if it will be uppercase or not
+        ta.userId = username;
+        ta.service = "capstone";
 
         IGetLinkedTokenAccount tokenAccount = LambdaInvokerFactory.builder().build(IGetLinkedTokenAccount.class);
-        String nounce = tokenAccount.getLinkedTokenAccount(ta);
+        Credentials cred = tokenAccount.getLinkedTokenAccount(ta);      // Check with Matt on this one....
 
-        CapstoneAuth capAuth = new CapstoneAuth(nounce);
+        CapstoneAuth capAuth = new CapstoneAuth(cred.getPassword());
 
         RestClient client = new RestClient(baseUrl + path, params + capAuth.BuildAuthString());
         String response = client.GetRequest();
