@@ -19,13 +19,18 @@ public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, St
         ICapstoneCurSprintId cs = LambdaInvokerFactory.builder().build(ICapstoneCurSprintId.class);
         String sprintId = cs.getSprintId(sa);
 
-        String params = param + "&teamid=" + input.teamId + "&sprintid=" + sprintId;
+        // Need to grab teamid from database
+        String teamdId = "CSSE-BD-Class2018-002";
+        String params = param + "&teamid=" + teamdId + "&sprintid=" + sprintId;
 
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         ResponseTask response;
         try {
             response = (ResponseTask) cap.CapCall(ResponseTask.class, context);
         } catch (CapstoneException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (Exception e) {
+            context.getLogger().log(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
 

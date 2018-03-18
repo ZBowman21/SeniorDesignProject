@@ -13,7 +13,7 @@ public class CapstoneCurSprintId implements RequestHandler<CapstoneCurSprintIdAr
     public String handleRequest(CapstoneCurSprintIdArgs input, Context context){
 
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, param);
-
+        context.getLogger().log("Getting current sprintId for " + input.username);
         ResponseSprint response;
         try {
             response = (ResponseSprint) cap.CapCall(ResponseSprint.class, context);

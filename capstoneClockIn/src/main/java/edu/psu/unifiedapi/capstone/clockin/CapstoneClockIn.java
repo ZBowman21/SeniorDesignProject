@@ -11,7 +11,9 @@ public class CapstoneClockIn implements RequestHandler<CapstoneClockInArgs,Boole
     @Override
     public Boolean handleRequest(CapstoneClockInArgs input, Context context) {
 
-        String params = "taskid=" + input.taskId + "&teamid=" + input.teamId;
+        // Need to get teamid from db
+        String teamid = "CSSE-BD-Class2018-002";
+        String params = "taskid=" + input.taskId + "&teamid=" + teamid;
 
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         TaskedInResponse response;

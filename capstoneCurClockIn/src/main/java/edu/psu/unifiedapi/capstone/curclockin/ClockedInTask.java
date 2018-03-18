@@ -3,7 +3,7 @@ import com.google.api.client.util.Key;
 
 public class ClockedInTask{
     @Key
-    public String activeTaskID;
+    public int activeTaskID;
     @Key
     public Boolean activeTask;
 }

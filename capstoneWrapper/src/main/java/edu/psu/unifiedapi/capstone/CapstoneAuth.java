@@ -1,12 +1,13 @@
 package edu.psu.unifiedapi.capstone;
 
 public class CapstoneAuth {
-    private String authID = "a26f44178da53e65d44bff13e1c56431";
+    private String authID;
     private String AuthRole = "Student";
     private String nounceCode;
 
-    public CapstoneAuth(String nounce) {
+    public CapstoneAuth(String nounce, String authID) {
         nounceCode = nounce;
+        this.authID = authID;
     }
 
     public String BuildAuthString(){

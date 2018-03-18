@@ -34,9 +34,14 @@ public class CapstoneWrapper{
         ta.service = "capstone";
 
         IGetLinkedTokenAccount tokenAccount = LambdaInvokerFactory.builder().build(IGetLinkedTokenAccount.class);
-        Credentials cred = tokenAccount.getLinkedTokenAccount(ta);      // Check with Matt on this one....
+        String token = tokenAccount.getLinkedTokenAccount(ta);      // Check with Matt on this one....
 
-        CapstoneAuth capAuth = new CapstoneAuth(cred.getPassword());
+        // Regex...
+        String[] authId = token.split(" ");
+
+        context.getLogger().log("Using authid = " + authId[1] + " and nounce = " + authId[0]);
+
+        CapstoneAuth capAuth = new CapstoneAuth(authId[1], authId[0]);
 
         RestClient client = new RestClient(baseUrl + path, params + capAuth.BuildAuthString());
         String response = client.GetRequest();
@@ -59,7 +64,7 @@ public class CapstoneWrapper{
         ua.username = username;
         ua.service = ta.service;
         context.getLogger().log(response);
-        ua.value = capRes.AuthenticateObject.NounceCode;
+        ua.value = authId[0] + " " + capRes.AuthenticateObject.NounceCode;
 
         IUpdateLinkedTokenAccount updateToken = LambdaInvokerFactory.builder().build(IUpdateLinkedTokenAccount.class);
         updateToken.updateLinkedTokenAccount(ua);
