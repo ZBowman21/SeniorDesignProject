@@ -3,6 +3,7 @@ package edu.psu.alexaskill.request_handlers.check_accounts;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazonaws.opensdk.BaseResult;
+import edu.pennstate.api.model.ExistsTokenAccountRequest;
 import edu.pennstate.api.model.PennStateUnifiedException;
 import edu.psu.alexaskill.request_handlers.RequestHandler;
 import edu.pennstate.api.model.ExistsPlainAccountRequest;
@@ -25,18 +26,33 @@ public class LinkAccountsRequestSender extends RequestHandler {
 
     public boolean sendRequest(String service)
     {
-        ExistsPlainAccountRequest request = new ExistsPlainAccountRequest();
-        request.setService(service);
-
         int statusCode = 200;
 
-        try
+        if(service.equals("webmail"))
         {
-           client.existsPlainAccount(request);
+            ExistsPlainAccountRequest request = new ExistsPlainAccountRequest();
+            request.setService(service);
+            try
+            {
+                client.existsPlainAccount(request);
+            }
+            catch(PennStateUnifiedException e)
+            {
+                statusCode = e.sdkHttpMetadata().httpStatusCode();
+            }
         }
-        catch(PennStateUnifiedException e)
+        else
         {
-            statusCode = e.sdkHttpMetadata().httpStatusCode();
+            ExistsTokenAccountRequest request = new ExistsTokenAccountRequest();
+            request.setService(service);
+            try
+            {
+                client.existsTokenAccount(request);
+            }
+            catch(PennStateUnifiedException e)
+            {
+                statusCode = e.sdkHttpMetadata().httpStatusCode();
+            }
         }
 
         if(statusCode == 200)
