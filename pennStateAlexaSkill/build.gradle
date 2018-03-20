@@ -4,4 +4,5 @@ dependencies {
     compile aws_lambda_java_core
     compile psuapi
     compile reflections
+    compile string_simularity
 }

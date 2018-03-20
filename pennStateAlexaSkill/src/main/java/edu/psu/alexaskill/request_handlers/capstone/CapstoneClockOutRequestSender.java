@@ -8,10 +8,7 @@ import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.SdkRequestConfig;
 import edu.pennstate.api.model.CapstoneClockOutRequest;
 import edu.pennstate.api.model.CapstoneClockOutResult;
-import edu.pennstate.api.model.GetCapstoneTaskListResult;
 import edu.psu.alexaskill.request_handlers.RequestHandler;
-
-import java.util.List;
 
 public class CapstoneClockOutRequestSender extends RequestHandler {
 
