@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.updatecapstonedata;
+package edu.psu.unifiedapi.account;
 
 import com.amazonaws.services.lambda.invoke.LambdaFunction;
 

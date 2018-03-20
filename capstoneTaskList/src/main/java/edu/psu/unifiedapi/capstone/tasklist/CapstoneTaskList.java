@@ -7,6 +7,8 @@ import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.utils.CapstoneCurSprintIdArgs;
 import edu.psu.unifiedapi.capstone.utils.ICapstoneCurSprintId;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
+import edu.psu.unifiedapi.account.IGetCapstoneData;
+import edu.psu.unifiedapi.account.GetCapstoneDataArgs;
 
 public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, String[]> {
     private final String path = "/AgileTask/EGetTaskList";
@@ -20,8 +22,14 @@ public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, St
         String sprintId = cs.getSprintId(sa);
 
         // Need to grab teamid from database
-        String teamdId = "CSSE-BD-Class2018-002";
-        String params = param + "&teamid=" + teamdId + "&sprintid=" + sprintId;
+        //String teamdId = "CSSE-BD-Class2018-002";
+        GetCapstoneDataArgs gcda = new GetCapstoneDataArgs();
+        gcda.userId = input.username;
+
+        IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
+        String teamId = gcd.getCapstoneData(gcda);
+
+        String params = param + "&teamid=" + teamId + "&sprintid=" + sprintId;
 
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         ResponseTask response;

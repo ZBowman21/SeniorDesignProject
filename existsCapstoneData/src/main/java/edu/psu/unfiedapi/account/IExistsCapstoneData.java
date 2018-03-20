@@ -1,4 +1,4 @@
-package edu.psu.unfiedapi.existCapstoneData;
+package edu.psu.unfiedapi.account;
 
 import com.amazonaws.services.lambda.invoke.LambdaFunction;
 

@@ -3,6 +3,8 @@ package edu.psu.unifiedapi.capstone.clockout;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import edu.psu.unifiedapi.account.GetCapstoneDataArgs;
+import edu.psu.unifiedapi.account.IGetCapstoneData;
 import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 import edu.psu.unifiedapi.capstone.curclockin.CapstoneCurClockInArgs;
@@ -15,7 +17,12 @@ public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boo
     public Boolean handleRequest(CapstoneClockOutArgs input, Context context) {
 
         // Need grab teamid from database
-        String teamid = "CSSE-BD-Class2018-002";
+        //String teamid = "CSSE-BD-Class2018-002";
+        GetCapstoneDataArgs gcda = new GetCapstoneDataArgs();
+        gcda.userId = input.username;
+
+        IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
+        String teamid = gcd.getCapstoneData(gcda);
 
         // Need to grab taskid from lambda....
         CapstoneCurClockInArgs ccia = new CapstoneCurClockInArgs();

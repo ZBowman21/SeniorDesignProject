@@ -1,4 +1,4 @@
-package edu.psu.unfiedapi.existCapstoneData;
+package edu.psu.unfiedapi.account;
 
 import edu.psu.unifiedapi.database.Database;
 import java.sql.SQLException;
