@@ -25,7 +25,6 @@ ext.jsoup = 'org.jsoup:jsoup:1.11.2'
 ext.alexa_skills_kit = 'com.amazon.alexa:alexa-skills-kit:1.6.0'
 ext.psuapi = 'edu.pennstate.api:PennStateUnified:1.0-SNAPSHOT'
 ext.reflections = 'org.reflections:reflections:0.9.11'
-ext.string_simularity = 'net.ricecode:string-similarity:1.0.0'
 
 subprojects {
 	apply plugin: 'java'

@@ -24,7 +24,6 @@ public class CapstoneClockInIntentHandler extends SecureLinkedAccountIntentHandl
     @Override
     public SpeechletResponse IntentCompleted(SpeechletRequestEnvelope<IntentRequest> requestEnvelope)
     {
-        logger.info("CompleteNormal: Slot Value=" + requestEnvelope.getRequest().getIntent().getSlot("Task").getValue());
         CapstoneTaskManager taskManager = new CapstoneTaskManager(requestEnvelope.getSession());
         Intent normalIntent = requestEnvelope.getRequest().getIntent();
 
@@ -43,48 +42,16 @@ public class CapstoneClockInIntentHandler extends SecureLinkedAccountIntentHandl
         }
 
         dialogIntent.setSlots(dialogSlots);
-        logger.info("Complete: Slot Value=" + dialogIntent.getSlots().get("Task").getValue());
-
-        return taskManager.getTaskSpokenTaskAnalysis(dialogIntent);
+        return taskManager.clockIntoTask(dialogIntent);
     }
 
     @Override
     public SpeechletResponse IntentStarted(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
-        CapstoneTaskManager taskManager = new CapstoneTaskManager(requestEnvelope.getSession());
-        SpeechletResponse response = IntentStarted(requestEnvelope, "capstone");
-        PlainTextOutputSpeech speech = (PlainTextOutputSpeech)response.getOutputSpeech();
-        if(speech != null)
-        {
-            return response;
-        }
-        else
-        {
-            DelegateDirective directive = (DelegateDirective)response.getDirectives().get(0);
-            DialogIntent intent = directive.getUpdatedIntent();
-            return taskManager.getTaskSpokenTaskAnalysis(intent);
-        }
+        return IntentStarted(requestEnvelope, "capstone");
     }
 
     @Override
     protected SpeechletResponse inProgress(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
-        CapstoneTaskManager taskManager = new CapstoneTaskManager(requestEnvelope.getSession());
-        Intent normalIntent = requestEnvelope.getRequest().getIntent();
-
-        DialogIntent dialogIntent = new DialogIntent();
-        dialogIntent.setName(normalIntent.getName());
-        dialogIntent.setConfirmationStatus(normalIntent.getConfirmationStatus());
-
-        Map<String, DialogSlot> dialogSlots = new HashMap<>();
-        for(Map.Entry<String, Slot> entry : normalIntent.getSlots().entrySet())
-        {
-            Slot slot = entry.getValue();
-            DialogSlot dialogSlot = new DialogSlot();
-            dialogSlot.setName(slot.getName());
-            dialogSlots.put(entry.getKey(), dialogSlot);
-        }
-        dialogIntent.setSlots(dialogSlots);
-        logger.info("InProgress: Slot Value=" + dialogIntent.getSlots().get("Task").getValue());
-
-        return taskManager.getTaskSpokenTaskAnalysis(dialogIntent);
+        return IntentHandler.getDefaultresponse();
     }
 }

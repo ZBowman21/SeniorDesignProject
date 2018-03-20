@@ -7,8 +7,8 @@ import com.amazon.speech.speechlet.dialog.directives.DialogIntent;
 import com.amazon.speech.speechlet.dialog.directives.DialogSlot;
 import com.amazon.speech.speechlet.dialog.directives.ElicitSlotDirective;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
+import com.amazon.speech.ui.SimpleCard;
 import edu.pennstate.api.model.GetCapstoneTaskListResult;
-import net.ricecode.similarity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,8 @@ public class CapstoneTaskManager
         this.session = session;
     }
 
-    public SpeechletResponse getTaskSpokenTaskAnalysis(DialogIntent intent)
+    @SuppressWarnings("unchecked")
+    public SpeechletResponse clockIntoTask(DialogIntent intent)
     {
         SpeechletResponse response = new SpeechletResponse();
         PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
@@ -30,113 +31,89 @@ public class CapstoneTaskManager
         String slotValue = slot.getValue();
         if(slotValue == null)
         {
-            //Slot has not been filled, get task list for user and do elicit prompt
-            CapstoneTaskListRequestSender taskListRequestSender = new CapstoneTaskListRequestSender(session.getUser().getAccessToken());
-            GetCapstoneTaskListResult result = (GetCapstoneTaskListResult)taskListRequestSender.sendRequest(null);
-            List<String> tasks = result.getCapstoneTaskList();
+            List<String> formattedTasks = getFormattedTaskIds(true);
 
             ElicitSlotDirective elicitSlotDirective = new ElicitSlotDirective();
             elicitSlotDirective.setSlotToElicit("Task");
 
-            List<Directive> directives = new ArrayList<Directive>();
+            List<Directive> directives = new ArrayList<>();
             directives.add(elicitSlotDirective);
             response.setDirectives(directives);
 
             String outputText = "You have the following tasks in Capstone. Which would you like to clock into. ";
-            for(int i = 0; i < tasks.size(); i++)
+            for(int i = 0; i < formattedTasks.size(); i++)
             {
-                outputText += tasks.get(i) + " ";
+                outputText += formattedTasks.get(i) + ". ";
             }
+
             speech.setText(outputText);
             response.setNullableShouldEndSession(false);
         }
-        else if(isInteger(slotValue))
-        {
-            //User has given the ID, so just clock them in
-            CapstoneClockInRequestSender clockInRequestSender = new CapstoneClockInRequestSender(session.getUser().getAccessToken());
-            clockInRequestSender.sendRequest(slotValue);
-            speech.setText("You have clocked in successfully");
-        }
         else
         {
-            //User stated a full task, get all tasks, remove the ids, and attempt to do string compare. Find the greatest match above x, get id and attempt to clock in
-            CapstoneTaskListRequestSender taskListRequestSender = new CapstoneTaskListRequestSender(session.getUser().getAccessToken());
-            GetCapstoneTaskListResult result = (GetCapstoneTaskListResult)taskListRequestSender.sendRequest(null);
-            List<String> tasks = result.getCapstoneTaskList();
-            List<String> removedIds = removeTaskIds(tasks);
+            //User has given the formatted ID, so get the true ID
+            int formattedTaskId = Integer.parseInt(slotValue);
+            formattedTaskId -=1;
 
-            int matchedTask = matchSpokenTask(slotValue, removedIds);
-            if(matchedTask > -1)
-            {
-                //matched task found, get true ID and send clock-in request
-                String taskID = tasks.get(matchedTask).substring(0, tasks.get(matchedTask).indexOf(" "));
-                CapstoneClockInRequestSender clockInRequestSender = new CapstoneClockInRequestSender(session.getUser().getAccessToken());
-                clockInRequestSender.sendRequest(taskID);
-                speech.setText("You have clocked in successfully");
-            }
-            else
-            {
-                speech.setText("I could not find that task in Capstone.");
-            }
+            List<String> tasks = (ArrayList<String>)session.getAttribute("tasks");
+
+            String task = tasks.get(formattedTaskId);
+            String trueTaskId = task.substring(0, task.indexOf(" "));
+
+            CapstoneClockInRequestSender clockInRequestSender = new CapstoneClockInRequestSender(session.getUser().getAccessToken());
+            clockInRequestSender.sendRequest(trueTaskId);
+            speech.setText("You have clocked in successfully");
         }
 
         response.setOutputSpeech(speech);
         return response;
     }
 
-    private boolean isInteger(String str) {
-        if (str == null) {
-            return false;
+    public SpeechletResponse getFormattedTaskListResponse()
+    {
+        SpeechletResponse response = new SpeechletResponse();
+        SimpleCard card = new SimpleCard();
+        PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
+
+        List<String> tasks = getFormattedTaskIds(false);
+        String speechContent = "You currently have the following tasks in Capstone: ";
+        String cardContent = "You currently have the following tasks in Capstone:\n";
+
+        for(int i = 0; i < tasks.size(); i++)
+        {
+            speechContent += tasks.get(i) + ". ";
+            cardContent += tasks.get(i);
         }
-        int length = str.length();
-        if (length == 0) {
-            return false;
-        }
-        int i = 0;
-        if (str.charAt(0) == '-') {
-            if (length == 1) {
-                return false;
-            }
-            i = 1;
-        }
-        for (; i < length; i++) {
-            char c = str.charAt(i);
-            if (c < '0' || c > '9') {
-                return false;
-            }
-        }
-        return true;
+
+        speech.setText(speechContent);
+        card.setContent(cardContent);
+
+        response.setOutputSpeech(speech);
+        response.setCard(card);
+
+        return  response;
     }
 
-    private List<String> removeTaskIds(List<String> tasks)
+    private List<String> getFormattedTaskIds(boolean cacheOriginalTasks)
     {
-        List<String> removedIds = new ArrayList<String>();
+        CapstoneTaskListRequestSender taskListRequestSender = new CapstoneTaskListRequestSender(session.getUser().getAccessToken());
+        GetCapstoneTaskListResult result = (GetCapstoneTaskListResult)taskListRequestSender.sendRequest(null);
+        List<String> tasks = result.getCapstoneTaskList();
+
+        if(cacheOriginalTasks)
+        {
+            session.setAttribute("tasks", tasks);
+        }
+
+        List<String> formattedIds = new ArrayList<>();
         for(int i = 0; i < tasks.size(); i++)
         {
             String s = tasks.get(i);
             int k = s.indexOf(" ", s.indexOf(" ") + 1);
-            String task = s.substring(k);
-            removedIds.add(task);
+            String taskNoId = s.substring(k);
+            String taskNewId = (i + 1) + " : " + taskNoId;
+            formattedIds.add(taskNewId);
         }
-        return removedIds;
-    }
-
-    private int matchSpokenTask(String spokenTask, List<String> tasks)
-    {
-        double match = 0;
-        int matchedTaskIndex = -1;
-
-        LevenshteinDistanceStrategy levenshteinDistanceStrategy = new LevenshteinDistanceStrategy();
-
-        for(int i = 0; i < tasks.size(); i++)
-        {
-            double currentMatch = levenshteinDistanceStrategy.score(spokenTask, tasks.get(i));
-            if(currentMatch >= match && currentMatch >= 0.80)
-            {
-                match = currentMatch;
-                matchedTaskIndex = i;
-            }
-        }
-        return matchedTaskIndex;
+        return formattedIds;
     }
 }
