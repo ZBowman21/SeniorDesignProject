@@ -166,7 +166,7 @@ public class Database {
 	private static boolean updateCapstone(String teamid, String userId) throws SQLException{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("UPDATE user_capstone SET teamdid = ? WHERE id = ?");
+		sb.append("UPDATE user_capstone SET team_id = ? WHERE id = ?");
 
 		PreparedStatement statement = getConnection().prepareStatement(sb.toString());
 
@@ -183,7 +183,7 @@ public class Database {
 	public static String getCapstoneData(String userId) throws SQLException{
 		String token = null;
 
-		String queryString = "select teamid from user_capstone where id = ?";
+		String queryString = "select team_id from user_capstone where id = ?";
 		PreparedStatement statement = getConnection().prepareStatement(queryString);
 		statement.setString(1, userId);
 		ResultSet result = statement.executeQuery();
