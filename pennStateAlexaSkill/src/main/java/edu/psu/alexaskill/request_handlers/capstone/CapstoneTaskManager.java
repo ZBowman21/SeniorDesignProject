@@ -33,21 +33,28 @@ public class CapstoneTaskManager
         {
             List<String> formattedTasks = getFormattedTaskIds(true);
 
-            ElicitSlotDirective elicitSlotDirective = new ElicitSlotDirective();
-            elicitSlotDirective.setSlotToElicit("Task");
-
-            List<Directive> directives = new ArrayList<>();
-            directives.add(elicitSlotDirective);
-            response.setDirectives(directives);
-
-            String outputText = "You have the following tasks in Capstone. Which would you like to clock into. ";
-            for(int i = 0; i < formattedTasks.size(); i++)
+            if(formattedTasks.isEmpty())
             {
-                outputText += formattedTasks.get(i) + ". ";
+                speech.setText("I could not retrieve your Capstone tasks. Please visit the Capstone website to login.");
             }
+            else
+            {
+                ElicitSlotDirective elicitSlotDirective = new ElicitSlotDirective();
+                elicitSlotDirective.setSlotToElicit("Task");
 
-            speech.setText(outputText);
-            response.setNullableShouldEndSession(false);
+                List<Directive> directives = new ArrayList<>();
+                directives.add(elicitSlotDirective);
+                response.setDirectives(directives);
+
+                String outputText = "You have the following tasks in Capstone. Which would you like to clock into. ";
+                for(int i = 0; i < formattedTasks.size(); i++)
+                {
+                    outputText += formattedTasks.get(i) + ". ";
+                }
+
+                speech.setText(outputText);
+                response.setNullableShouldEndSession(false);
+            }
         }
         else
         {
@@ -61,8 +68,17 @@ public class CapstoneTaskManager
             String trueTaskId = task.substring(0, task.indexOf(" "));
 
             CapstoneClockInRequestSender clockInRequestSender = new CapstoneClockInRequestSender(session.getUser().getAccessToken());
-            clockInRequestSender.sendRequest(trueTaskId);
-            speech.setText("You have clocked in successfully");
+            boolean clockInSuccessfully = clockInRequestSender.sendRequest(trueTaskId);
+
+            if(clockInSuccessfully)
+            {
+                speech.setText("You have clocked in successfully");
+            }
+            else
+            {
+                speech.setText("There was a problem with clocking you into that task. Please try again or visit the Capstone website to clock-in manually.");
+            }
+
         }
 
         response.setOutputSpeech(speech);
@@ -74,23 +90,31 @@ public class CapstoneTaskManager
         SpeechletResponse response = new SpeechletResponse();
         SimpleCard card = new SimpleCard();
         PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
+        String speechContent;
+        String cardContent;
 
         List<String> tasks = getFormattedTaskIds(false);
-        String speechContent = "You currently have the following tasks in Capstone: ";
-        String cardContent = "You currently have the following tasks in Capstone:\n";
-
-        for(int i = 0; i < tasks.size(); i++)
+        if(tasks.isEmpty())
         {
-            speechContent += tasks.get(i) + ". ";
-            cardContent += tasks.get(i);
+            speechContent = cardContent = "I could not find any Capstone tasks for your team.";
         }
+        else
+        {
+            speechContent = "You currently have the following tasks in Capstone: ";
+            cardContent = "You currently have the following tasks in Capstone:\n";
 
+            for(int i = 0; i < tasks.size(); i++)
+            {
+                speechContent += tasks.get(i) + ". ";
+                cardContent += tasks.get(i);
+            }
+
+        }
         speech.setText(speechContent);
         card.setContent(cardContent);
 
         response.setOutputSpeech(speech);
         response.setCard(card);
-
         return  response;
     }
 
@@ -98,22 +122,30 @@ public class CapstoneTaskManager
     {
         CapstoneTaskListRequestSender taskListRequestSender = new CapstoneTaskListRequestSender(session.getUser().getAccessToken());
         GetCapstoneTaskListResult result = (GetCapstoneTaskListResult)taskListRequestSender.sendRequest(null);
-        List<String> tasks = result.getCapstoneTaskList();
 
-        if(cacheOriginalTasks)
+        if(result == null)
         {
-            session.setAttribute("tasks", tasks);
+            return new ArrayList<String>();
         }
+        else
+        {
+            List<String> tasks = result.getCapstoneTaskList();
 
-        List<String> formattedIds = new ArrayList<>();
-        for(int i = 0; i < tasks.size(); i++)
-        {
-            String s = tasks.get(i);
-            int k = s.indexOf(" ", s.indexOf(" ") + 1);
-            String taskNoId = s.substring(k);
-            String taskNewId = (i + 1) + " : " + taskNoId;
-            formattedIds.add(taskNewId);
+            if(cacheOriginalTasks)
+            {
+                session.setAttribute("tasks", tasks);
+            }
+
+            List<String> formattedIds = new ArrayList<>();
+            for(int i = 0; i < tasks.size(); i++)
+            {
+                String s = tasks.get(i);
+                int k = s.indexOf(" ", s.indexOf(" ") + 1);
+                String taskNoId = s.substring(k);
+                String taskNewId = (i + 1) + " : " + taskNoId;
+                formattedIds.add(taskNewId);
+            }
+            return formattedIds;
         }
-        return formattedIds;
     }
 }

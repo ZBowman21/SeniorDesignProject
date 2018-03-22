@@ -3,8 +3,6 @@ package edu.psu.alexaskill.intent_handlers;
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.speechlet.IntentRequest;
 import com.amazon.speech.speechlet.SpeechletResponse;
-import com.amazonaws.opensdk.BaseResult;
-import edu.psu.alexaskill.request_handlers.capstone.CapstoneTaskListRequestSender;
 import edu.psu.alexaskill.request_handlers.capstone.CapstoneTaskManager;
 
 @Handler("CapstoneListTasks")

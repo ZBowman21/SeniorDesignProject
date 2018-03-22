@@ -5,10 +5,7 @@ import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.SdkRequestConfig;
 import com.fasterxml.jackson.databind.ser.Serializers;
-import edu.pennstate.api.model.CapstoneClockInRequest;
-import edu.pennstate.api.model.CapstoneClockInResult;
-import edu.pennstate.api.model.GetCapstoneTaskListRequest;
-import edu.pennstate.api.model.GetCapstoneTaskListResult;
+import edu.pennstate.api.model.*;
 import edu.psu.alexaskill.request_handlers.RequestHandler;
 
 public class CapstoneClockInRequestSender extends RequestHandler{
@@ -26,8 +23,10 @@ public class CapstoneClockInRequestSender extends RequestHandler{
         return null;
     }
 
-    public BaseResult sendRequest(String taskID)
+    public boolean sendRequest(String taskID)
     {
+        int statusCode = 200;
+
         CapstoneClockInRequest request = new CapstoneClockInRequest();
         request.setTaskId(taskID);
         request.sdkRequestConfig(
@@ -37,7 +36,18 @@ public class CapstoneClockInRequestSender extends RequestHandler{
                         .build()
         );
 
-        CapstoneClockInResult response = client.capstoneClockIn(request);
-        return response;
+        try
+        {
+            client.capstoneClockIn(request);
+        }
+        catch(PennStateUnifiedException e)
+        {
+            statusCode = e.sdkHttpMetadata().httpStatusCode();
+        }
+
+        if(statusCode == 200)
+            return true;
+        else
+            return false;
     }
 }

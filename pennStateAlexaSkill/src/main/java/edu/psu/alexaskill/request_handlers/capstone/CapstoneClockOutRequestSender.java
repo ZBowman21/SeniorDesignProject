@@ -8,16 +8,23 @@ import com.amazonaws.opensdk.BaseResult;
 import com.amazonaws.opensdk.SdkRequestConfig;
 import edu.pennstate.api.model.CapstoneClockOutRequest;
 import edu.pennstate.api.model.CapstoneClockOutResult;
+import edu.pennstate.api.model.PennStateUnifiedException;
 import edu.psu.alexaskill.request_handlers.RequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CapstoneClockOutRequestSender extends RequestHandler {
 
     public CapstoneClockOutRequestSender(String token) {
         super(token);
     }
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public BaseResult sendRequest(Intent requestIntent) {
+        int statusCode = 200;
+        CapstoneClockOutResult result = new CapstoneClockOutResult();
+
         CapstoneClockOutRequest request = new CapstoneClockOutRequest();
         request.sdkRequestConfig(
                 SdkRequestConfig.builder()
@@ -26,8 +33,24 @@ public class CapstoneClockOutRequestSender extends RequestHandler {
                         .build()
         );
 
-        CapstoneClockOutResult response = client.capstoneClockOut(request);
-        return response;
+        try
+        {
+            result = client.capstoneClockOut(request);
+        }
+        catch(PennStateUnifiedException e)
+        {
+            logger.info("Capstone clockout exception");
+            statusCode = e.sdkHttpMetadata().httpStatusCode();
+        }
+
+        if(statusCode == 200)
+        {
+            return result;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     @Override
@@ -35,8 +58,16 @@ public class CapstoneClockOutRequestSender extends RequestHandler {
 
         PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
         SimpleCard card = new SimpleCard();
-        String outputResponse = "You have been clocked out of your task.";
+        String outputResponse;
 
+        if(response == null)
+        {
+            outputResponse = "You could not be clocked out of your task in Capstone. Please visit the Capstone website in order to clock out.";
+        }
+        else
+        {
+            outputResponse = "You have been clocked out of your task in Capstone.";
+        }
 
         card.setContent(outputResponse);
         speech.setText(outputResponse);
