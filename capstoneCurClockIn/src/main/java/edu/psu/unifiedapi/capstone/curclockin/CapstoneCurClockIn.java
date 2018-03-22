@@ -32,9 +32,9 @@ public class CapstoneCurClockIn implements RequestHandler<CapstoneCurClockInArgs
         }
 
         // This is only needed if Brandon wants it.
-//        if(response.response.activeTask) {
-//            throw new RuntimeException("No Tasks to clock out")
-//        }
+        if(!response.response.activeTask) {
+            throw new RuntimeException("No tasks to clock out");
+        }
 
         return response.response.activeTaskID;
     }

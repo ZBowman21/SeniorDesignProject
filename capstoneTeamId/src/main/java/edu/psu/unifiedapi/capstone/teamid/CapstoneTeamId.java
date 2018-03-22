@@ -6,11 +6,11 @@ import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 
 
-public class CapstoneTeamId implements RequestHandler<CapstoneTeamIdArgs,Void> {
+public class CapstoneTeamId implements RequestHandler<CapstoneTeamIdArgs,String> {
     private final String path = "/AgileTask/EGetMyTeamID";
 
     @Override
-    public Void handleRequest(CapstoneTeamIdArgs input, Context context) {
+    public String handleRequest(CapstoneTeamIdArgs input, Context context) {
 
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, null);
         ResponseTeamId response;
@@ -20,9 +20,6 @@ public class CapstoneTeamId implements RequestHandler<CapstoneTeamIdArgs,Void> {
             throw new RuntimeException(e.getMessage());
         }
 
-        // Add the teamId to the db
-
-
-        return null;
+        return response.response.teamId;
     }
 }
