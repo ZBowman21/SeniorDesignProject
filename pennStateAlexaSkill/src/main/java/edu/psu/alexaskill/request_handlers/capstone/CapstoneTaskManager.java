@@ -125,7 +125,7 @@ public class CapstoneTaskManager
 
         if(result == null)
         {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
         else
         {
