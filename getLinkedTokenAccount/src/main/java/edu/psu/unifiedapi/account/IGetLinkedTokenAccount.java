@@ -9,6 +9,6 @@ import edu.psu.unifiedapi.auth.Credentials;
 public interface IGetLinkedTokenAccount {
 
 	@LambdaFunction(functionName = "getLinkedTokenAccount")
-	Credentials getLinkedTokenAccount(GetLinkedTokenAccountArgs args);
+	String getLinkedTokenAccount(GetLinkedTokenAccountArgs args);
 
 }

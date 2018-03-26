@@ -1,0 +1,9 @@
+dependencies{
+    compile project(':capstoneUtils')
+    compile project(':capstoneWrapper')
+    compile project(':capstoneCurClockIn')
+    compile project(':getCapstoneData')
+    compile 'com.amazonaws:aws-java-sdk-lambda:1.11.226'
+    compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
+    compile 'com.google.http-client:google-http-client-jackson2:1.22.0'
+}

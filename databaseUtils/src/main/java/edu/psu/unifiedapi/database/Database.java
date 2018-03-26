@@ -144,4 +144,71 @@ public class Database {
 		return token;
 	}
 
+	private static boolean update(String table, String token, String userId, String service) throws SQLException {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("UPDATE token_credentials SET token = ? WHERE id = ? AND service = ?");
+
+		PreparedStatement statement = getConnection().prepareStatement(sb.toString());
+
+		statement.setString(1, table);
+		statement.setString(2, token);
+		statement.setString(3, userId);
+		statement.setString(4, service);
+
+		return statement.executeUpdate() > 0;
+	}
+
+	public static boolean updateTokenCredentials(String userId, String service, String token) throws SQLException {
+		return update("token_credentials", token, userId, service);
+	}
+
+	private static boolean updateCapstone(String teamid, String userId) throws SQLException{
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("UPDATE user_capstone SET team_id = ? WHERE id = ?");
+
+		PreparedStatement statement = getConnection().prepareStatement(sb.toString());
+
+		statement.setString(1, teamid);
+		statement.setString(2, userId);
+
+		return statement.executeUpdate() > 0;
+	}
+
+	public static boolean updateCapstoneData(String teamid, String userId) throws SQLException{
+		return updateCapstone(teamid, userId);
+	}
+
+	public static String getCapstoneData(String userId) throws SQLException{
+		String token = null;
+
+		String queryString = "select team_id from user_capstone where id = ?";
+		PreparedStatement statement = getConnection().prepareStatement(queryString);
+		statement.setString(1, userId);
+		ResultSet result = statement.executeQuery();
+
+		if(result.next()){
+			token = result.getString(1);
+		}
+
+		return token;
+	}
+
+	public static boolean insertCapstoneData(String teamid, String userId) throws SQLException{
+		PreparedStatement statement = getConnection().prepareStatement("INSERT INTO user_capstone VALUES ( ?, ?)");
+
+		statement.setString(1, userId);
+		statement.setString(2, teamid);
+
+		return statement.executeUpdate() > 0;
+	}
+
+	public static boolean existsCapstoneData(String userid) throws SQLException{
+		PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM user_capstone WHERE id = ?");
+		statement.setString(1, userid);
+		ResultSet result = statement.executeQuery();
+
+		return result.next();
+	}
 }
