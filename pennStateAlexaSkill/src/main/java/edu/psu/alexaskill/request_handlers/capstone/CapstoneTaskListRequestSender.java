@@ -19,6 +19,7 @@ public class CapstoneTaskListRequestSender extends RequestHandler {
 
     @Override
     public BaseResult sendRequest(Intent requestIntent) {
+        int statusCode = 200;
 
         GetCapstoneTaskListRequest request = new GetCapstoneTaskListRequest();
         request.sdkRequestConfig(
@@ -27,9 +28,24 @@ public class CapstoneTaskListRequestSender extends RequestHandler {
                         .totalExecutionTimeout(30000)
                         .build()
         );
+        GetCapstoneTaskListResult response = new GetCapstoneTaskListResult();
+        try
+        {
+            response = client.getCapstoneTaskList(request);
+        }
+        catch(PennStateUnifiedException e)
+        {
+            statusCode = e.sdkHttpMetadata().httpStatusCode();
+        }
 
-        GetCapstoneTaskListResult response = client.getCapstoneTaskList(request);
-        return response;
+        if(statusCode == 200)
+        {
+            return response;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     @Override

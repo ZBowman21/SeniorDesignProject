@@ -90,12 +90,11 @@ public class PennStateSpeechlet implements SpeechletV2 {
     public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope)
     {
 
-
     }
 
     private SpeechletResponse getDefaultResponse()
     {
-        String speechText = "Welcome to the Penn State Unified System. I did not understand your request.";
+        String speechText = "Welcome to the Penn State Alexa Application. You can do things like send and receive email, clock into senior design, and more.";
         PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
         speech.setText(speechText);
 

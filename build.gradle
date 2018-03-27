@@ -32,6 +32,7 @@ subprojects {
 	apply plugin: 'java'
 
 	repositories {
+		mavenCentral()
 		maven {
 			url "s3://repo.unifiedapi.psu.edu/snapshots"
 			credentials(AwsCredentials) {
@@ -40,7 +41,6 @@ subprojects {
 				secretKey credentials.AWSSecretKey
 			}
 		}
-		mavenCentral()
 	}
 
 	dependencies {
