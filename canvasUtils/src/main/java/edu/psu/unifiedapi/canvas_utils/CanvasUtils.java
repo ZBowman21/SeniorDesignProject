@@ -70,11 +70,12 @@ public class CanvasUtils {
 	}
 
 	public Enrollments getEnrollments(int cID) throws IOException {
-        Enrollments[] e = read("courses/" + cID + "/enrollments", Enrollments[].class);
+        // for some reason 1050000000 is before the courseid???? I don't know why
+        Enrollments[] e = read("users/self/enrollments?per_page=40", Enrollments[].class);
         Enrollments grade = null;
 
         for(Enrollments c : e){
-            if (c.grades.current_score > 0){
+            if (c.course_id == cID){
                 grade = c;
             }
         }
@@ -83,7 +84,7 @@ public class CanvasUtils {
 
     public Course[] getCourses() {
         try {
-            Course[] courses = read("courses?enrollment_type=student&include[]=total_scores", Course[].class);
+            Course[] courses = read("courses?enrollment_type=student&per_page=25&include[]=total_scores", Course[].class);
 
             List<Course> coursesList = new ArrayList<>();
 

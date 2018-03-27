@@ -1,5 +1,6 @@
 dependencies {
     compile project(':getLinkedTokenAccount')
+    compile project(':canvasUtils')
     compile aws_lambda_java_core
     compile http_client
     compile authcanvas
