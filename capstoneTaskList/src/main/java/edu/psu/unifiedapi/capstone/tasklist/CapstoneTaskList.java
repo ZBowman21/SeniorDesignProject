@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.utils.CapstoneCurSprintIdArgs;
+import edu.psu.unifiedapi.capstone.utils.CapstoneDbUtils;
 import edu.psu.unifiedapi.capstone.utils.ICapstoneCurSprintId;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 import edu.psu.unifiedapi.account.IGetCapstoneData;
@@ -27,7 +28,7 @@ public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, St
         gcda.userId = input.username;
 
         IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
-        String teamId = gcd.getCapstoneData(gcda);
+        String teamId = CapstoneDbUtils.getTeamId(gcda.userId);
 
         String params = param + "&teamid=" + teamId + "&sprintid=" + sprintId;
 

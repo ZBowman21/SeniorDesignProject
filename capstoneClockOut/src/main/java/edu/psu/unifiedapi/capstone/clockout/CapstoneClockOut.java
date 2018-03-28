@@ -9,6 +9,7 @@ import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 import edu.psu.unifiedapi.capstone.curclockin.CapstoneCurClockInArgs;
 import edu.psu.unifiedapi.capstone.curclockin.ICapstoneCurClockIn;
+import edu.psu.unifiedapi.capstone.utils.CapstoneDbUtils;
 
 public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boolean>{
     private final String path = "/AgileTask/EStudentTaskOut";
@@ -22,7 +23,7 @@ public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boo
         gcda.userId = input.username;
 
         IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
-        String teamid = gcd.getCapstoneData(gcda);
+        String teamid = CapstoneDbUtils.getTeamId(gcda.userId);
 
         // Need to grab taskid from lambda....
         CapstoneCurClockInArgs ccia = new CapstoneCurClockInArgs();

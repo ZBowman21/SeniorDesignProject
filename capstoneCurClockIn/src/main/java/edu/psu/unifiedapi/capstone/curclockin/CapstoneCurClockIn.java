@@ -7,6 +7,7 @@ import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 import edu.psu.unifiedapi.account.IGetCapstoneData;
 import edu.psu.unifiedapi.account.GetCapstoneDataArgs;
+import edu.psu.unifiedapi.capstone.utils.CapstoneDbUtils;
 
 public class CapstoneCurClockIn implements RequestHandler<CapstoneCurClockInArgs,Integer> {
     private final String path = "/AgileTask/EGetActiveTaskInstance";
@@ -19,7 +20,7 @@ public class CapstoneCurClockIn implements RequestHandler<CapstoneCurClockInArgs
         GetCapstoneDataArgs gcda = new GetCapstoneDataArgs();
         gcda.userId = input.username;
         IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
-        String teamId = gcd.getCapstoneData(gcda);
+        String teamId = CapstoneDbUtils.getTeamId(gcda.userId);
 
         String params = "teamid=" + teamId;
 
