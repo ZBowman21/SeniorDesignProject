@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':RestClientUtil')
+    compile project(':restClientUtils')
     compile project(':capstoneUtils')
     compile project(':getLinkedTokenAccount')
     compile project(':updateLinkedTokenAccount')
