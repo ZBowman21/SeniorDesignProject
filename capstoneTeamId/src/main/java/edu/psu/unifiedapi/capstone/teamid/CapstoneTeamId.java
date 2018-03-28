@@ -2,24 +2,20 @@ package edu.psu.unifiedapi.capstone.teamid;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import edu.psu.unifiedapi.capstone.CapstoneException;
-import edu.psu.unifiedapi.capstone.CapstoneWrapper;
+import edu.psu.unifiedapi.capstone.utils.CapstoneDbUtils;
 
 
 public class CapstoneTeamId implements RequestHandler<CapstoneTeamIdArgs,String> {
-    private final String path = "/AgileTask/EGetMyTeamID";
 
     @Override
     public String handleRequest(CapstoneTeamIdArgs input, Context context) {
 
-        CapstoneWrapper cap = new CapstoneWrapper(input.username, path, null);
-        ResponseTeamId response;
-        try {
-            response = (ResponseTeamId) cap.CapCall(ResponseTeamId.class, context);
-        } catch (CapstoneException e) {
-            throw new RuntimeException(e.getMessage());
+        String teamId = CapstoneDbUtils.getTeamId(input.username);
+
+        if (teamId == null) {
+            throw new RuntimeException("Cannot get team ID");
         }
 
-        return response.response.teamId;
+        return teamId;
     }
 }

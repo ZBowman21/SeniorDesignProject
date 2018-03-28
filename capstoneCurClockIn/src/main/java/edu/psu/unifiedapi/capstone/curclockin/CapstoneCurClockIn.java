@@ -7,6 +7,7 @@ import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 import edu.psu.unifiedapi.account.IGetCapstoneData;
 import edu.psu.unifiedapi.account.GetCapstoneDataArgs;
+import edu.psu.unifiedapi.capstone.utils.CapstoneDbUtils;
 
 public class CapstoneCurClockIn implements RequestHandler<CapstoneCurClockInArgs,Integer> {
     private final String path = "/AgileTask/EGetActiveTaskInstance";
@@ -26,7 +27,7 @@ public class CapstoneCurClockIn implements RequestHandler<CapstoneCurClockInArgs
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         ResponseClockIn response;
         try {
-            response = (ResponseClockIn) cap.CapCall(ResponseClockIn.class, context);
+            response = cap.capCall(ResponseClockIn.class);
         } catch (CapstoneException e) {
             throw new RuntimeException(e.getMessage());
         }

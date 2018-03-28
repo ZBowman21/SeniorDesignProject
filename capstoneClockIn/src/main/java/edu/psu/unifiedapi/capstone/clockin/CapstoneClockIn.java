@@ -7,6 +7,7 @@ import edu.psu.unifiedapi.account.IGetCapstoneData;
 import edu.psu.unifiedapi.account.GetCapstoneDataArgs;
 import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
+import edu.psu.unifiedapi.capstone.utils.CapstoneDbUtils;
 
 public class CapstoneClockIn implements RequestHandler<CapstoneClockInArgs,Boolean>{
     private final String path = "/AgileTask/EStudentTaskIn";
@@ -27,7 +28,7 @@ public class CapstoneClockIn implements RequestHandler<CapstoneClockInArgs,Boole
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         TaskedInResponse response;
         try {
-            response = (TaskedInResponse) cap.CapCall(TaskedInResponse.class, context);
+            response = cap.capCall(TaskedInResponse.class);
         } catch (CapstoneException e) {
             throw new RuntimeException(e.getMessage());
         }

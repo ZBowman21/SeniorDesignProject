@@ -1,4 +1,5 @@
 dependencies {
-    compile project(':databaseUtils')
+    compile project(':capstoneUtils')
+    compile project(':capstoneDbUtils')
     compile aws_java_sdk_lambda
 }

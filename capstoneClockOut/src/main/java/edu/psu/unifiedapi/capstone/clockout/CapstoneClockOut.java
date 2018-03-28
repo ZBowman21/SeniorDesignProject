@@ -9,6 +9,7 @@ import edu.psu.unifiedapi.capstone.CapstoneException;
 import edu.psu.unifiedapi.capstone.CapstoneWrapper;
 import edu.psu.unifiedapi.capstone.curclockin.CapstoneCurClockInArgs;
 import edu.psu.unifiedapi.capstone.curclockin.ICapstoneCurClockIn;
+import edu.psu.unifiedapi.capstone.utils.CapstoneDbUtils;
 
 public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boolean>{
     private final String path = "/AgileTask/EStudentTaskOut";
@@ -36,7 +37,7 @@ public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boo
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         ResponseTaskedOut response;
         try {
-            response = (ResponseTaskedOut) cap.CapCall(ResponseTaskedOut.class, context);
+            response = cap.capCall(ResponseTaskedOut.class);
         } catch (CapstoneException e) {
             throw new RuntimeException(e.getMessage());
         }
