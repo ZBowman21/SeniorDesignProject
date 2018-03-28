@@ -1,3 +1,5 @@
+import edu.psu.unifiedapi.canvas.GetGrades;
+import edu.psu.unifiedapi.canvas.GetGradesArgs;
 import edu.psu.unifiedapi.canvas_utils.CanvasUtils;
 import edu.psu.unifiedapi.canvas_utils.Course;
 
@@ -9,14 +11,9 @@ import java.io.IOException;
 
 public class testCanvas {
     public static void main(String[] args) throws IOException {
-        String grades = "";
 
-        CanvasUtils ca = new CanvasUtils("1050~vxqReycOSH0IbANwWy2Rakw22DY5LdsSLdY5ugzX6sQ0DMXblpY2T8lEM1a33mzS");
-        Course[] a = ca.getCourses();
-
-        for(Course c : a){
-            grades += ca.getCourseGrade(c.name) + "\n";
-        }
+        GetGrades gg = new GetGrades();
+        String grades = gg.handleRequest(new GetGradesArgs(), null);
 
         System.out.println(grades);
         //ca.getTerm();

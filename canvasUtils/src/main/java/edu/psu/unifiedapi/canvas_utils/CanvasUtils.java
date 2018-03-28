@@ -11,7 +11,13 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -58,7 +64,7 @@ public class CanvasUtils {
 				if(c.name.equals(courseName) || c.course_code.equals(courseName)) {
 				    int cID;
 				    cID = c.id;
-				    Enrollments e = getEnrollments(cID);
+				    Enrollments e = getEnrollment(cID);
 				    courseGrade = "";
 					courseGrade += (e.grades.current_score); //c.enrollments[0].computed_current_grade;
 				}
@@ -66,12 +72,12 @@ public class CanvasUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return courseGrade;
+        return courseGrade;
 	}
 
-	public Enrollments getEnrollments(int cID) throws IOException {
+	public Enrollments getEnrollment(int cID) throws IOException {
         // for some reason 1050000000 is before the courseid???? I don't know why
-        Enrollments[] e = read("users/self/enrollments?per_page=40", Enrollments[].class);
+        Enrollments[] e = getEnrollments();
         Enrollments grade = null;
 
         for(Enrollments c : e){
@@ -80,6 +86,29 @@ public class CanvasUtils {
             }
         }
         return grade;
+    }
+
+    public Enrollments[] getEnrollments() throws IOException {
+        List<Enrollments> el = new ArrayList<Enrollments>();
+        Enrollments[] ea;
+
+        Enrollments[] es = read("users/self/enrollments?per_page=40", Enrollments[].class);
+
+        LocalDateTime temp;
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Enrollments e : es) {
+            temp = LocalDateTime.parse(e.created_at, DateTimeFormatter.ISO_DATE_TIME);
+
+            if(now.getYear() == temp.getYear()
+                    && ((now.getMonthValue() < 8 && temp.getMonthValue() == 1)
+                    || (now.getMonthValue() > 7 && temp.getMonthValue() >= 8))) {
+                el.add(e);
+            }
+        }
+        ea = new Enrollments[el.size()];
+        ea = el.toArray(ea);
+        return ea;
     }
 
     public Course[] getCourses() {

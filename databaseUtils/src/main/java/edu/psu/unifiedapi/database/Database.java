@@ -151,10 +151,10 @@ public class Database {
 
 		PreparedStatement statement = getConnection().prepareStatement(sb.toString());
 
-		statement.setString(1, table);
-		statement.setString(2, token);
-		statement.setString(3, userId);
-		statement.setString(4, service);
+		//statement.setString(1, table);
+		statement.setString(1, token);
+		statement.setString(2, userId);
+		statement.setString(3, service);
 
 		return statement.executeUpdate() > 0;
 	}

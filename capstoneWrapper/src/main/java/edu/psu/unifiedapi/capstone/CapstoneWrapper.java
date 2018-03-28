@@ -39,7 +39,7 @@ public class CapstoneWrapper{
         // Regex...
         String[] authId = token.split(" ");
 
-        context.getLogger().log("Using authid = " + authId[1] + " and nounce = " + authId[0]);
+        context.getLogger().log("Using authid = " + authId[0] + " and nounce = " + authId[1]);
 
         CapstoneAuth capAuth = new CapstoneAuth(authId[1], authId[0]);
 
