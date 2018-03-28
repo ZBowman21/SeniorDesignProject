@@ -20,7 +20,7 @@ public class CapstoneCurClockIn implements RequestHandler<CapstoneCurClockInArgs
         GetCapstoneDataArgs gcda = new GetCapstoneDataArgs();
         gcda.userId = input.username;
         IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
-        String teamId = CapstoneDbUtils.getTeamId(gcda.userId);
+        String teamId = gcd.getCapstoneData(gcda);
 
         String params = "teamid=" + teamId;
 

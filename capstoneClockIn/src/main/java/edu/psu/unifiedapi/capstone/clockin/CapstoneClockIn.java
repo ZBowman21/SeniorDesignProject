@@ -20,7 +20,7 @@ public class CapstoneClockIn implements RequestHandler<CapstoneClockInArgs,Boole
         gcda.userId = input.username;
 
         IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
-        String teamid = CapstoneDbUtils.getTeamId(gcda.userId);
+        String teamid = gcd.getCapstoneData(gcda);
         //String teamid = "CSSE-BD-Class2018-002";
 
         String params = "taskid=" + input.taskId + "&teamid=" + teamid;

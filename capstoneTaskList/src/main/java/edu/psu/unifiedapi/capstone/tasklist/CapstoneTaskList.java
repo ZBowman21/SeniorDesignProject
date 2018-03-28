@@ -28,7 +28,7 @@ public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, St
         gcda.userId = input.username;
 
         IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
-        String teamId = CapstoneDbUtils.getTeamId(gcda.userId);
+        String teamId = gcd.getCapstoneData(gcda);
 
         String params = param + "&teamid=" + teamId + "&sprintid=" + sprintId;
 

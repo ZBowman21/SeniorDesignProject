@@ -23,7 +23,7 @@ public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boo
         gcda.userId = input.username;
 
         IGetCapstoneData gcd = LambdaInvokerFactory.builder().build(IGetCapstoneData.class);
-        String teamid = CapstoneDbUtils.getTeamId(gcda.userId);
+        String teamid = gcd.getCapstoneData(gcda);
 
         // Need to grab taskid from lambda....
         CapstoneCurClockInArgs ccia = new CapstoneCurClockInArgs();
