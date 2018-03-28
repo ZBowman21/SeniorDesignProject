@@ -26,7 +26,7 @@ public class CapstoneCurClockIn implements RequestHandler<CapstoneCurClockInArgs
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         ResponseClockIn response;
         try {
-            response = (ResponseClockIn) cap.CapCall(ResponseClockIn.class, context);
+            response = cap.capCall(ResponseClockIn.class);
         } catch (CapstoneException e) {
             throw new RuntimeException(e.getMessage());
         }

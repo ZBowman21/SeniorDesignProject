@@ -16,7 +16,7 @@ public class CapstoneCurSprintId implements RequestHandler<CapstoneCurSprintIdAr
         context.getLogger().log("Getting current sprintId for " + input.username);
         ResponseSprint response;
         try {
-            response = (ResponseSprint) cap.CapCall(ResponseSprint.class, context);
+            response = cap.capCall(ResponseSprint.class);
             context.getLogger().log(response.response.sprint_id);
 
             return response.response.sprint_id;

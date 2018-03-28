@@ -34,7 +34,7 @@ public class CapstoneTaskList implements RequestHandler<CapstoneTaskListArgs, St
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         ResponseTask response;
         try {
-            response = (ResponseTask) cap.CapCall(ResponseTask.class, context);
+            response = cap.capCall(ResponseTask.class);
         } catch (CapstoneException e) {
             throw new RuntimeException(e.getMessage());
         } catch (Exception e) {

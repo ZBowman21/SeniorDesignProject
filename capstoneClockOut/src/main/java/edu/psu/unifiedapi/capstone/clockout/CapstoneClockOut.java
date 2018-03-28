@@ -36,7 +36,7 @@ public class CapstoneClockOut implements RequestHandler<CapstoneClockOutArgs,Boo
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, params);
         ResponseTaskedOut response;
         try {
-            response = (ResponseTaskedOut) cap.CapCall(ResponseTaskedOut.class, context);
+            response = cap.capCall(ResponseTaskedOut.class);
         } catch (CapstoneException e) {
             throw new RuntimeException(e.getMessage());
         }

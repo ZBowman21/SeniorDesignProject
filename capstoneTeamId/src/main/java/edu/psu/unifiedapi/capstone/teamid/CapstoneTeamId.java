@@ -15,7 +15,7 @@ public class CapstoneTeamId implements RequestHandler<CapstoneTeamIdArgs,String>
         CapstoneWrapper cap = new CapstoneWrapper(input.username, path, null);
         ResponseTeamId response;
         try {
-            response = (ResponseTeamId) cap.CapCall(ResponseTeamId.class, context);
+            response = cap.capCall(ResponseTeamId.class);
         } catch (CapstoneException e) {
             throw new RuntimeException(e.getMessage());
         }
