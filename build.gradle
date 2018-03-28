@@ -27,6 +27,7 @@ ext.psuapi = 'edu.pennstate.api:PennStateUnified:1.0-SNAPSHOT'
 ext.reflections = 'org.reflections:reflections:0.9.11'
 ext.http_client = 'com.google.http-client:google-http-client-jackson2:1.22.0'
 ext.authcanvas = 'com.google.api-client:google-api-client:1.23.0'
+ext.slf4j_log4j12 = 'org.slf4j:slf4j-log4j12:1.7.0'
 
 subprojects {
 	apply plugin: 'java'
