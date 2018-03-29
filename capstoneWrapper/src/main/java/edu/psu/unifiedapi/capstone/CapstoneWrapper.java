@@ -45,6 +45,9 @@ public class CapstoneWrapper{
 
         CapstoneAuth capAuth = new CapstoneAuth(authId[1], authId[0]);
 
+		logger.info("{}", baseUrl + path);
+		logger.info("{}", params + capAuth.BuildAuthString());
+
         RestClient client = new RestClient(baseUrl + path, params + capAuth.BuildAuthString());
         String response = client.GetRequest();
 

@@ -4,5 +4,5 @@ import com.google.api.client.util.Key;
 
 public class TeamId {
     @Key
-    public String teamId;
+    public String teamid;
 }
