@@ -4,9 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.psu.unifiedapi.canvas_utils.CanvasUtils;
 import edu.psu.unifiedapi.canvas_utils.Course;
-import edu.psu.unifiedapi.canvas_utils.Enrollments;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 // get single course grade/grades for all courses
@@ -16,8 +14,8 @@ public class GetGrades implements RequestHandler<GetGradesArgs, String[]>{
         String[] grades = {};
         ArrayList<Course> courses = new ArrayList<>();
 
-        CanvasUtils ca = new CanvasUtils("1050~lLxt7V3eH7Gsvk7W8AwnhtqoRkohvuUogKYGKUvDPdhING50KRodQF0vLrDVRfnZ");
         try {
+            CanvasUtils ca = new CanvasUtils(input.username);
             courses = ca.getCourseGrades();
 
             ArrayList<String> cg = new ArrayList<>();

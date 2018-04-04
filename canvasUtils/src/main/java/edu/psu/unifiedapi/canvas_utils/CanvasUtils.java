@@ -9,8 +9,10 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import edu.psu.unifiedapi.database.Database;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -20,12 +22,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-
 public class CanvasUtils {
     private final HttpRequestFactory requestFactory;
     private final String BASE_URL = "https://psu.instructure.com/api/v1/";
 
-    public CanvasUtils(String accessToken){
+    public CanvasUtils(String username) throws SQLException {
+        String service = "canvas";
+        String accessToken = Database.getTokenCredentials(username, service);
+
         HttpTransport transport = new NetHttpTransport();
         Credential creds = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
         requestFactory = transport.createRequestFactory(creds);
