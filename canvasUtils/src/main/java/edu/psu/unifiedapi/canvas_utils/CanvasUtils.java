@@ -29,7 +29,6 @@ public class CanvasUtils {
     public CanvasUtils(String username) throws SQLException {
         String service = "canvas";
         String accessToken = Database.getTokenCredentials(username, service);
-
         HttpTransport transport = new NetHttpTransport();
         Credential creds = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
         requestFactory = transport.createRequestFactory(creds);
@@ -164,7 +163,7 @@ public class CanvasUtils {
     public Assignment[] getUpcomingAssignments(Course course) {
         if(course != null) {
             try {
-                return read("courses/" + course.id + "/assignments?bucket=upcoming", Assignment[].class);
+                return read("courses/" + course.id + "/assignments?bucket=upcoming&per_page=100", Assignment[].class);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,5 +1,5 @@
 package edu.psu.unifiedapi.canvas;
 
-public class GetGradesArgs {
+public class GetAssignmentsArgs {
     public String username;
 }

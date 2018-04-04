@@ -1,0 +1,4 @@
+dependencies{
+    compile project(':canvasUtils')
+    compile slf4j_log4j12
+}
