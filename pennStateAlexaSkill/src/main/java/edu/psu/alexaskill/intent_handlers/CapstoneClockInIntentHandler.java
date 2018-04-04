@@ -24,23 +24,7 @@ public class CapstoneClockInIntentHandler extends SecureLinkedAccountIntentHandl
     {
         CapstoneTaskManager taskManager = new CapstoneTaskManager(requestEnvelope.getSession());
         Intent normalIntent = requestEnvelope.getRequest().getIntent();
-
-        DialogIntent dialogIntent = new DialogIntent();
-        dialogIntent.setName(normalIntent.getName());
-        dialogIntent.setConfirmationStatus(normalIntent.getConfirmationStatus());
-
-        Map<String, DialogSlot> dialogSlots = new HashMap<>();
-        for(Map.Entry<String, Slot> entry : normalIntent.getSlots().entrySet())
-        {
-            Slot slot = entry.getValue();
-            DialogSlot dialogSlot = new DialogSlot();
-            dialogSlot.setName(slot.getName());
-            dialogSlot.setValue(slot.getValue());
-            dialogSlots.put(entry.getKey(), dialogSlot);
-        }
-
-        dialogIntent.setSlots(dialogSlots);
-        return taskManager.clockIntoTask(dialogIntent);
+        return taskManager.clockIntoTask(normalIntent);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package edu.psu.alexaskill.request_handlers.capstone;
 
+import com.amazon.speech.slu.ConfirmationStatus;
+import com.amazon.speech.slu.Intent;
+import com.amazon.speech.slu.Slot;
 import com.amazon.speech.speechlet.Directive;
 import com.amazon.speech.speechlet.Session;
 import com.amazon.speech.speechlet.SpeechletResponse;
@@ -11,7 +14,9 @@ import com.amazon.speech.ui.SimpleCard;
 import edu.pennstate.api.model.GetCapstoneTaskListResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CapstoneTaskManager
 {
@@ -23,11 +28,11 @@ public class CapstoneTaskManager
     }
 
     @SuppressWarnings("unchecked")
-    public SpeechletResponse clockIntoTask(DialogIntent intent)
+    public SpeechletResponse clockIntoTask(Intent intent)
     {
         SpeechletResponse response = new SpeechletResponse();
         PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
-        DialogSlot slot = intent.getSlots().get("Task");
+        Slot slot = intent.getSlots().get("Task");
         String slotValue = slot.getValue();
         if(slotValue == null)
         {
@@ -43,14 +48,30 @@ public class CapstoneTaskManager
                 elicitSlotDirective.setSlotToElicit("Task");
 
                 List<Directive> directives = new ArrayList<>();
-                directives.add(elicitSlotDirective);
-                response.setDirectives(directives);
 
                 String outputText = "You have the following tasks in Capstone. Which would you like to clock into. ";
                 for(int i = 0; i < formattedTasks.size(); i++)
                 {
                     outputText += formattedTasks.get(i) + ". ";
                 }
+
+                DialogIntent dialogIntent = new DialogIntent();
+                dialogIntent.setName(intent.getName());
+                Map<String, DialogSlot> dialogSlots = new HashMap<>();
+                for(Map.Entry<String, Slot> entry : intent.getSlots().entrySet())
+                {
+                    Slot oldSlot = entry.getValue();
+                    DialogSlot dialogSlot = new DialogSlot();
+                    dialogSlot.setName(oldSlot.getName());
+                    dialogSlot.setValue(oldSlot.getValue());
+                    dialogSlot.setConfirmationStatus(oldSlot.getConfirmationStatus());
+                    dialogSlots.put(entry.getKey(), dialogSlot);
+                }
+
+                dialogIntent.setSlots(dialogSlots);
+                elicitSlotDirective.setUpdatedIntent(dialogIntent);
+                directives.add(elicitSlotDirective);
+                response.setDirectives(directives);
 
                 speech.setText(outputText);
                 response.setNullableShouldEndSession(false);
