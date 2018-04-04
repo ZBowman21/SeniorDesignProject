@@ -50,29 +50,30 @@ public class CanvasUtils {
         return 1;
     }
 
-    public String getCourseGrade(String courseName) {
+    public ArrayList<Course> getCourseGrades() {
 		String courseGrade = "Unable to get classes.";
+        ArrayList<Course> co = new ArrayList<>();
 		try {
-			Course[] ca = read("users/self/courses", Course[].class);//read("courses", Course[].class);
-			ArrayList<Course> co = new ArrayList<>();
+			Course[] ca = read("courses?per_page=100&include[]=total_scores", Course[].class);//read("courses", Course[].class);
+
+			int etID = 0;
+
+			//get current etID
+            for(int i = 0; i < ca.length; i++){
+                if(etID < ca[i].enrollment_term_id){
+                    etID = ca[i].enrollment_term_id;
+                }
+            }
+
 			for(int i = 0; i < ca.length; i++){
-			    if(ca[i].name != null){
+			    if(ca[i].enrollment_term_id == etID){
 			        co.add(ca[i]);
                 }
             }
-			for (Course c : co) {
-				if(c.name.equals(courseName) || c.course_code.equals(courseName)) {
-				    int cID;
-				    cID = c.id;
-				    Enrollments e = getEnrollment(cID);
-				    courseGrade = "";
-					courseGrade += (e.grades.current_score); //c.enrollments[0].computed_current_grade;
-				}
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        return courseGrade;
+        return co;
 	}
 
 	public Enrollments getEnrollment(int cID) throws IOException {
