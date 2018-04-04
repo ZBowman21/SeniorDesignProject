@@ -159,7 +159,7 @@ public class CanvasUtils {
     public Assignment[] getUpcomingAssignments(Course course) {
         if(course != null) {
             try {
-                return read("courses/" + course.id + "/assignments?bucket=upcoming", Assignment[].class);
+                return read("courses/" + course.id + "/assignments?bucket=upcoming&per_page=100", Assignment[].class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
