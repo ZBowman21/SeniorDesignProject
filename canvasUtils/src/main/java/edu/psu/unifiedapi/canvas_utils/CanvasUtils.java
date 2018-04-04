@@ -9,8 +9,10 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import edu.psu.unifiedapi.database.Database;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -20,12 +22,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-
 public class CanvasUtils {
     private final HttpRequestFactory requestFactory;
     private final String BASE_URL = "https://psu.instructure.com/api/v1/";
 
-    public CanvasUtils(String accessToken){
+    public CanvasUtils(String username) throws SQLException {
+        String service = "canvas";
+        String accessToken = Database.getTokenCredentials(username, service);
+
         HttpTransport transport = new NetHttpTransport();
         Credential creds = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
         requestFactory = transport.createRequestFactory(creds);
@@ -50,29 +54,30 @@ public class CanvasUtils {
         return 1;
     }
 
-    public String getCourseGrade(String courseName) {
+    public ArrayList<Course> getCourseGrades() {
 		String courseGrade = "Unable to get classes.";
+        ArrayList<Course> co = new ArrayList<>();
 		try {
-			Course[] ca = read("users/self/courses", Course[].class);//read("courses", Course[].class);
-			ArrayList<Course> co = new ArrayList<>();
+			Course[] ca = read("courses?per_page=100&include[]=total_scores", Course[].class);//read("courses", Course[].class);
+
+			int etID = 0;
+
+			//get current etID
+            for(int i = 0; i < ca.length; i++){
+                if(etID < ca[i].enrollment_term_id){
+                    etID = ca[i].enrollment_term_id;
+                }
+            }
+
 			for(int i = 0; i < ca.length; i++){
-			    if(ca[i].name != null){
+			    if(ca[i].enrollment_term_id == etID){
 			        co.add(ca[i]);
                 }
             }
-			for (Course c : co) {
-				if(c.name.equals(courseName) || c.course_code.equals(courseName)) {
-				    int cID;
-				    cID = c.id;
-				    Enrollments e = getEnrollment(cID);
-				    courseGrade = "";
-					courseGrade += (e.grades.current_score); //c.enrollments[0].computed_current_grade;
-				}
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        return courseGrade;
+        return co;
 	}
 
 	public Enrollments getEnrollment(int cID) throws IOException {
