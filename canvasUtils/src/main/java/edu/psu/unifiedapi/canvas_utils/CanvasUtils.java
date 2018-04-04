@@ -29,7 +29,6 @@ public class CanvasUtils {
     public CanvasUtils(String username) throws SQLException {
         String service = "canvas";
         String accessToken = Database.getTokenCredentials(username, service);
-
         HttpTransport transport = new NetHttpTransport();
         Credential creds = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
         requestFactory = transport.createRequestFactory(creds);
