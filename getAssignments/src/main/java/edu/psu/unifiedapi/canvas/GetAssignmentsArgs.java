@@ -1,4 +1,4 @@
-package edu.psu.unifiedapi.canvas.getassignments;
+package edu.psu.unifiedapi.canvas;
 
 public class GetAssignmentsArgs {
     public String username;
