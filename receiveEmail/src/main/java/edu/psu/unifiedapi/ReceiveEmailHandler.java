@@ -72,7 +72,7 @@ public class ReceiveEmailHandler implements RequestHandler<ReceiveEmailRequest, 
 					Date d = messages[messages.length - input.start - 1].getReceivedDate();
 
 					Calendar c = Calendar.getInstance();
-					c.setTimeInMillis(d.getTime() - 18000000);
+					c.setTimeInMillis(d.getTime() - 14400000);
 
 					SimpleDateFormat estDF = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a");
 					String date = estDF.format(c.getTime());
