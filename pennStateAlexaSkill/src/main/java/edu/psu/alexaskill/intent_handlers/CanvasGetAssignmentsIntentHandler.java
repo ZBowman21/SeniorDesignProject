@@ -3,6 +3,8 @@ package edu.psu.alexaskill.intent_handlers;
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.speechlet.IntentRequest;
 import com.amazon.speech.speechlet.SpeechletResponse;
+import com.amazonaws.opensdk.BaseResult;
+import edu.psu.alexaskill.request_handlers.canvas.CanvasGetAssignmentsRequestSender;
 
 @Handler("GetAssignments")
 public class CanvasGetAssignmentsIntentHandler extends SecureLinkedAccountIntentHandler {
@@ -18,6 +20,8 @@ public class CanvasGetAssignmentsIntentHandler extends SecureLinkedAccountIntent
 
     @Override
     public SpeechletResponse IntentCompleted(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
-        return null;
+        CanvasGetAssignmentsRequestSender requestSender = new CanvasGetAssignmentsRequestSender(requestEnvelope.getSession().getUser().getAccessToken());
+        BaseResult result = requestSender.sendRequest(requestEnvelope.getRequest().getIntent());
+        return requestSender.parseResponse(result);
     }
 }
