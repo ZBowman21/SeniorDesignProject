@@ -3,11 +3,13 @@ package edu.psu.unifiedapi.canvas;
 import edu.psu.unifiedapi.canvas_utils.CanvasUtils;
 import edu.psu.unifiedapi.canvas_utils.Course;
 import edu.psu.unifiedapi.canvas_utils.Assignment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class GetAssignments {
 
@@ -22,7 +24,13 @@ public class GetAssignments {
                 Assignment[] as = ca.getUpcomingAssignments(c);
                 temp = "";
                 for (Assignment a : as) {
-                    temp += a.name + " Due: " + a.due_at + " ";
+                    SimpleDateFormat sd1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    Date dt = sd1.parse(a.due_at);
+                    LocalDateTime ldt = LocalDateTime.ofInstant(dt.toInstant(), ZoneId.of("-05:00"));
+                    dt = Date.from(ldt.minusHours(4).atZone(ZoneId.of("-05:00")).toInstant());
+                    SimpleDateFormat sd2 = new SimpleDateFormat("EEEEE-MMMM-dd-yyyy'@'hh-mm-a");
+                    String nd = sd2.format(dt);
+                    temp += a.name + " Due: " + nd + ". ";
                 }
                 if (as.length != 0) {
                     temp = "For " + c.name + ", " + temp;
@@ -31,6 +39,8 @@ public class GetAssignments {
             }
             System.out.println(upcoming);
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return upcoming.toArray(new String[upcoming.size()]);
