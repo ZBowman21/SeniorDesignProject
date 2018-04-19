@@ -18,7 +18,12 @@ public class SendEmailIntentHandler extends SecureLinkedAccountIntentHandler {
     }
 
     @Override
-    public SpeechletResponse inProgress(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
+    public SpeechletResponse IntentStarted(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
         return IntentStarted(requestEnvelope, "webmail");
+    }
+
+    @Override
+    public SpeechletResponse inProgress(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
+        return IntentHandler.getDefaultresponse();
     }
 }
