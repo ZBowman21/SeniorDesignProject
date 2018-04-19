@@ -23,7 +23,7 @@ public class GetHoursRequestSender extends RequestHandler
         String day = requestIntent.getSlot("time").getValue();
         Calendar c = Calendar.getInstance();
 
-        if(day.equalsIgnoreCase("tomorrow"))
+        if(day != null && day.equalsIgnoreCase("tomorrow"))
         {
             day = strDays[c.get(Calendar.DAY_OF_WEEK)];
         }
